@@ -1,4 +1,6 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:mausoleum/api/firebase-api.dart';
 import 'package:mausoleum/rowandcolumn.dart';
 import 'package:flutter/rendering.dart' show debugPaintSizeEnabled;
 import 'package:mausoleum/pages/homepage.dart';
@@ -10,8 +12,11 @@ import 'package:synchronized/synchronized.dart';
 import 'package:todo_models/todo_model.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  await FirebaseApi().initNotifications();
   debugPaintSizeEnabled = false;
-  runApp(MyApp()); 
+  runApp(MyApp());
 }
 
 //Все будет состоять из виджетов, неизменяемый объект,

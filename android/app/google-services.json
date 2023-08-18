@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "878227260722",
+    "firebase_url": "https://fir-dbmausoleum-default-rtdb.firebaseio.com",
+    "project_id": "fir-dbmausoleum",
+    "storage_bucket": "fir-dbmausoleum.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:878227260722:android:ae53cdf8356fc90bf1032b",
+        "android_client_info": {
+          "package_name": "com.example.flutter_application_2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "878227260722-ch4kufi1mm1hek6mja3bftl424kuvvd9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC1qkey0bt6GKYbXgoSS1ZcGrdlvjdsR5I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "878227260722-ch4kufi1mm1hek6mja3bftl424kuvvd9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
