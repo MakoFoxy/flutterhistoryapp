@@ -1,34 +1,33 @@
 {
   "project_info": {
-    "project_number": "878227260722",
-    "firebase_url": "https://fir-dbmausoleum-default-rtdb.firebaseio.com",
-    "project_id": "fir-dbmausoleum",
-    "storage_bucket": "fir-dbmausoleum.appspot.com"
+    "project_number": "734178320042",
+    "project_id": "mausoleumfirebase",
+    "storage_bucket": "mausoleumfirebase.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:878227260722:android:ae53cdf8356fc90bf1032b",
+        "mobilesdk_app_id": "1:734178320042:android:1f12e3d764300d9b8f7ad3",
         "android_client_info": {
           "package_name": "com.example.flutter_application_2"
         }
       },
       "oauth_client": [
         {
-          "client_id": "878227260722-ch4kufi1mm1hek6mja3bftl424kuvvd9.apps.googleusercontent.com",
+          "client_id": "734178320042-qaf7d3bi5antappr73174e4qj9d93jdc.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyC1qkey0bt6GKYbXgoSS1ZcGrdlvjdsR5I"
+          "current_key": "AIzaSyBR16jczb6AnZZoBdTh6Jlklm15zGDCKWU"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "878227260722-ch4kufi1mm1hek6mja3bftl424kuvvd9.apps.googleusercontent.com",
+              "client_id": "734178320042-qaf7d3bi5antappr73174e4qj9d93jdc.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

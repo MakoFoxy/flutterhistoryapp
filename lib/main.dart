@@ -1,6 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:mausoleum/api/firebase-api.dart';
 import 'package:mausoleum/rowandcolumn.dart';
 import 'package:flutter/rendering.dart' show debugPaintSizeEnabled;
 import 'package:mausoleum/pages/homepage.dart';
@@ -10,10 +9,19 @@ import 'package:mausoleum/sqlitedb/sqlite.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:synchronized/synchronized.dart';
 import 'package:todo_models/todo_model.dart';
+import 'package:mausoleum/api/firebase-api.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+      options: const FirebaseOptions(
+    apiKey: 'AIzaSyBR16jczb6AnZZoBdTh6Jlklm15zGDCKWU',
+    appId: '1:734178320042:android:1f12e3d764300d9b8f7ad3',
+    messagingSenderId: '734178320042',
+    projectId: 'mausoleumfirebase',
+    storageBucket: 'mausoleumfirebase.appspot.com/',
+  ));
   await FirebaseApi().initNotifications();
   debugPaintSizeEnabled = false;
   runApp(MyApp());

@@ -36,8 +36,12 @@ dependencies:
    path: packages/todo_models
   todo_repo:
    path: packages/todo_repo
-  firebase_core: ^2.15.1
+  firebase_auth: ^4.7.3
+  firebase_storage: ^11.2.6
   firebase_messaging: ^14.6.6
+  firebase_core: ^2.15.1
+  cloud_firestore: ^4.8.5
+
 
 dev_dependencies:
   flutter_test:
