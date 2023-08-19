@@ -1,4 +1,5 @@
 import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:todo_models/todo_model.dart';
 import 'package:todo_repo/todo_repo.dart';
@@ -12,7 +13,7 @@ class CreateHistoryPost extends StatefulWidget {
 
 class _CreateHistoryPostState extends State<CreateHistoryPost> {
   PlatformFile? pickedFile;
-
+  UploadTask? uploadTask;
   Future selectFile() async {
     final FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
@@ -32,7 +33,22 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
   }
 
   Future uploadFile() async {
-    final fileupload = await File(pickedFile!.path!);
+    final path = 'files/${pickedFile!.path!}';
+    final fileupload = File(pickedFile!.path!);
+
+    final ref = FirebaseStorage.instance.ref().child(path);
+    setState(() {
+      uploadTask = ref.putFile(fileupload);
+    });
+
+    final snapshot = await uploadTask!.whenComplete(() {});
+
+    final urlDownload = await snapshot.ref.getDownloadURL();
+    print('Download Link $urlDownload');
+  
+   setState(() {
+      uploadTask = null;
+    });
   }
 
   TextEditingController teTitle = TextEditingController();
@@ -122,6 +138,10 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
                   child: Text('Фотофайлды жүктеу'),
                 ),
               ),
+              const SizedBox(
+                height: 32,
+              ),
+              buildProgress(),
               Container(
                 width: double.infinity,
                 height: 60,
@@ -153,4 +173,37 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
       ),
     );
   }
+
+  Widget buildProgress() => StreamBuilder<TaskSnapshot>(
+        stream: uploadTask?.snapshotEvents,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            final data = snapshot.data!;
+            double progress = data.bytesTransferred / data.totalBytes;
+
+            return SizedBox(
+              height: 50,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  LinearProgressIndicator(
+                    value: progress,
+                    backgroundColor: Colors.grey,
+                    color: Colors.green,
+                  ),
+                  Center(
+                      child: Text(
+                    '${(100 * progress).roundToDouble()}%',
+                    style: const TextStyle(color: Colors.white),
+                  ))
+                ],
+              ),
+            );
+          } else {
+            return const SizedBox(
+              height: 50,
+            );
+          }
+        },
+      );
 }
