@@ -1,10 +1,11 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mausoleum/models/overview.dart';
 import 'package:flutter/material.dart';
 import 'package:mausoleum/models/overview.dart';
 import 'package:mausoleum/models/generalwidgets.dart';
 import 'package:mausoleum/models/createpost/createpostscree.dart';
-import 'package:mausoleum/rowandcolumn.dart';
+import 'package:mausoleum/objectpage.dart';
 import 'package:todo_repo/todo_repo.dart';
 import 'package:mausoleum/pages/editPages.dart';
 import 'package:todo_models/todo_model.dart';
@@ -268,6 +269,61 @@ class HomePageState extends State<MyHomePage> {
                         },
                       ),
                     ),
+                    StreamBuilder<QuerySnapshot>(
+                      stream: FirebaseFirestore.instance
+                          .collection('data')
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return CircularProgressIndicator();
+                        }
+                        if (snapshot.hasError) {
+                          return Text('Произошла ошибка');
+                        }
+                        final clients = snapshot.data?.docs.toList();
+
+                        return Column(
+                          children: clients!.map((data) {
+                            final doc = data.data() as Map<String, dynamic>;
+
+                            return Container(
+                              margin:
+                                  const EdgeInsets.only(left: 50, right: 50),
+                              padding: const EdgeInsets.symmetric(vertical: 5),
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  // Обработчик нажатия кнопки с ключом
+                                  print('Нажата кнопка с ключом: ${doc['id']}');
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ObjectPage(
+                                          selectedId: doc['id'],
+                                          selectedKey: doc['title']),
+                                    ),
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  primary: Colors.amber.withOpacity(0.8),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 10,
+                                    horizontal: 30,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                ),
+                                child: Text(
+                                  doc['title'],
+                                  style: colorTextStyle,
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        );
+                      },
+                    ),
                   ],
                 );
               }
@@ -309,6 +365,186 @@ class HomePageState extends State<MyHomePage> {
     );
   }
 }
+
+// StreamBuilder<QuerySnapshot>(
+//   stream: FirebaseFirestore.instance
+//       .collection('data')
+//       .snapshots(),
+//   builder: (context, snapshot) {
+//     if (snapshot.connectionState ==
+//         ConnectionState.waiting) {
+//       return CircularProgressIndicator();
+//     }
+//     if (snapshot.hasError) {
+//       return Text('Произошла ошибка');
+//     }
+//     final clients =
+//         snapshot.data?.docs.reversed.toList();
+
+//     return Column(
+//       children: clients!.map((data) {
+//         final doc =
+//             data.data() as Map<String, dynamic>;
+
+//         return Container(
+//           margin: const EdgeInsets.only(
+//               left: 50, right: 50),
+//           padding:
+//               const EdgeInsets.symmetric(vertical: 5),
+//           child: ElevatedButton(
+//             onPressed: () {
+//               // Обработчик нажатия кнопки с ключом
+//               print(
+//                   'Нажата кнопка с ключом: ${doc['id']}');
+//               Navigator.push(
+//                 context,
+//                 MaterialPageRoute(
+//                   builder: (context) => ObjectPage(
+//                       selectedId: doc['id'],
+//                       selectedKey: doc['title']),
+//                 ),
+//               );
+//             },
+//             style: ElevatedButton.styleFrom(
+//               primary: Colors.amber.withOpacity(0.8),
+//               padding: const EdgeInsets.symmetric(
+//                 vertical: 10,
+//                 horizontal: 30,
+//               ),
+//               shape: RoundedRectangleBorder(
+//                 borderRadius:
+//                     BorderRadius.circular(30),
+//               ),
+//             ),
+//             child: Text(
+//               doc['title'],
+//               style: colorTextStyle,
+//             ),
+//           ),
+//         );
+//       }).toList(),
+//     );
+//   },
+// );
+
+// Container(
+//   margin:
+//       const EdgeInsets.only(left: 50, right: 50),
+//   padding:
+//       const EdgeInsets.symmetric(vertical: 5),
+//   child: ElevatedButton(
+//     onPressed: () {
+//       // Обработчик нажатия кнопки с ключом
+//       print(
+//           'Нажата кнопка с ключом: ${data[index].letId}');
+//       Navigator.push(
+//         context,
+//         MaterialPageRoute(
+//           builder: (context) => ObjectPage(
+//               selectedId: data[index].letId,
+//               selectedKey: data[index].title),
+//         ),
+//       );
+//     },
+//     style: ElevatedButton.styleFrom(
+//       primary: Colors.amber.withOpacity(0.8),
+//       padding: const EdgeInsets.symmetric(
+//         vertical: 10,
+//         horizontal: 30,
+//       ),
+//       shape: RoundedRectangleBorder(
+//         borderRadius: BorderRadius.circular(30),
+//       ),
+//     ),
+//     child: Text(
+//       data[index].title,
+//       style: colorTextStyle,
+//     ),
+//   ),
+// ),
+
+// StreamBuilder<QuerySnapshot>(
+//     stream: FirebaseFirestore.instance
+//         .collection('data')
+//         .snapshots(),
+//     builder: (context, snapshot) {
+//       List<Row> clientWidgets = [];
+
+//       if (snapshot.hasData) {
+//         final clients =
+//             snapshot.data?.docs.reversed.toList();
+//         for (var data in clients!) {
+//           final clientWidget = Row(
+//             mainAxisAlignment:
+//                 MainAxisAlignment.spaceBetween,
+//             children: [
+//               Container(
+//                 margin: const EdgeInsets.only(
+//                     left: 50, right: 50),
+//                 padding:
+//                     const EdgeInsets.symmetric(vertical: 5),
+//                 child: ElevatedButton(
+//                   onPressed: () {
+//                     // Обработчик нажатия кнопки с ключом
+//                     print(
+//                         'Нажата кнопка с ключом: ${data}');
+//                     Navigator.push(
+//                       context,
+//                       MaterialPageRoute(
+//                         builder: (context) => ObjectPage(
+//                             selectedId: data['id'],
+//                             selectedKey: data['title']),
+//                       ),
+//                     );
+//                   },
+//                   style: ElevatedButton.styleFrom(
+//                     primary: Colors.amber.withOpacity(0.8),
+//                     padding: const EdgeInsets.symmetric(
+//                       vertical: 10,
+//                       horizontal: 30,
+//                     ),
+//                     shape: RoundedRectangleBorder(
+//                       borderRadius:
+//                           BorderRadius.circular(30),
+//                     ),
+//                   ),
+//                   child: Text(
+//                     // resulterList != null
+//                     //     ? resulterList[index].title
+//                     data['title'],
+//                     //  ? data[index].title
+//                     // : widget.resulterList[index].title,
+//                     style: colorTextStyle,
+//                   ),
+//                 ),
+//               ),
+//               Text(
+//                 data['title'],
+//                 style: TextStyle(
+//                     color: Colors.red, fontSize: 16),
+//               ), // Зеленый цвет текста),
+//               Text(
+//                 data['description'],
+//                 style: TextStyle(
+//                     color: Colors.red, fontSize: 16),
+//               ), // Зеленый цвет текста)),
+//               Text(
+//                 data['filephotopath'],
+//                 style: TextStyle(
+//                     color: Colors.red, fontSize: 16),
+//               ), // Зеленый цвет текста),
+//             ],
+//           );
+//           clientWidgets.add(clientWidget);
+//         }
+//       }
+
+//       return Expanded(
+//         child: ListView(
+//           children: clientWidgets,
+//         ),
+//       );
+//     }),
 
 class MenuTile extends StatefulWidget {
   @override

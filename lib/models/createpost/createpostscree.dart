@@ -5,6 +5,8 @@ import 'package:todo_models/todo_model.dart';
 import 'package:todo_repo/todo_repo.dart';
 import 'package:todo_services/data_models/dbtodo.dart';
 import 'dart:io';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CreateHistoryPost extends StatefulWidget {
   @override
@@ -45,8 +47,8 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
 
     final urlDownload = await snapshot.ref.getDownloadURL();
     print('Download Link $urlDownload');
-  
-   setState(() {
+
+    setState(() {
       uploadTask = null;
     });
   }
@@ -151,7 +153,7 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
                 ),
                 margin: const EdgeInsets.all(15),
                 child: ElevatedButton(
-                  onPressed: () async {
+                  onPressed: () async {                                   
                     DBtodo dbTodo = DBtodo();
                     await dbTodo
                         .checkData(); // Получаем уникальное значение letId
@@ -163,6 +165,18 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
                     );
                     TodoRepository().addTodo(todo);
                     Navigator.pop(context);
+
+                   CollectionReference collRef = FirebaseFirestore.instance.collection('data');
+
+                    collRef.add({
+                      'title': teTitle.text,
+                      'description': teDescription.text,
+                      'filephotopath': pickedFile!.path!,
+                    });
+
+                    teTitle.clear();
+                    teDescription.clear();
+                    pickedFile = null;
                   },
                   child: const Text('Тарихи тұлғаны сақтау'),
                 ),
@@ -188,13 +202,13 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
                 children: [
                   LinearProgressIndicator(
                     value: progress,
-                    backgroundColor: Colors.grey,
+                    backgroundColor: Colors.green,
                     color: Colors.green,
                   ),
                   Center(
                       child: Text(
                     '${(100 * progress).roundToDouble()}%',
-                    style: const TextStyle(color: Colors.white),
+                    style: const TextStyle(color: Colors.green),
                   ))
                 ],
               ),

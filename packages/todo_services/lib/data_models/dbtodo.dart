@@ -12,7 +12,7 @@ class DBtodo {
         maxId = getId.letId;
       }
     }
-    letId = maxId + 1;
+    letId = maxId+1;
   }
 
   String title;

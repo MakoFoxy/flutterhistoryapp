@@ -1,6 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:mausoleum/rowandcolumn.dart';
+import 'package:mausoleum/objectpage.dart';
 import 'package:flutter/rendering.dart' show debugPaintSizeEnabled;
 import 'package:mausoleum/pages/homepage.dart';
 import 'package:mausoleum/models/overview.dart';

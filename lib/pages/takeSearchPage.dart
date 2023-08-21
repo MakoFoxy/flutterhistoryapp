@@ -5,7 +5,7 @@ import 'package:mausoleum/models/overview.dart';
 import 'package:mausoleum/models/generalwidgets.dart';
 import 'package:mausoleum/models/createpost/createpostscree.dart';
 import 'package:mausoleum/pages/homepage.dart';
-import 'package:mausoleum/rowandcolumn.dart';
+import 'package:mausoleum/objectpage.dart';
 import 'package:todo_repo/todo_repo.dart';
 import 'package:mausoleum/pages/editPages.dart';
 import 'package:todo_models/todo_model.dart';

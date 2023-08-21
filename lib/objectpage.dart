@@ -7,6 +7,7 @@ import 'package:mausoleum/pages/editPages.dart';
 import 'package:mausoleum/pages/homepage.dart';
 import 'package:mausoleum/pages/takeSearchPage.dart';
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 // Overview dataInform = Overview();
 
@@ -86,7 +87,7 @@ class _ObjectPage extends State<ObjectPage> {
                     itemBuilder: (context, index) {
                       return Column(
                         children: <Widget>[
-                           MyPhotoCont(selectedKey: widget.selectedKey),
+                          MyPhotoCont(selectedKey: widget.selectedKey),
                           const ScreenInit(),
                         ],
                       );
@@ -195,33 +196,81 @@ class _MyOverviewsState extends State<MyOverviews> {
   }
 
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: 1,
-      itemBuilder: (context, index) {
-        // String value = mapdata[selectedKey] ?? "";
-        print(widget.selectedKey);
-        print(resultDiscription);
-        return Card(
-          color: Colors.amber,
-          elevation: 5, // Добавляем тень для карточки
-          // shape: RoundedRectangleBorder(
-          //   borderRadius: BorderRadius.circular(10), // Закругляем углы
-          // ),
-          child: Container(
-            // padding: const EdgeInsets.symmetric(
-            //     horizontal: 0), // Убираем отступы по бокам
-            color: Colors.amber,
-            child: Text(
-              resultDiscription,
-              style: whiteTextStyle,
-              textAlign: TextAlign.justify,
-            ),
-          ),
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance.collection('data').snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator(); // Показываем индикатор загрузки во время ожидания данных
+        }
+
+        if (snapshot.hasError) {
+          return Text("Ошибка: ${snapshot.error}");
+        }
+        final clients = snapshot.data?.docs.reversed.toList();
+
+        return ListView.builder(
+          itemCount: clients?.length ?? 0,
+          //itemCount: 1,
+          itemBuilder: (context, index) {
+           final data = clients![index];
+            // String value = mapdata[selectedKey] ?? "";
+            print(widget.selectedKey);
+            print(resultDiscription);
+            Card(
+              color: Colors.amber,
+              elevation: 5,
+              child: Container(
+                // padding: const EdgeInsets.symmetric(
+                //     horizontal: 0), // Убираем отступы по бокам
+                color: Colors.amber,
+                child: Text(
+                  resultDiscription,
+                  style: whiteTextStyle,
+                  textAlign: TextAlign.justify,
+                ),
+              ),
+            );
+            Card(
+              child: Container(
+                // padding: const EdgeInsets.symmetric(
+                //     horizontal: 0), // Убираем отступы по бокам
+                color: Colors.amber,
+                child: Text(
+                  data['description'],
+                  style: whiteTextStyle,
+                  textAlign: TextAlign.justify,
+                ),
+              ),
+            );
+            // child: Column(
+            //   children: [
+            //     Container(
+            //       color: Colors.amber,
+            //       child: Text(
+            //         resultDiscription,
+            //         style: whiteTextStyle,
+            //         textAlign: TextAlign.justify,
+            //       ),
+            //     ),
+            //   ],
+            // ),
+          },
         );
       },
     );
   }
 }
+
+// Container(
+//   // padding: const EdgeInsets.symmetric(
+//   //     horizontal: 0), // Убираем отступы по бокам
+//   color: Colors.amber,
+//   child: Text(
+//     data['description'],
+//     style: whiteTextStyle,
+//     textAlign: TextAlign.justify,
+//   ),
+// ),
 
 class ScreenInit extends StatelessWidget {
   const ScreenInit({super.key});
@@ -370,7 +419,7 @@ class MyTextCont extends StatelessWidget {
 }
 
 class MyPhotoCont extends StatefulWidget {
- String selectedKey;
+  String selectedKey;
 
   MyPhotoCont({
     required this.selectedKey,
@@ -380,9 +429,8 @@ class MyPhotoCont extends StatefulWidget {
   State<MyPhotoCont> createState() => _MyPhotoContState();
 }
 
-class _MyPhotoContState extends State<MyPhotoCont> { 
-
- @override
+class _MyPhotoContState extends State<MyPhotoCont> {
+  @override
   void initState() {
     super.initState();
     photoAsyncFunction(widget.selectedKey);
@@ -559,12 +607,6 @@ class _FavoriteWidjetState extends State<FavoriteWidjet> {
   }
 }
 
-
-
-
-
-
-
 // class BoxMenu extends StatelessWidget {
 //   @override
 //   Widget build(BuildContext context) {
@@ -634,29 +676,25 @@ class _FavoriteWidjetState extends State<FavoriteWidjet> {
 //   }
 // }
 
+// String myfunc(String selectedKey) {
+//   for (var key in mapdata.keys) {
+//     if (key == selectedKey) {
+//       return mapdata[key]!;
+//     }
+//   }
+//   return "";
+// }
+//   String myfunc(String selectedKey) {
+//   for (var i = 0; i < mapdata.keys.length; i++) {
+//     if (mapdata.keys.elementAt(i) == selectedKey) {
+//       return mapdata[mapdata.keys.elementAt(i)]!;
+//     }
+//   }
+//   return "";
+// }
 
+// String value = myfunc(selectedKey);
 
-   // String myfunc(String selectedKey) {
-    //   for (var key in mapdata.keys) {
-    //     if (key == selectedKey) {
-    //       return mapdata[key]!;
-    //     }
-    //   }
-    //   return "";
-    // }
-    //   String myfunc(String selectedKey) {
-    //   for (var i = 0; i < mapdata.keys.length; i++) {
-    //     if (mapdata.keys.elementAt(i) == selectedKey) {
-    //       return mapdata[mapdata.keys.elementAt(i)]!;
-    //     }
-    //   }
-    //   return "";
-    // }
-
-    // String value = myfunc(selectedKey);
-
-
-    
 //  Icon(
 //               Icons.favorite,
 //               size: 50,
