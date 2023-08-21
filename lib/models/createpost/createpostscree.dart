@@ -187,7 +187,7 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
       ),
     );
   }
-jhg
+
   Widget buildProgress() => StreamBuilder<TaskSnapshot>(
         stream: uploadTask?.snapshotEvents,
         builder: (context, snapshot) {
