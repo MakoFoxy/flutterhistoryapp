@@ -11,20 +11,20 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 // Overview dataInform = Overview();
 
-class ObjectPage extends StatefulWidget {
+class ObjectFirebasePage extends StatefulWidget {
   //final Map<String, String> mapdata;
   final String selectedKey; // Добавьте параметр для выбранного ключа
-  final int selectedId; // Добавьте параметр для выбранного ключа
-  ObjectPage({
+  // final int selectedId; // Добавьте параметр для выбранного ключа
+  ObjectFirebasePage({
     required this.selectedKey,
-    required this.selectedId,
+    // required this.selectedId,
   });
 
   @override
-  State<ObjectPage> createState() => _ObjectPage();
+  State<ObjectFirebasePage> createState() => _ObjectFirebasePage();
 }
 
-class _ObjectPage extends State<ObjectPage> {
+class _ObjectFirebasePage extends State<ObjectFirebasePage> {
   @override
   final whiteTextStyle = TextStyle(color: Colors.white, fontSize: 24);
 
@@ -163,66 +163,53 @@ class MyOverviews extends StatefulWidget {
   });
 
   @override
-  State<MyOverviews> createState() => _MyOverviewsState();
+  State<MyOverviews> createState() => MyOverviewsState();
 }
 
-class _MyOverviewsState extends State<MyOverviews> {
+class MyOverviewsState extends State<MyOverviews> {
   final whiteTextStyle =
       TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 20);
 
-  @override
-  void initState() {
-    super.initState();
-    someAsyncFunction(widget.selectedKey);
-  }
-
-  String resultDiscription = "";
-  Future<void> someAsyncFunction(String selectedKey) async {
-    print("selectedKey1 $selectedKey");
-    Future<List<TodoModel>> result = TodoRepository().searchDB(selectedKey);
-    List<TodoModel> resultList = await result; // Дождитесь завершения Future
-
-    for (int i = 0; i < resultList.length; i++) {
-      print("resultList.length ${resultList.length}");
-      if (resultList[i].title == selectedKey) {
-        setState(() {
-          resultDiscription = resultDiscription + resultList[i].description;
-        });
-        print(resultDiscription);
-      }
-    }
-    print("selectedKey info ${widget.selectedKey}");
-    print("resultDiscription info $resultDiscription");
-  }
-
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: 1,
-      itemBuilder: (context, index) {
-        // String value = mapdata[selectedKey] ?? "";
-        print(widget.selectedKey);
-        print(resultDiscription);
-        return Card(
-          color: Colors.amber,
-          elevation: 5, // Добавляем тень для карточки
-          // shape: RoundedRectangleBorder(
-          //   borderRadius: BorderRadius.circular(10), // Закругляем углы
-          // ),
-          child: Container(
-            // padding: const EdgeInsets.symmetric(
-            //     horizontal: 0), // Убираем отступы по бокам
-            color: Colors.amber,
-            child: Text(
-              resultDiscription,
-              style: whiteTextStyle,
-              textAlign: TextAlign.justify,
-            ),
-          ),
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance.collection('data').snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator(); // Показываем индикатор загрузки во время ожидания данных
+        }
+
+        if (snapshot.hasError) {
+          return Text("Ошибка: ${snapshot.error}");
+        }
+
+        String discripWidgets = "";
+
+        final keysfirebase = snapshot.data?.docs.toList();
+
+        for (var key in keysfirebase!) {
+          if (widget.selectedKey == key['title']) {
+            discripWidgets = key['description'];
+          }
+        }
+
+        return ListView.builder(
+          itemCount: 1,
+          itemBuilder: (context, index) {
+            return Container(
+              color: Colors.amber,
+              child: Text(
+                discripWidgets, // Убедиcь, что значение не null
+                style: whiteTextStyle,
+                textAlign: TextAlign.justify,
+              ),
+            );
+          },
         );
       },
     );
   }
 }
+
 class ScreenInit extends StatelessWidget {
   const ScreenInit({super.key});
   @override
@@ -382,49 +369,46 @@ class MyPhotoCont extends StatefulWidget {
 
 class _MyPhotoContState extends State<MyPhotoCont> {
   @override
-  void initState() {
-    super.initState();
-    photoAsyncFunction(widget.selectedKey);
-  }
-
-  String resultPhoto = "";
-
-  Future<void> photoAsyncFunction(String selectedKey) async {
-    print("selectedKey1 $selectedKey");
-    Future<List<TodoModel>> result = TodoRepository().searchDB(selectedKey);
-    List<TodoModel> resultList = await result; // Дождитесь завершения Future
-
-    for (int i = 0; i < resultList.length; i++) {
-      print("resultList.length ${resultList.length}");
-      if (resultList[i].title == selectedKey) {
-        setState(() {
-          resultPhoto = resultList[i].filephotopath;
-        });
-        print(resultPhoto);
-      }
-    }
-    print("selectedKey info ${widget.selectedKey}");
-    print("resultPhoto info $resultPhoto");
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 150,
-      width: 340,
-      child: Card(
-        margin: const EdgeInsets.only(left: 0, right: 0, top: 0, bottom: 10),
-        elevation: 5,
-        child: Container(
-          child: Image.file(
-            File(resultPhoto),
-            fit: BoxFit.cover,
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance.collection('data').snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator(); // Показываем индикатор загрузки во время ожидания данных
+        }
+
+        if (snapshot.hasError) {
+          return Text("Ошибка: ${snapshot.error}");
+        }
+
+        String photoWidgets = "";
+
+        final keysfirebase = snapshot.data?.docs.toList();
+        for (var key in keysfirebase!) {
+          if (widget.selectedKey == key['title']) {
+            photoWidgets = key['filephotopath'];
+          }
+        }
+        print(photoWidgets);
+        return Container(
+          height: 150,
+          width: 340,
+          child: Card(
+            margin:
+                const EdgeInsets.only(left: 0, right: 0, top: 0, bottom: 10),
+            elevation: 5,
+            child: Container(
+              child: Image.file(
+                File(photoWidgets),
+                fit: BoxFit.cover,
+              ),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30),
+              ),
+            ),
           ),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(30),
-          ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
@@ -557,272 +541,3 @@ class _FavoriteWidjetState extends State<FavoriteWidjet> {
     });
   }
 }
-
-
-// Widget build(BuildContext context) {
-//   return StreamBuilder<QuerySnapshot>(
-//     stream: FirebaseFirestore.instance.collection('data').snapshots(),
-//     builder: (context, snapshot) {
-//       if (snapshot.connectionState == ConnectionState.waiting) {
-//         return CircularProgressIndicator(); // Показываем индикатор загрузки во время ожидания данных
-//       }
-
-//       if (snapshot.hasError) {
-//         return Text("Ошибка: ${snapshot.error}");
-//       }
-//       final clients = snapshot.data?.docs.reversed.toList();
-
-//       return ListView.builder(
-//         itemCount: clients?.length ?? 0,
-//         //itemCount: 1,
-//         itemBuilder: (context, index) {
-//          final data = clients![index];
-//           // String value = mapdata[selectedKey] ?? "";
-//           print(widget.selectedKey);
-//           print(resultDiscription);
-//           Card(
-//             color: Colors.amber,
-//             elevation: 5,
-//             child: Container(
-//               // padding: const EdgeInsets.symmetric(
-//               //     horizontal: 0), // Убираем отступы по бокам
-//               color: Colors.amber,
-//               child: Text(
-//                 resultDiscription,
-//                 style: whiteTextStyle,
-//                 textAlign: TextAlign.justify,
-//               ),
-//             ),
-//           );
-//           Card(
-//             child: Container(
-//               // padding: const EdgeInsets.symmetric(
-//               //     horizontal: 0), // Убираем отступы по бокам
-//               color: Colors.amber,
-//               child: Text(
-//                 data['description'],
-//                 style: whiteTextStyle,
-//                 textAlign: TextAlign.justify,
-//               ),
-//             ),
-//           );
-//           // child: Column(
-//           //   children: [
-//           //     Container(
-//           //       color: Colors.amber,
-//           //       child: Text(
-//           //         resultDiscription,
-//           //         style: whiteTextStyle,
-//           //         textAlign: TextAlign.justify,
-//           //       ),
-//           //     ),
-//           //   ],
-//           // ),
-//         },
-//       );
-//     },
-//   );
-// }
-
-// Container(
-//   // padding: const EdgeInsets.symmetric(
-//   //     horizontal: 0), // Убираем отступы по бокам
-//   color: Colors.amber,
-//   child: Text(
-//     data['description'],
-//     style: whiteTextStyle,
-//     textAlign: TextAlign.justify,
-//   ),
-// ),
-
-// class BoxMenu extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       width: 80,
-//       height: 50,
-//       child: Center(
-//         child: Text(
-//           'Меню',
-//           textAlign: TextAlign.center,
-//           style: TextStyle(
-//             fontSize: 18,
-//           ),
-//         ),
-//       ),
-//       decoration: BoxDecoration(
-//         color: Color.fromARGB(255, 124, 108, 59),
-//         border: Border.all(),
-//       ),
-//     );
-//   }
-// }
-
-// class SearchBox extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       width: 80,
-//       height: 50,
-//       child: Center(
-//         child: Text(
-//           'Поиск',
-//           textAlign: TextAlign.center,
-//           style: TextStyle(
-//             fontSize: 18,
-//           ),
-//         ),
-//       ),
-//       decoration: BoxDecoration(
-//         color: Color.fromARGB(255, 124, 108, 59),
-//         border: Border.all(),
-//       ),
-//     );
-//   }
-// }
-
-// class LinguaBox extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       width: 80,
-//       height: 50,
-//       child: Center(
-//         child: Text(
-//           'Язык',
-//           textAlign: TextAlign.center,
-//           style: TextStyle(
-//             fontSize: 18,
-//           ),
-//         ),
-//       ),
-//       decoration: BoxDecoration(
-//         color: Color.fromARGB(255, 124, 108, 59),
-//         border: Border.all(),
-//       ),
-//     );
-//   }
-// }
-
-// String myfunc(String selectedKey) {
-//   for (var key in mapdata.keys) {
-//     if (key == selectedKey) {
-//       return mapdata[key]!;
-//     }
-//   }
-//   return "";
-// }
-//   String myfunc(String selectedKey) {
-//   for (var i = 0; i < mapdata.keys.length; i++) {
-//     if (mapdata.keys.elementAt(i) == selectedKey) {
-//       return mapdata[mapdata.keys.elementAt(i)]!;
-//     }
-//   }
-//   return "";
-// }
-
-// String value = myfunc(selectedKey);
-
-//  Icon(
-//               Icons.favorite,
-//               size: 50,
-//               color: Colors.tealAccent,
-//             ), - Иконки Like
-//fit: FlexFit.loose - дополнительное пространство
-//будет участвовать во flex
-//Expanded - это fit, альтернативная запись
-
-// class PlaceListBox extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       // width: 100,
-//       height: 50,
-//       child: Center(
-//         child: Text(
-//           'Список мест',
-//           textAlign: TextAlign.center,
-//           style: TextStyle(
-//             fontSize: 18,
-//             color: Colors.black,
-//           ),
-//           softWrap: true, // перененос строки
-//           overflow: TextOverflow.fade, // если softWrap неотработает
-//         ),
-//       ),
-//       decoration: BoxDecoration(
-//         color: Color.fromARGB(255, 124, 108, 59),
-//         border: Border.all(),
-//       ),
-//     );
-//   }
-// }
-
-// class MyMapBox extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       // width: 110,
-//       height: 50,
-//       child: Center(
-//         child: Text(
-//           'Карта',
-//           textAlign: TextAlign.center,
-//           style: TextStyle(
-//             fontSize: 18,
-//             color: Colors.black,
-//           ),
-//           softWrap: true, // перененос строки
-//           overflow: TextOverflow.fade, // если softWrap неотработает
-//         ),
-//       ),
-//       decoration: BoxDecoration(
-//         color: Color.fromARGB(255, 124, 108, 59),
-//         border: Border.all(),
-//       ),
-//     );
-//   }
-// }
-
-// class FavoriteBox extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       // width: 110,
-//       height: 50,
-//       child: Center(
-//         child: Text(
-//           'Избранное',
-//           textAlign: TextAlign.center,
-//           style: TextStyle(
-//             fontSize: 18,
-//             color: Colors.black,
-//           ),
-//           softWrap: true, // перененос строки
-//           overflow: TextOverflow.fade, // если softWrap неотработает
-//         ),
-//       ),
-//       decoration: BoxDecoration(
-//         color: Color.fromARGB(255, 124, 108, 59),
-//         border: Border.all(),
-//       ),
-//     );
-//   }
-// }
-// Container(child: Row(...)) создает экземпляр класса
-//Container, а в качестве значения свойства child этого
-//экземпляра используется экземпляр класса Row. Это позволяет
-//вложить один виджет внутрь другого, создавая иерархию
-//виджетов для построения пользовательского интерфейса.
-// child: Stack(
-//           children: [
-//             Container(
-//               child: Image.asset(
-//                 'lib/assets/images/mavzoley yasavi.jpg',
-//                 fit: BoxFit.cover,
-//               ),
-//               decoration: BoxDecoration(
-//                 borderRadius: BorderRadius.circular(30),
-//               ),
-//             ),
-//           ],

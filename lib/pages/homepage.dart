@@ -11,6 +11,7 @@ import 'package:mausoleum/pages/editPages.dart';
 import 'package:todo_models/todo_model.dart';
 import 'package:todo_services/data_models/dbtodo.dart';
 import 'package:mausoleum/models/generalwidgets.dart';
+import 'package:mausoleum/pages/firebaseobjectpage.dart';
 
 class HomePage extends StatefulWidget {
   // List<TodoModel> resulterList;
@@ -281,28 +282,34 @@ class HomePageState extends State<MyHomePage> {
                         if (snapshot.hasError) {
                           return Text('Произошла ошибка');
                         }
-                        final clients = snapshot.data?.docs.toList();
+                        if (!snapshot.hasData || snapshot.data == null) {
+                          return Text('Нет данных');
+                        }
+                        final keysfirebase = snapshot.data?.docs.toList();
 
                         return Column(
-                          children: clients!.map((data) {
+                          children: keysfirebase!.map((data) {
                             final doc = data.data() as Map<String, dynamic>;
-
+                            // late int id =
+                            //     doc['id'] as int; // Приводим id к типу int
                             return Container(
                               margin:
                                   const EdgeInsets.only(left: 50, right: 50),
                               padding: const EdgeInsets.symmetric(vertical: 5),
                               child: ElevatedButton(
                                 onPressed: () {
+                                  // if (id is int) {
                                   // Обработчик нажатия кнопки с ключом
-                                  print('Нажата кнопка с ключом: ${doc['id']}');
+                                  // print('Нажата кнопка с ключом: $id}');
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => ObjectPage(
-                                          selectedId: doc['id'],
+                                      builder: (context) => ObjectFirebasePage(
+                                          // selectedId: id,
                                           selectedKey: doc['title']),
                                     ),
                                   );
+                                  // }
                                 },
                                 style: ElevatedButton.styleFrom(
                                   primary: Colors.amber.withOpacity(0.8),

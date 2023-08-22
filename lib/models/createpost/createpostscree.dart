@@ -153,7 +153,7 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
                 ),
                 margin: const EdgeInsets.all(15),
                 child: ElevatedButton(
-                  onPressed: () async {                                   
+                  onPressed: () async {
                     DBtodo dbTodo = DBtodo();
                     await dbTodo
                         .checkData(); // Получаем уникальное значение letId
@@ -166,9 +166,12 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
                     TodoRepository().addTodo(todo);
                     Navigator.pop(context);
 
-                   CollectionReference collRef = FirebaseFirestore.instance.collection('data');
+                    CollectionReference collRef =
+                        FirebaseFirestore.instance.collection('data');
+                    dbTodo.checkData();
 
                     collRef.add({
+                      'id': dbTodo.letId,
                       'title': teTitle.text,
                       'description': teDescription.text,
                       'filephotopath': pickedFile!.path!,
