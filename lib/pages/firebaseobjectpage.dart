@@ -398,12 +398,12 @@ class _MyPhotoContState extends State<MyPhotoCont> {
                 const EdgeInsets.only(left: 0, right: 0, top: 0, bottom: 10),
             elevation: 5,
             child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30),
+              ),
               child: Image.file(
                 File(photoWidgets),
                 fit: BoxFit.cover,
-              ),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30),
               ),
             ),
           ),

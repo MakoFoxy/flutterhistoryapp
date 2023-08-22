@@ -16,6 +16,7 @@ class CreateHistoryPost extends StatefulWidget {
 class _CreateHistoryPostState extends State<CreateHistoryPost> {
   PlatformFile? pickedFile;
   UploadTask? uploadTask;
+  late String image_url;
   Future selectFile() async {
     final FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
@@ -42,10 +43,12 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
     setState(() {
       uploadTask = ref.putFile(fileupload);
     });
-
+    print('Download uploadTask $uploadTask');
     final snapshot = await uploadTask!.whenComplete(() {});
+    print('Download snapshot $snapshot');
 
     final urlDownload = await snapshot.ref.getDownloadURL();
+    image_url = urlDownload;
     print('Download Link $urlDownload');
 
     setState(() {
