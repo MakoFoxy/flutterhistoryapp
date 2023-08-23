@@ -96,33 +96,27 @@ class MyHomePage extends StatefulWidget {
   HomePageState createState() => HomePageState();
 }
 
-TextEditingController keyword = TextEditingController();
+//TextEditingController keyword = TextEditingController();
+//TextEditingController firebasekeyword = TextEditingController();
 
 class HomePageState extends State<MyHomePage> {
-  // List<TodoModel> resulterList;
+TextEditingController keyword = TextEditingController();
 
-  // HomePageState({required this.resulterList});
+@override
+  void initState() {
+    super.initState();
+    keyword = TextEditingController(); // Инициализируем контроллер
+  }
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   resulterList = resulterList; // Инициализируем resulterList
-  // }
+  @override
+  void dispose() {
+    keyword.dispose(); // Освобождаем контроллер при удалении виджета
+    super.dispose();
+  }
 
-  // HomePageState({required this.resulterList});
 
   @override
   final whiteTexstStyle = TextStyle(color: Colors.white, fontSize: 24);
-
-  // final Overview mapOver = Overview();
-  // final DataName dataInform = DataName();
-  // late Map<String, String> mapdata = mapOver.mapdatas;
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   mapdata = mapOver.mapdatas;
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -197,33 +191,7 @@ class HomePageState extends State<MyHomePage> {
                         ),
                       ),
                     ),
-                    Container(
-                      margin: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 5,
-                      ),
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: Color.fromARGB(255, 134, 133, 45),
-                            blurRadius: 40,
-                            offset: Offset(1, 1),
-                          ),
-                        ],
-                        borderRadius: BorderRadius.circular(30),
-                        gradient: LinearGradient(colors: [
-                          Color.fromARGB(255, 187, 185, 60),
-                          Color.fromARGB(235, 233, 229, 16),
-                          Color.fromARGB(255, 187, 185, 60),
-                        ]),
-                      ),
-                      child: Text(
-                        'Мавзолей',
-                        textAlign: TextAlign.center,
-                        style: colorTextStyle,
-                      ),
-                    ),
+                    Mausoleum(),
                     Expanded(
                       child: ListView.separated(
                         itemCount: data.length,
@@ -270,67 +238,7 @@ class HomePageState extends State<MyHomePage> {
                         },
                       ),
                     ),
-                    StreamBuilder<QuerySnapshot>(
-                      stream: FirebaseFirestore.instance
-                          .collection('data')
-                          .snapshots(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return CircularProgressIndicator();
-                        }
-                        if (snapshot.hasError) {
-                          return Text('Произошла ошибка');
-                        }
-                        if (!snapshot.hasData || snapshot.data == null) {
-                          return Text('Нет данных');
-                        }
-                        final keysfirebase = snapshot.data?.docs.toList();
-
-                        return Column(
-                          children: keysfirebase!.map((data) {
-                            final doc = data.data() as Map<String, dynamic>;
-                            // late int id =
-                            //     doc['id'] as int; // Приводим id к типу int
-                            return Container(
-                              margin:
-                                  const EdgeInsets.only(left: 50, right: 50),
-                              padding: const EdgeInsets.symmetric(vertical: 5),
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  // if (id is int) {
-                                  // Обработчик нажатия кнопки с ключом
-                                  // print('Нажата кнопка с ключом: $id}');
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => ObjectFirebasePage(
-                                          // selectedId: id,
-                                          selectedKey: doc['title']),
-                                    ),
-                                  );
-                                  // }
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  primary: Colors.amber.withOpacity(0.8),
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 10,
-                                    horizontal: 30,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30),
-                                  ),
-                                ),
-                                child: Text(
-                                  doc['title'],
-                                  style: colorTextStyle,
-                                ),
-                              ),
-                            );
-                          }).toList(),
-                        );
-                      },
-                    ),
+                    FirebaseSearch(),
                   ],
                 );
               }
@@ -373,185 +281,258 @@ class HomePageState extends State<MyHomePage> {
   }
 }
 
-// StreamBuilder<QuerySnapshot>(
-//   stream: FirebaseFirestore.instance
-//       .collection('data')
-//       .snapshots(),
-//   builder: (context, snapshot) {
-//     if (snapshot.connectionState ==
-//         ConnectionState.waiting) {
-//       return CircularProgressIndicator();
-//     }
-//     if (snapshot.hasError) {
-//       return Text('Произошла ошибка');
-//     }
-//     final clients =
-//         snapshot.data?.docs.reversed.toList();
+class FirebaseSearch extends StatefulWidget {
+  // const FirebaseSearch({Key? key}) : super(key: key);
+  @override
+  FirebaseSearchWidget createState() => FirebaseSearchWidget();
+}
 
-//     return Column(
-//       children: clients!.map((data) {
-//         final doc =
-//             data.data() as Map<String, dynamic>;
+class FirebaseSearchWidget extends State<FirebaseSearch> {
+  TextEditingController keyword = TextEditingController();
 
-//         return Container(
-//           margin: const EdgeInsets.only(
-//               left: 50, right: 50),
-//           padding:
-//               const EdgeInsets.symmetric(vertical: 5),
-//           child: ElevatedButton(
-//             onPressed: () {
-//               // Обработчик нажатия кнопки с ключом
-//               print(
-//                   'Нажата кнопка с ключом: ${doc['id']}');
-//               Navigator.push(
-//                 context,
-//                 MaterialPageRoute(
-//                   builder: (context) => ObjectPage(
-//                       selectedId: doc['id'],
-//                       selectedKey: doc['title']),
-//                 ),
-//               );
-//             },
-//             style: ElevatedButton.styleFrom(
-//               primary: Colors.amber.withOpacity(0.8),
-//               padding: const EdgeInsets.symmetric(
-//                 vertical: 10,
-//                 horizontal: 30,
-//               ),
-//               shape: RoundedRectangleBorder(
-//                 borderRadius:
-//                     BorderRadius.circular(30),
-//               ),
-//             ),
-//             child: Text(
-//               doc['title'],
-//               style: colorTextStyle,
-//             ),
-//           ),
-//         );
-//       }).toList(),
-//     );
-//   },
-// );
+  List allResults = [];
+  List resultList = [];
 
-// Container(
-//   margin:
-//       const EdgeInsets.only(left: 50, right: 50),
-//   padding:
-//       const EdgeInsets.symmetric(vertical: 5),
-//   child: ElevatedButton(
-//     onPressed: () {
-//       // Обработчик нажатия кнопки с ключом
-//       print(
-//           'Нажата кнопка с ключом: ${data[index].letId}');
-//       Navigator.push(
-//         context,
-//         MaterialPageRoute(
-//           builder: (context) => ObjectPage(
-//               selectedId: data[index].letId,
-//               selectedKey: data[index].title),
-//         ),
-//       );
-//     },
-//     style: ElevatedButton.styleFrom(
-//       primary: Colors.amber.withOpacity(0.8),
-//       padding: const EdgeInsets.symmetric(
-//         vertical: 10,
-//         horizontal: 30,
-//       ),
-//       shape: RoundedRectangleBorder(
-//         borderRadius: BorderRadius.circular(30),
-//       ),
-//     ),
-//     child: Text(
-//       data[index].title,
-//       style: colorTextStyle,
-//     ),
-//   ),
-// ),
+  @override
+  void initState() {
+    // getClientStream();
+    keyword.addListener(_onSearchChanged);
+    super.initState();
+    // mapdata = mapOver.mapdatas;
+  }
 
-// StreamBuilder<QuerySnapshot>(
-//     stream: FirebaseFirestore.instance
-//         .collection('data')
-//         .snapshots(),
-//     builder: (context, snapshot) {
-//       List<Row> clientWidgets = [];
+  _onSearchChanged() {
+    print(keyword.text);
+    searchResultList();
+  }
 
-//       if (snapshot.hasData) {
-//         final clients =
-//             snapshot.data?.docs.reversed.toList();
-//         for (var data in clients!) {
-//           final clientWidget = Row(
-//             mainAxisAlignment:
-//                 MainAxisAlignment.spaceBetween,
-//             children: [
-//               Container(
-//                 margin: const EdgeInsets.only(
-//                     left: 50, right: 50),
-//                 padding:
-//                     const EdgeInsets.symmetric(vertical: 5),
-//                 child: ElevatedButton(
-//                   onPressed: () {
-//                     // Обработчик нажатия кнопки с ключом
-//                     print(
-//                         'Нажата кнопка с ключом: ${data}');
-//                     Navigator.push(
-//                       context,
-//                       MaterialPageRoute(
-//                         builder: (context) => ObjectPage(
-//                             selectedId: data['id'],
-//                             selectedKey: data['title']),
-//                       ),
-//                     );
-//                   },
-//                   style: ElevatedButton.styleFrom(
-//                     primary: Colors.amber.withOpacity(0.8),
-//                     padding: const EdgeInsets.symmetric(
-//                       vertical: 10,
-//                       horizontal: 30,
-//                     ),
-//                     shape: RoundedRectangleBorder(
-//                       borderRadius:
-//                           BorderRadius.circular(30),
-//                     ),
-//                   ),
-//                   child: Text(
-//                     // resulterList != null
-//                     //     ? resulterList[index].title
-//                     data['title'],
-//                     //  ? data[index].title
-//                     // : widget.resulterList[index].title,
-//                     style: colorTextStyle,
-//                   ),
-//                 ),
-//               ),
-//               Text(
-//                 data['title'],
-//                 style: TextStyle(
-//                     color: Colors.red, fontSize: 16),
-//               ), // Зеленый цвет текста),
-//               Text(
-//                 data['description'],
-//                 style: TextStyle(
-//                     color: Colors.red, fontSize: 16),
-//               ), // Зеленый цвет текста)),
-//               Text(
-//                 data['filephotopath'],
-//                 style: TextStyle(
-//                     color: Colors.red, fontSize: 16),
-//               ), // Зеленый цвет текста),
-//             ],
-//           );
-//           clientWidgets.add(clientWidget);
-//         }
-//       }
+  searchResultList() {
+    var showRes = [];
+    if (keyword.text != "") {
+      for (var keySnap in allResults) {
+        var title = keySnap['title'].toString().toLowerCase();
+        if (title.contains(keyword.text.toLowerCase())) {
+          showRes.add(keySnap);
+        }
+      }
+    } else {
+      showRes = List.from(allResults);
+    }
 
-//       return Expanded(
-//         child: ListView(
-//           children: clientWidgets,
-//         ),
-//       );
-//     }),
+    setState(() {
+      resultList = showRes;
+    });
+  }
+
+  getClientStream() async {
+    var data = await FirebaseFirestore.instance
+        .collection('data')
+        .orderBy('title')
+        .get();
+
+    setState(() {
+      allResults = data.docs;
+    });
+    searchResultList();
+  }
+
+  @override
+  void dispose() {
+    keyword.removeListener(_onSearchChanged);
+    keyword.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    getClientStream();
+    super.didChangeDependencies();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(children: [
+      Container(
+        width: double.infinity,
+        height: 40,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: Center(
+          child: TextField(
+            controller: keyword,
+            onSubmitted: (value) {
+              setState(() {
+                // ignore: unrelated_type_equality_checks
+                keyword.text = value;
+              });
+            },
+            decoration: InputDecoration(
+              prefixIcon: IconButton(
+                icon: const Icon(Icons.search),
+                onPressed: () {
+                  setState(() {
+                    getClientStream();
+                  });
+                },
+              ),
+              suffixIcon: IconButton(
+                icon: const Icon(Icons.clear),
+                onPressed: () {
+                  keyword.text = '';
+                },
+              ),
+              hintText: 'Іздеу...',
+              border: InputBorder.none,
+            ),
+          ),
+        ),
+      ),
+      Mausoleum(),
+      streamBuild(resultList: resultList),
+    ]);
+  }
+}
+
+class streamBuild extends StatelessWidget {
+  List<dynamic> resultList = [];
+
+  streamBuild({
+    required this.resultList,
+  });
+
+  @override
+  final colorTextStyle = TextStyle(color: Colors.white, fontSize: 24);
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance.collection('data').snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator();
+        }
+        if (snapshot.hasError) {
+          return Text('Произошла ошибка');
+        }
+        if (!snapshot.hasData || snapshot.data == null) {
+          return Text('Нет данных');
+        }
+        final keysfirebase = snapshot.data?.docs.toList();
+
+        if (resultList != "") {
+          return Column(
+            children: resultList.map((data) {
+              final doc = data.data() as Map<String, dynamic>;
+              return Container(
+                margin: const EdgeInsets.only(left: 50, right: 50),
+                padding: const EdgeInsets.symmetric(vertical: 5),
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ObjectFirebasePage(
+                          selectedKey: doc['title'],
+                        ),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.amber.withOpacity(0.8),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 10,
+                      horizontal: 30,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+                  child: Text(
+                    doc['title'],
+                    style: colorTextStyle,
+                  ),
+                ),
+              );
+            }).toList(),
+          );
+        } else {
+          return Column(
+            children: keysfirebase!.map((data) {
+              final doc = data.data() as Map<String, dynamic>;
+              return Container(
+                margin: const EdgeInsets.only(left: 50, right: 50),
+                padding: const EdgeInsets.symmetric(vertical: 5),
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ObjectFirebasePage(
+                          selectedKey: doc['title'],
+                        ),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.amber.withOpacity(0.8),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 10,
+                      horizontal: 30,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+                  child: Text(
+                    doc['title'],
+                    style: colorTextStyle,
+                  ),
+                ),
+              );
+            }).toList(),
+          );
+        }
+      },
+    );
+  }
+}
+
+class Mausoleum extends StatelessWidget {
+  @override
+  final colorTextStyle = TextStyle(color: Colors.black, fontSize: 24);
+
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(
+        horizontal: 10,
+        vertical: 5,
+      ),
+      width: double.infinity,
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: Color.fromARGB(255, 134, 133, 45),
+            blurRadius: 40,
+            offset: Offset(1, 1),
+          ),
+        ],
+        borderRadius: BorderRadius.circular(30),
+        gradient: LinearGradient(colors: [
+          Color.fromARGB(255, 187, 185, 60),
+          Color.fromARGB(235, 233, 229, 16),
+          Color.fromARGB(255, 187, 185, 60),
+        ]),
+      ),
+      child: Text(
+        'Мавзолей',
+        textAlign: TextAlign.center,
+        style: colorTextStyle,
+      ),
+    );
+  }
+}
 
 class MenuTile extends StatefulWidget {
   @override
@@ -693,357 +674,107 @@ class _FavoriteWidjetState extends State<FavoriteWidjet> {
 }
 
 
-// class SearchCheck extends StatefulWidget {
-//   late TextEditingController keyword;
+// class sqfliteSearch extends StatefulWidget {
+//   List<TodoModel> data; // Добавьте поле для хранения списка data
 
-//   SearchCheck(this.keyword);
-
+//   // Конструктор для передачи данных
+//   sqfliteSearch({required this.data});
 //   @override
-//   State<SearchCheck> createState() => _searchCheckState();
+//   State<sqfliteSearch> createState() => sqfliteSearchState();
 // }
 
-// class _searchCheckState extends State<SearchCheck> {
-//   late TextEditingController keyword;
-
+// class sqfliteSearchState extends State<sqfliteSearch> {
 //   @override
-//   void initState() {
-//     super.initState();
-//     keyword = widget.keyword; // Инициализируем контроллер в initState
-//   }
+//   final colorTextStyle = TextStyle(color: Colors.white, fontSize: 24);
 
 //   @override
 //   Widget build(BuildContext context) {
-//     return Container(
-//       width: double.infinity,
-//       height: 40,
-//       decoration: BoxDecoration(
-//         color: Colors.white,
-//         borderRadius: BorderRadius.circular(15),
-//       ),
-//       child: Center(
-//         child: TextField(
-//           controller: keyword,
-//           onSubmitted: (value) async {
-//             List<TodoModel> searchResults =
-//                 await TodoRepository().searchDB(keyword.text);
-//             setState(() {
-//               // Обновляем состояние с результатами поиска
-//               // Например, можно сохранить результаты в переменной и использовать их в UI
-//               // searchResultsList = searchResults;
-//             });
-//           },
-//           decoration: InputDecoration(
-//             prefixIcon: IconButton(
-//               icon: const Icon(Icons.search),
-//               onPressed: () {
-//                 // Удалите этот вызов
-//               },
-//             ),
-//             suffixIcon: IconButton(
-//               icon: const Icon(Icons.clear),
-//               onPressed: () {
+//     return Column(
+//       children: [
+//         Container(
+//           width: double.infinity,
+//           height: 40,
+//           decoration: BoxDecoration(
+//             color: Colors.white,
+//             borderRadius: BorderRadius.circular(15),
+//           ),
+//           child: Center(
+//             child: TextField(
+//               controller: keyword,
+//               onSubmitted: (value) {
 //                 setState(() {
-//                   keyword.text = '';
+//                   // ignore: unrelated_type_equality_checks
+//                   keyword.text = value;
 //                 });
 //               },
+//               decoration: InputDecoration(
+//                 prefixIcon: IconButton(
+//                   icon: const Icon(Icons.search),
+//                   onPressed: () {
+//                     setState(() {
+//                       TodoRepository().searchDB(keyword.text);
+//                     });
+//                   },
+//                 ),
+//                 suffixIcon: IconButton(
+//                   icon: const Icon(Icons.clear),
+//                   onPressed: () {
+//                     keyword.text = '';
+//                   },
+//                 ),
+//                 hintText: 'Іздеу...',
+//                 border: InputBorder.none,
+//               ),
 //             ),
-//             hintText: 'Search...',
-//             border: InputBorder.none,
 //           ),
 //         ),
-//       ),
-//     );
-//   }
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// class BoxMenu extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       width: 80,
-//       height: 50,
-//       child: Center(
-//         child: Text(
-//           'Меню',
-//           textAlign: TextAlign.center,
-//           style: TextStyle(
-//             fontSize: 18,
+//         Mausoleum(),
+//         Expanded(
+//           child: ListView.separated(
+//             itemCount: widget.data.length,
+//             separatorBuilder: (context, index) => SizedBox(height: 10),
+//             itemBuilder: (context, index) {
+//               return Container(
+//                 margin: const EdgeInsets.only(left: 50, right: 50),
+//                 padding: const EdgeInsets.symmetric(vertical: 5),
+//                 child: ElevatedButton(
+//                   onPressed: () {
+//                     // Обработчик нажатия кнопки с ключом
+//                     print(
+//                         'Нажата кнопка с ключом: ${widget.data[index].letId}');
+//                     Navigator.push(
+//                       context,
+//                       MaterialPageRoute(
+//                         builder: (context) => ObjectPage(
+//                             selectedId: widget.data[index].letId,
+//                             selectedKey: widget.data[index].title),
+//                       ),
+//                     );
+//                   },
+//                   style: ElevatedButton.styleFrom(
+//                     primary: Colors.amber.withOpacity(0.8),
+//                     padding: const EdgeInsets.symmetric(
+//                       vertical: 10,
+//                       horizontal: 30,
+//                     ),
+//                     shape: RoundedRectangleBorder(
+//                       borderRadius: BorderRadius.circular(30),
+//                     ),
+//                   ),
+//                   child: Text(
+//                     // resulterList != null
+//                     //     ? resulterList[index].title
+//                     widget.data[index].title,
+//                     //  ? data[index].title
+//                     // : widget.resulterList[index].title,
+//                     style: colorTextStyle,
+//                   ),
+//                 ),
+//               );
+//             },
 //           ),
 //         ),
-//       ),
-//       decoration: BoxDecoration(
-//         color: Color.fromARGB(255, 124, 108, 59),
-//         border: Border.all(),
-//       ),
-//     );
-//   }
-// }
-
-// class SearchBox extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       width: 80,
-//       height: 50,
-//       child: Center(
-//         child: Text(
-//           'Поиск',
-//           textAlign: TextAlign.center,
-//           style: TextStyle(
-//             fontSize: 18,
-//           ),
-//         ),
-//       ),
-//       decoration: BoxDecoration(
-//         color: Color.fromARGB(255, 124, 108, 59),
-//         border: Border.all(),
-//       ),
-//     );
-//   }
-// }
-
-// class LinguaBox extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       width: 80,
-//       height: 50,
-//       child: Center(
-//         child: Text(
-//           'Язык',
-//           textAlign: TextAlign.center,
-//           style: TextStyle(
-//             fontSize: 18,
-//           ),
-//         ),
-//       ),
-//       decoration: BoxDecoration(
-//         color: Color.fromARGB(255, 124, 108, 59),
-//         border: Border.all(),
-//       ),
-//     );
-//   }
-// }
-
-
-
-  // void clearState() => setState(() {
-  //       _HomeIndex = 0;
-  //       _HomeResultIndex = 0;
-  //       _icons = [];
-  //     });
-
-  // void _onChangeStatus(bool _choiceFavor) {
-  //   setState(() {
-  //     if (_choiceFavor == true) {
-  //       _icons.add(
-  //         Icon(Icons.brightness_1, color: Colors.amber),
-  //       );
-  //       _HomeIndex++;
-  //     } else {
-  //       _icons.add(
-  //         Icon(Icons.brightness_1, color: Colors.black),
-  //       );
-  //     }
-
-  //     _HomeResultIndex = _HomeResultIndex + 1;
-  //   });
-  // }
-
-
- // Expanded(
-            //   flex: 1, // MenuTile будет занимать в один раз меньше пространства
-            //   child: MenuTile(),
-            // ),
-            // Expanded(
-            //   child: Column(
-            //     mainAxisSize: MainAxisSize.max,
-            //     mainAxisAlignment: MainAxisAlignment.start,
-            //     crossAxisAlignment: CrossAxisAlignment.start,
-            //     children: <Widget>[
-            //       Expanded(
-            //         flex: 2,
-            //         child: MyHomePage(),
-            //       ),
-            //     ],
-            //   ),
-            // ),
-
-            // Expanded(
-            //   child: Column(
-            //     mainAxisSize: MainAxisSize.max,
-            //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //     crossAxisAlignment: CrossAxisAlignment.center,
-            //     children: <Widget>[
-            //       Expanded(
-            //         flex: 1,
-            //         child: MenuTile(),
-            //       ),
-            //     ],
-            //   ),
-            // ),
-            // Container(
-            //   height: 50,
-            //   child: Row(
-            //     mainAxisSize: MainAxisSize.max,
-            //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //     crossAxisAlignment: CrossAxisAlignment.center,
-            //     children: <Widget>[
-            //       Flexible(
-            //         fit: FlexFit.tight,
-            //         flex: 1,
-            //         child: PlaceListBox(),
-            //       ),
-            //       Flexible(
-            //         fit: FlexFit.tight,
-            //         flex: 1,
-            //         child: MyMapBox(),
-            //       ),
-            //       Flexible(
-            //         fit: FlexFit.tight,
-            //         flex: 1,
-            //         child: FavoriteBox(),
-            //       ),
-            //     ],
-            //   ),
-            // ),
-
-// class PlaceListBox extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       height: 50,
-//       child: Center(
-//         child: Text(
-//           'Список мест',
-//           textAlign: TextAlign.center,
-//           style: TextStyle(
-//             fontSize: 18,
-//             color: Colors.black,
-//           ),
-//           softWrap: true,
-//           overflow: TextOverflow.fade,
-//         ),
-//       ),
-//       decoration: BoxDecoration(
-//         color: Color.fromARGB(255, 124, 108, 59),
-//         border: Border.all(),
-//       ),
-//     );
-//   }
-// }
-
-// class MyMapBox extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       height: 50,
-//       child: Center(
-//         child: Text(
-//           'Карта',
-//           textAlign: TextAlign.center,
-//           style: TextStyle(
-//             fontSize: 18,
-//             color: Colors.black,
-//           ),
-//           softWrap: true,
-//           overflow: TextOverflow.fade,
-//         ),
-//       ),
-//       decoration: BoxDecoration(
-//         color: Color.fromARGB(255, 124, 108, 59),
-//         border: Border.all(),
-//       ),
-//     );
-//   }
-// }
-
-// class FavoriteBox extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       height: 50,
-//       child: Center(
-//         child: Text(
-//           'Избранное',
-//           textAlign: TextAlign.center,
-//           style: TextStyle(
-//             fontSize: 18,
-//             color: Colors.black,
-//           ),
-//           softWrap: true,
-//           overflow: TextOverflow.fade,
-//         ),
-//       ),
-//       decoration: BoxDecoration(
-//         color: Color.fromARGB(255, 124, 108, 59),
-//         border: Border.all(),
-//       ),
-//     );
-//   }
-// }
-
-
-
-// class MyRatingWidjet extends StatelessWidget {
-//   Widget _buildRating() => ListTile(
-//         title: Text(
-//           'Меню',
-//           style: TextStyle(
-//             fontWeight: FontWeight.w500,
-//           ),
-//         ),
-//         subtitle: Text('Выбирите небходимый раздел'),
-//         trailing: Row(
-//           mainAxisSize: MainAxisSize.min,
-//           children: <Widget>[
-//             MyRowColumnMain(),
-//           ],
-//         ),
-//       );
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return _buildRating();
-//   }
-// }
-
-// class MyRatingWidjet0 extends StatelessWidget {
-//   Widget build(BuildContext context) {
-//     return Container(
-//       height: 200,
-//       width: 350,
-//       child: Card(
-//         margin: const EdgeInsets.only(left: 20, right: 20, top: 20),
-//         elevation: 5,
-//       ),
+//       ],
 //     );
 //   }
 // }
