@@ -8,61 +8,80 @@ import 'package:mausoleum/pages/homepage.dart';
 import 'package:mausoleum/pages/takeSearchPage.dart';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:mausoleum/pages/editFirebasePages.dart';
+
 
 // Overview dataInform = Overview();
 
 class ObjectFirebasePage extends StatefulWidget {
-  //final Map<String, String> mapdata;
   final String selectedKey; // Добавьте параметр для выбранного ключа
-  // final int selectedId; // Добавьте параметр для выбранного ключа
   ObjectFirebasePage({
     required this.selectedKey,
-    // required this.selectedId,
   });
 
   @override
-  State<ObjectFirebasePage> createState() => _ObjectFirebasePage();
+  State<ObjectFirebasePage> createState() => _ObjectFirebasePageState();
 }
 
-class _ObjectFirebasePage extends State<ObjectFirebasePage> {
-  @override
+class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
+  // QueryDocumentSnapshot<Map<String, dynamic>>? editMydb;
+  // QueryDocumentSnapshot<Map<String, dynamic>>? firebaseMyId;
+  //List<QueryDocumentSnapshot<Map<String, dynamic>>>? datafirebase;
   final whiteTextStyle = TextStyle(color: Colors.white, fontSize: 24);
 
-  @override
-  void initState() {
-    super.initState();
-    asyncFunction(widget.selectedKey);
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   fetchKeysFirebase(); // Загрузите ключи из Firebase
+  // }
 
-  TodoModel editRes = TodoModel(
-    letId: 0,
-    title: "",
-    description: "",
-    filephotopath: "",
-  );
+  // Future<void> fetchKeysFirebase() async {
+  //   QuerySnapshot<Map<String, dynamic>> snapshot =
+  //       await FirebaseFirestore.instance.collection('data').get();
+  //   datafirebase = snapshot.docs.toList();
 
-  int resultID = 0;
-  Future<void> asyncFunction(String selectedKey) async {
-    print("selectedKey $selectedKey");
-    Future<List<TodoModel>> result = TodoRepository().searchDB(selectedKey);
-    List<TodoModel> resultList = await result; // Дождитесь завершения Future
+  //   // for (int i = 0; i < datafirebase!.length; i++) {
+  //   //   if (widget.selectedKey == datafirebase![i]['title']) {
+  //   //     editMydb = datafirebase![i];
+  //   //     firebaseMyId = datafirebase![i]['id'];
+  //   //     break;
+  //   //   }
+  //   // }
+  //   setState(() {
+  //     fetchKeysFirebase();
+  //   });
+  // }
 
-    for (int i = 0; i < resultList.length; i++) {
-      print("resultList.length ${resultList.length}");
-      if (resultList[i].title == selectedKey) {
-        setState(() {
-          resultID = resultID + resultList[i].letId;
-          editRes = resultList[i];
-        });
-        print(resultID);
-      }
-    }
-    print("selectedId info ${editRes}");
-    print("resultID info $resultID");
-  }
+  // TodoModel editRes = TodoModel(
+  //   letId: 0,
+  //   title: "",
+  //   description: "",
+  //   filephotopath: "",
+  // );
+
+  // int resultID = 0;
+  // Future<void> asyncFunction(String selectedKey) async {
+  //   print("selectedKey $selectedKey");
+  //   Future<List<TodoModel>> result = TodoRepository().searchDB(selectedKey);
+  //   List<TodoModel> resultList = await result; // Дождитесь завершения Future
+
+  //   for (int i = 0; i < resultList.length; i++) {
+  //     print("resultList.length ${resultList.length}");
+  //     if (resultList[i].title == selectedKey) {
+  //       setState(() {
+  //         resultID = resultID + resultList[i].letId;
+  //         editRes = resultList[i];
+  //       });
+  //       print(resultID);
+  //     }
+  //   }
+  //   print("selectedId info ${editRes}");
+  //   print("resultID info $resultID");
+  // }
 
   @override
   Widget build(BuildContext context) {
+   // fetchKeysFirebase();
     return Scaffold(
       body: SafeArea(
         child: DefaultTextStyle(
@@ -117,8 +136,9 @@ class _ObjectFirebasePage extends State<ObjectFirebasePage> {
                 await Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (BuildContext context) => EditPage(
-                      modelDB: editRes,
+                    builder: (BuildContext context) => EditFirebasePage(
+                     //editMydb: editMydb,
+                     selectedKey: widget.selectedKey, 
                     ),
                   ),
                 );
@@ -136,7 +156,7 @@ class _ObjectFirebasePage extends State<ObjectFirebasePage> {
             child: FloatingActionButton(
               onPressed: () {
                 setState(() {
-                  TodoRepository().deleteElemById(resultID);
+                  //TodoRepository().deleteElemById(resultID);
                 });
               },
               mini: true, // Установите mini: true для уменьшения размера кнопки
@@ -318,40 +338,57 @@ class _MySearchState extends State<mySearch> {
   }
 }
 
-class MyTextCont extends StatelessWidget {
+class MyTextCont extends StatefulWidget {
   String selectedKey;
 
   MyTextCont({required this.selectedKey});
 
-  // Future<void> keywordAsyncFunction(String selectedKey) async {
-  //   Future<List<TodoModel>> myres = TodoRepository().searchDB(selectedKey);
-  //   List<TodoModel> myresList = await myres; // Дождитесь завершения Future
-  //   for (int i = 0; i < myresList.length; i++) {
-  //     if (myresList[i].title == selectedKey) {
-  //       selectedKey = myresList[i].title;
-  //     }
-  //   }
-  // }
+  @override
+  State<MyTextCont> createState() => _MyTextContState();
+}
 
+class _MyTextContState extends State<MyTextCont> {
   @override
   Widget build(BuildContext context) {
-    //  keywordAsyncFunction(selectedKey);
-    return Container(
-      width: 350,
-      alignment: Alignment.center,
-      color: Colors.amber,
-      child: Container(
-        margin: const EdgeInsets.only(left: 0, right: 0, top: 10, bottom: 10),
-        color: Colors.amber,
-        child: Text(
-          selectedKey,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 20,
-            color: Colors.black,
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance.collection('data').snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator(); // Показываем индикатор загрузки во время ожидания данных
+        }
+
+        if (snapshot.hasError) {
+          return Text("Ошибка: ${snapshot.error}");
+        }
+
+        String textWidgets = "";
+
+        final keysfirebase = snapshot.data?.docs.toList();
+        for (var key in keysfirebase!) {
+          if (widget.selectedKey == key['title']) {
+            textWidgets = key['title'];
+          }
+        }
+        print(textWidgets);
+        return Container(
+          width: 350,
+          alignment: Alignment.center,
+          color: Colors.amber,
+          child: Container(
+            margin:
+                const EdgeInsets.only(left: 0, right: 0, top: 10, bottom: 10),
+            color: Colors.amber,
+            child: Text(
+              textWidgets,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.black,
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

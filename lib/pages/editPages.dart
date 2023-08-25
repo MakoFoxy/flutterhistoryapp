@@ -45,7 +45,7 @@ class _EditPageState extends State<EditPage> {
         TextEditingController(text: widget.modelDB.title);
     TextEditingController teDecsription =
         TextEditingController(text: widget.modelDB.description);
-    PlatformFile teFilePhoto = PlatformFile(
+    PlatformFile? teFilePhoto = PlatformFile(
         size: 0,
         name: "",
         path: widget.modelDB.filephotopath);
@@ -144,9 +144,9 @@ class _EditPageState extends State<EditPage> {
               margin: const EdgeInsets.all(15),
               child: ElevatedButton(
                 onPressed: () async {
-                  DBtodo dbTodo = DBtodo(letId: 1);
-                  await dbTodo
-                      .checkData(); // Получаем уникальное значение letId
+                  // DBtodo dbTodo = DBtodo(letId: 1);
+                  // await dbTodo
+                  //     .checkData(); // Получаем уникальное значение letId
                   var todo = TodoModel(
                     letId: widget.modelDB.letId,
                     title: teTitle.text,
