@@ -158,31 +158,40 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
                 child: ElevatedButton(
                   onPressed: () async {
                     DBtodo dbTodo = DBtodo();
+                    CollectionReference collRef =
+                        FirebaseFirestore.instance.collection('data');
                     await dbTodo
                         .checkData(); // Получаем уникальное значение letId
+
                     var todo = TodoModel(
                       letId: dbTodo.letId,
                       title: teTitle.text,
                       description: teDescription.text,
                       filephotopath: pickedFile!.path!,
                     );
-                    TodoRepository().addTodo(todo);
-                    Navigator.pop(context);
 
-                    CollectionReference collRef =
-                        FirebaseFirestore.instance.collection('data');
+                    TodoRepository().addTodo(todo);
+
                     dbTodo.checkData();
 
-                    collRef.add({
-                      'id': dbTodo.letId,
+                    Map<String, dynamic> data = {
+                      //'id': dbTodo.letId,
                       'title': teTitle.text,
                       'description': teDescription.text,
                       'filephotopath': pickedFile!.path!,
-                    });
+                    };
+
+                    DocumentReference docRef = await collRef.add(data);
+
+                    String parentKey = docRef.parent.id;
+
+                    print('parentKey $parentKey');
 
                     teTitle.clear();
                     teDescription.clear();
                     pickedFile = null;
+
+                    Navigator.pop(context);
                   },
                   child: const Text('Тарихи тұлғаны сақтау'),
                 ),

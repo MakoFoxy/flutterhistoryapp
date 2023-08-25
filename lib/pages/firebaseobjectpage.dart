@@ -29,56 +29,6 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
   //List<QueryDocumentSnapshot<Map<String, dynamic>>>? datafirebase;
   final whiteTextStyle = TextStyle(color: Colors.white, fontSize: 24);
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   fetchKeysFirebase(); // Загрузите ключи из Firebase
-  // }
-
-  // Future<void> fetchKeysFirebase() async {
-  //   QuerySnapshot<Map<String, dynamic>> snapshot =
-  //       await FirebaseFirestore.instance.collection('data').get();
-  //   datafirebase = snapshot.docs.toList();
-
-  //   // for (int i = 0; i < datafirebase!.length; i++) {
-  //   //   if (widget.selectedKey == datafirebase![i]['title']) {
-  //   //     editMydb = datafirebase![i];
-  //   //     firebaseMyId = datafirebase![i]['id'];
-  //   //     break;
-  //   //   }
-  //   // }
-  //   setState(() {
-  //     fetchKeysFirebase();
-  //   });
-  // }
-
-  // TodoModel editRes = TodoModel(
-  //   letId: 0,
-  //   title: "",
-  //   description: "",
-  //   filephotopath: "",
-  // );
-
-  // int resultID = 0;
-  // Future<void> asyncFunction(String selectedKey) async {
-  //   print("selectedKey $selectedKey");
-  //   Future<List<TodoModel>> result = TodoRepository().searchDB(selectedKey);
-  //   List<TodoModel> resultList = await result; // Дождитесь завершения Future
-
-  //   for (int i = 0; i < resultList.length; i++) {
-  //     print("resultList.length ${resultList.length}");
-  //     if (resultList[i].title == selectedKey) {
-  //       setState(() {
-  //         resultID = resultID + resultList[i].letId;
-  //         editRes = resultList[i];
-  //       });
-  //       print(resultID);
-  //     }
-  //   }
-  //   print("selectedId info ${editRes}");
-  //   print("resultID info $resultID");
-  // }
-
   @override
   Widget build(BuildContext context) {
    // fetchKeysFirebase();
@@ -578,3 +528,55 @@ class _FavoriteWidjetState extends State<FavoriteWidjet> {
     });
   }
 }
+
+
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   fetchKeysFirebase(); // Загрузите ключи из Firebase
+  // }
+
+  // Future<void> fetchKeysFirebase() async {
+  //   QuerySnapshot<Map<String, dynamic>> snapshot =
+  //       await FirebaseFirestore.instance.collection('data').get();
+  //   datafirebase = snapshot.docs.toList();
+
+  //   // for (int i = 0; i < datafirebase!.length; i++) {
+  //   //   if (widget.selectedKey == datafirebase![i]['title']) {
+  //   //     editMydb = datafirebase![i];
+  //   //     firebaseMyId = datafirebase![i]['id'];
+  //   //     break;
+  //   //   }
+  //   // }
+  //   setState(() {
+  //     fetchKeysFirebase();
+  //   });
+  // }
+
+  // TodoModel editRes = TodoModel(
+  //   letId: 0,
+  //   title: "",
+  //   description: "",
+  //   filephotopath: "",
+  // );
+
+  // int resultID = 0;
+  // Future<void> asyncFunction(String selectedKey) async {
+  //   print("selectedKey $selectedKey");
+  //   Future<List<TodoModel>> result = TodoRepository().searchDB(selectedKey);
+  //   List<TodoModel> resultList = await result; // Дождитесь завершения Future
+
+  //   for (int i = 0; i < resultList.length; i++) {
+  //     print("resultList.length ${resultList.length}");
+  //     if (resultList[i].title == selectedKey) {
+  //       setState(() {
+  //         resultID = resultID + resultList[i].letId;
+  //         editRes = resultList[i];
+  //       });
+  //       print(resultID);
+  //     }
+  //   }
+  //   print("selectedId info ${editRes}");
+  //   print("resultID info $resultID");
+  // }

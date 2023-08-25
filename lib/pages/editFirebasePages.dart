@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mausoleum/pages/homepage.dart';
 import 'package:todo_models/todo_model.dart';
 import 'package:todo_repo/todo_repo.dart';
 import 'package:todo_services/data_models/dbtodo.dart';
@@ -27,7 +28,7 @@ class EditFirebasePageState extends State<EditFirebasePage> {
   late String description = "";
   late String title = "";
   //late String idnum = "";
-  //late int id;
+  //late int id=0;
   List<QueryDocumentSnapshot<Map<String, dynamic>>>? datafirebase;
 
   final teTitle = TextEditingController();
@@ -48,10 +49,10 @@ class EditFirebasePageState extends State<EditFirebasePage> {
       if (widget.selectedKey == datafirebase![i]['title']) {
         description = datafirebase![i]['description'];
         title = datafirebase![i]['title'];
-        // idnum = datafirebase![i]['id'];
+        //idnum = datafirebase![i]['id'];
         teTitle.text = title; // Инициализация контроллера
         teDecsription.text = description; // Инициализация контроллера
-        // teId.text = idnum;
+        //teId.text = idnum;
         break;
       }
     }
@@ -101,33 +102,8 @@ class EditFirebasePageState extends State<EditFirebasePage> {
     });
   }
 
-  // CollectionReference collRef = FirebaseFirestore.instance.collection('data');
-
-  // late Map<String, dynamic> output;
-
-  // void fetchData() {
-  //   Stream<DocumentSnapshot> docSnapshotStream = FirebaseFirestore.instance
-  //       .collection('data')
-  //       .doc(widget.editMydb?['title'])
-  //       .snapshots();
-
-  //   docSnapshotStream.listen((docSnapshot) {
-  //     Map<String, dynamic> data = docSnapshot.data() as Map<String, dynamic>;
-  //     output = data;
-  //   });
-  // }
-
   @override
   Widget build(BuildContext context) {
-    // TextEditingController teTitle =
-    //     TextEditingController(text: widget.editMydb?['title']);
-    // TextEditingController teDecsription =
-    //     TextEditingController(text: widget.editMydb?['description']);
-    // PlatformFile? teFilePhoto = PlatformFile(
-    //   size: 0,
-    //   name: "",
-    //   path: teFilePhoto?.path,
-    // );
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -222,37 +198,47 @@ class EditFirebasePageState extends State<EditFirebasePage> {
               child: ElevatedButton(
                 onPressed: () async {
                   var collRef = FirebaseFirestore.instance.collection('data');
+                  String targetTitle =
+                      widget.selectedKey; // Значение, которое вы ищете
 
-                  String document = widget.selectedKey;
+                  try {
+                    QuerySnapshot querySnapshot = await collRef.get();
+                    List<QueryDocumentSnapshot> docs = querySnapshot.docs;
 
-                  print("document firebase $document");
+                    for (QueryDocumentSnapshot doc in docs) {
+                      Map<String, dynamic> autodata =
+                          doc.data() as Map<String, dynamic>;
+                      String autokey = doc.id; // Получение ключа документа
 
-                  // teTitle.clear();
-                  // teDecsription.clear();
-                  // teFilePhoto = null;
-                  Navigator.pop(context);
+                      // Проверка, соответствует ли поле title значению, которое вы ищете
+                      if (autodata['title'] == targetTitle) {
+                        print("ElevButton teTitle $targetTitle");
+                        print("ElevButton teDecsription ${teDecsription.text}");
+                        print(
+                            "ElevButton selectedKey for firebase ${widget.selectedKey}");
 
-                  print("ElevButton teTitle ${teTitle.text}");
-                  print("ElevButton teDecsription ${teDecsription.text}");
-                  print(
-                      "ElevButton selectedKey fo firebase ${widget.selectedKey}");
+                        print('autokey $autokey');
+                        print('data $autodata');
 
-                  DocumentSnapshot docSnapshot =
-                      await collRef.doc('M9fiGBPz7jK7zCrvCMDf').get();
-                  if (docSnapshot.exists) {
-                    try {
-                      print("Updating document: $document");
-                      await collRef.doc('M9fiGBPz7jK7zCrvCMDf').update({
-                        'title': teTitle.text,
-                        'description': teDecsription.text,
-                        'filephotopath': teFilePhoto!.path!,
-                      });
-                    } catch (e) {
-                      print("Error updating document: $e");
+                        await collRef.doc(autokey).update({
+                          'title': teTitle.text,
+                          'description': teDecsription.text,
+                          'filephotopath': teFilePhoto!.path!,
+                        });
+                        print("Document updated: $autokey");
+                        break; // Прерываем цикл после обновления первого соответствующего документа
+                      }
                     }
-                  } else {
-                    print("Document not found: $document");
+                  } catch (e) {
+                    print("Error updating document: $e");
                   }
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => HomePage(),
+                    ),
+                  );
                 },
                 child: const Text('Тарихи тұлғаны жаңарту'),
                 key: ValueKey(
@@ -265,3 +251,39 @@ class EditFirebasePageState extends State<EditFirebasePage> {
     );
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+  // QuerySnapshot querySnapshot = await collRef
+                  //     .where('title', isEqualTo: teTitle.text)
+                  //     .get();
+
+                  // try {
+                  //   // Если найдены соответствующие документы
+                  //   if (querySnapshot.docs.isNotEmpty) {
+                  //     for (QueryDocumentSnapshot docSnapshot
+                  //         in querySnapshot.docs) {
+                  //       newAutoId =
+                  //           docSnapshot.id; // Получение ключа документа
+                  //       print('Ключ документа: $newAutoId');
+
+                  //       print(
+                  //           'Данные документа $newAutoId успешно обновлены.');
+                  //     }
+                  //   } else {
+                  //     print('Документы с указанными условиями не найдены.');
+                  //   }
+                  // } catch (error) {
+                  //   print('Ошибка: $error');
+                  // }
+
+                  // print("newAutoId $newAutoId");
