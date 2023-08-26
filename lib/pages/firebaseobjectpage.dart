@@ -10,7 +10,6 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mausoleum/pages/editFirebasePages.dart';
 
-
 // Overview dataInform = Overview();
 
 class ObjectFirebasePage extends StatefulWidget {
@@ -31,7 +30,7 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
 
   @override
   Widget build(BuildContext context) {
-   // fetchKeysFirebase();
+    // fetchKeysFirebase();
     return Scaffold(
       body: SafeArea(
         child: DefaultTextStyle(
@@ -87,8 +86,8 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
                   context,
                   MaterialPageRoute(
                     builder: (BuildContext context) => EditFirebasePage(
-                     //editMydb: editMydb,
-                     selectedKey: widget.selectedKey, 
+                      //editMydb: editMydb,
+                      selectedKey: widget.selectedKey,
                     ),
                   ),
                 );
@@ -104,10 +103,31 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
           Padding(
             padding: const EdgeInsets.only(right: 50.0, bottom: 0.0),
             child: FloatingActionButton(
-              onPressed: () {
-                setState(() {
-                  //TodoRepository().deleteElemById(resultID);
-                });
+              onPressed: () async {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => HomePage(),
+                  ),
+                );
+                var collRef = FirebaseFirestore.instance.collection('data');
+                String targetTitle =
+                    widget.selectedKey; // Значение, которое вы ищете
+
+                QuerySnapshot querySnapshot = await collRef.get();
+                List<QueryDocumentSnapshot> docs = querySnapshot.docs;
+
+                for (QueryDocumentSnapshot doc in docs) {
+                  Map<String, dynamic> autodata =
+                      doc.data() as Map<String, dynamic>;
+                  String autokey = doc.id; // Получение ключа документа
+                  // Проверка, соответствует ли поле title значению, которое вы ищете
+                  if (autodata['title'] == targetTitle) {
+                    await collRef.doc(autokey).delete();
+                    print("Document deleted: $autokey");
+                    break; // Прерываем цикл после обновления первого соответствующего документа
+                  }
+                }
               },
               mini: true, // Установите mini: true для уменьшения размера кнопки
               shape: RoundedRectangleBorder(
@@ -529,54 +549,52 @@ class _FavoriteWidjetState extends State<FavoriteWidjet> {
   }
 }
 
+// @override
+// void initState() {
+//   super.initState();
+//   fetchKeysFirebase(); // Загрузите ключи из Firebase
+// }
 
+// Future<void> fetchKeysFirebase() async {
+//   QuerySnapshot<Map<String, dynamic>> snapshot =
+//       await FirebaseFirestore.instance.collection('data').get();
+//   datafirebase = snapshot.docs.toList();
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   fetchKeysFirebase(); // Загрузите ключи из Firebase
-  // }
+//   // for (int i = 0; i < datafirebase!.length; i++) {
+//   //   if (widget.selectedKey == datafirebase![i]['title']) {
+//   //     editMydb = datafirebase![i];
+//   //     firebaseMyId = datafirebase![i]['id'];
+//   //     break;
+//   //   }
+//   // }
+//   setState(() {
+//     fetchKeysFirebase();
+//   });
+// }
 
-  // Future<void> fetchKeysFirebase() async {
-  //   QuerySnapshot<Map<String, dynamic>> snapshot =
-  //       await FirebaseFirestore.instance.collection('data').get();
-  //   datafirebase = snapshot.docs.toList();
+// TodoModel editRes = TodoModel(
+//   letId: 0,
+//   title: "",
+//   description: "",
+//   filephotopath: "",
+// );
 
-  //   // for (int i = 0; i < datafirebase!.length; i++) {
-  //   //   if (widget.selectedKey == datafirebase![i]['title']) {
-  //   //     editMydb = datafirebase![i];
-  //   //     firebaseMyId = datafirebase![i]['id'];
-  //   //     break;
-  //   //   }
-  //   // }
-  //   setState(() {
-  //     fetchKeysFirebase();
-  //   });
-  // }
+// int resultID = 0;
+// Future<void> asyncFunction(String selectedKey) async {
+//   print("selectedKey $selectedKey");
+//   Future<List<TodoModel>> result = TodoRepository().searchDB(selectedKey);
+//   List<TodoModel> resultList = await result; // Дождитесь завершения Future
 
-  // TodoModel editRes = TodoModel(
-  //   letId: 0,
-  //   title: "",
-  //   description: "",
-  //   filephotopath: "",
-  // );
-
-  // int resultID = 0;
-  // Future<void> asyncFunction(String selectedKey) async {
-  //   print("selectedKey $selectedKey");
-  //   Future<List<TodoModel>> result = TodoRepository().searchDB(selectedKey);
-  //   List<TodoModel> resultList = await result; // Дождитесь завершения Future
-
-  //   for (int i = 0; i < resultList.length; i++) {
-  //     print("resultList.length ${resultList.length}");
-  //     if (resultList[i].title == selectedKey) {
-  //       setState(() {
-  //         resultID = resultID + resultList[i].letId;
-  //         editRes = resultList[i];
-  //       });
-  //       print(resultID);
-  //     }
-  //   }
-  //   print("selectedId info ${editRes}");
-  //   print("resultID info $resultID");
-  // }
+//   for (int i = 0; i < resultList.length; i++) {
+//     print("resultList.length ${resultList.length}");
+//     if (resultList[i].title == selectedKey) {
+//       setState(() {
+//         resultID = resultID + resultList[i].letId;
+//         editRes = resultList[i];
+//       });
+//       print(resultID);
+//     }
+//   }
+//   print("selectedId info ${editRes}");
+//   print("resultID info $resultID");
+// }

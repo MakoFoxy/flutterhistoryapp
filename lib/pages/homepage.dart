@@ -100,9 +100,9 @@ class MyHomePage extends StatefulWidget {
 //TextEditingController firebasekeyword = TextEditingController();
 
 class HomePageState extends State<MyHomePage> {
-TextEditingController keyword = TextEditingController();
+  TextEditingController keyword = TextEditingController();
 
-@override
+  @override
   void initState() {
     super.initState();
     keyword = TextEditingController(); // Инициализируем контроллер
@@ -114,10 +114,9 @@ TextEditingController keyword = TextEditingController();
     super.dispose();
   }
 
-
   @override
   final whiteTexstStyle = TextStyle(color: Colors.white, fontSize: 24);
-  
+
   @override
   Widget build(BuildContext context) {
     final colorTextStyle = TextStyle(
@@ -267,9 +266,22 @@ TextEditingController keyword = TextEditingController();
             left: 20,
             bottom: 0,
             child: FloatingActionButton(
-              onPressed: () {
+              onPressed: () async {
                 setState(() {
                   TodoRepository().deleteAlltables();
+                });
+                var collRef = FirebaseFirestore.instance.collection('data');
+                QuerySnapshot querySnapshot = await collRef.get();
+                List<QueryDocumentSnapshot> docs = querySnapshot.docs;
+                List<String> autokey = [];
+                for (QueryDocumentSnapshot doc in docs) {
+                  autokey.add(doc.id);
+                }
+                // for(int i = 0; i < autokey.length; i++) {
+                //   collRef.doc(autokey[i]).delete();
+                // }
+                autokey.forEach((element) {
+                  collRef.doc(element).delete();
                 });
               },
               child: const Icon(Icons.delete),
