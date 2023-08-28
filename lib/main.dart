@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:mausoleum/components/sidebarmenu.dart';
 import 'package:mausoleum/objectpage.dart';
 import 'package:flutter/rendering.dart' show debugPaintSizeEnabled;
 import 'package:mausoleum/pages/homepage.dart';
@@ -42,7 +43,7 @@ class MyApp extends StatelessWidget {
           Theme.of(context).textTheme,
         ),
       ),
-      home: HomePage(),
+      home: SideMenu(),
     );
   }
 }

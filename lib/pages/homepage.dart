@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:mausoleum/components/sidebarmenu.dart';
 import 'package:mausoleum/models/overview.dart';
 import 'package:flutter/material.dart';
 import 'package:mausoleum/models/overview.dart';
@@ -50,7 +51,7 @@ class AppHomePage extends State<HomePage> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                   ),
-                ),
+                ),             
                 Expanded(
                   child: Container(
                     padding: const EdgeInsets.only(left: 0, right: 0),
