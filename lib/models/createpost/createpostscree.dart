@@ -157,22 +157,22 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
                 margin: const EdgeInsets.all(15),
                 child: ElevatedButton(
                   onPressed: () async {
-                    DBtodo dbTodo = DBtodo();
+                   // DBtodo dbTodo = DBtodo();
                     CollectionReference collRef =
                         FirebaseFirestore.instance.collection('data');
-                    await dbTodo
-                        .checkData(); // Получаем уникальное значение letId
+                    // await dbTodo
+                    //     .checkData(); // Получаем уникальное значение letId
 
-                    var todo = TodoModel(
-                      letId: dbTodo.letId,
-                      title: teTitle.text,
-                      description: teDescription.text,
-                      filephotopath: pickedFile!.path!,
-                    );
+                    // var todo = TodoModel(
+                    //   letId: dbTodo.letId,
+                    //   title: teTitle.text,
+                    //   description: teDescription.text,
+                    //   filephotopath: pickedFile!.path!,
+                    // );
 
-                    TodoRepository().addTodo(todo);
+                    // TodoRepository().addTodo(todo);
 
-                    dbTodo.checkData();
+                    // dbTodo.checkData();
 
                     Map<String, dynamic> data = {
                       //'id': dbTodo.letId,

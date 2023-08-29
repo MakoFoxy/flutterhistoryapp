@@ -6,6 +6,7 @@ import 'package:flutter/rendering.dart' show debugPaintSizeEnabled;
 import 'package:mausoleum/pages/homepage.dart';
 import 'package:mausoleum/models/overview.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mausoleum/qrscanner.dart';
 import 'package:mausoleum/sqlitedb/sqlite.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:synchronized/synchronized.dart';
@@ -43,7 +44,7 @@ class MyApp extends StatelessWidget {
           Theme.of(context).textTheme,
         ),
       ),
-      home: SideMenu(),
+      home: HomePage(),
     );
   }
 }

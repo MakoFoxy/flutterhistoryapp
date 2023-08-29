@@ -9,6 +9,8 @@ import 'package:mausoleum/pages/takeSearchPage.dart';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mausoleum/pages/editFirebasePages.dart';
+import 'package:mausoleum/pages/takeSearchFirebasepage.dart';
+import 'package:mausoleum/qrscanner.dart';
 
 // Overview dataInform = Overview();
 
@@ -56,7 +58,7 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
                       return Column(
                         children: <Widget>[
                           MyPhotoCont(selectedKey: widget.selectedKey),
-                          const ScreenInit(),
+                          // const ScreenInit(),
                         ],
                       );
                     },
@@ -100,6 +102,26 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
               child: const Icon(Icons.create),
             ),
           ),
+          Positioned(
+            left: 60,
+            bottom: 0,           
+            child: FloatingActionButton(
+              onPressed: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => QrScanner(),
+                  ),
+                );
+              },
+              child: const Icon(Icons.qr_code_scanner),
+              mini: true, // Установите mini: true для уменьшения размера кнопки
+              shape: RoundedRectangleBorder(
+                borderRadius:
+                    BorderRadius.circular(15), // Настройте форму кнопки
+              ),
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.only(right: 50.0, bottom: 0.0),
             child: FloatingActionButton(
@@ -136,7 +158,7 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
               ),
               child: const Icon(Icons.delete),
             ),
-          ),
+          ),          
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
@@ -200,26 +222,26 @@ class MyOverviewsState extends State<MyOverviews> {
   }
 }
 
-class ScreenInit extends StatelessWidget {
-  const ScreenInit({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return ScreenUtilInit(
-      designSize: const Size(360, 720),
-      minTextAdapt: true,
-      splitScreenMode: true,
-      builder: (context, widget) => MaterialApp(
-          debugShowCheckedModeBanner: false,
-          home: const SplashScreen(),
-          builder: (context, widget) {
-            ScreenUtil.registerToBuild(context);
-            return MediaQuery(
-                data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
-                child: widget!);
-          }),
-    );
-  }
-}
+// class ScreenInit extends StatelessWidget {
+//   const ScreenInit({super.key});
+//   @override
+//   Widget build(BuildContext context) {
+//     return ScreenUtilInit(
+//       designSize: const Size(360, 720),
+//       minTextAdapt: true,
+//       splitScreenMode: true,
+//       builder: (context, widget) => MaterialApp(
+//           debugShowCheckedModeBanner: false,
+//           home: const SplashScreen(),
+//           builder: (context, widget) {
+//             ScreenUtil.registerToBuild(context);
+//             return MediaQuery(
+//                 data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+//                 child: widget!);
+//           }),
+//     );
+//   }
+// }
 
 class mySearch extends StatefulWidget {
   @override
@@ -235,26 +257,26 @@ class _MySearchState extends State<mySearch> {
   //   keywordAsyncFunction(keyword.text);
   // }
 
-  late List<TodoModel> resList = [];
-  Future<void> keywordAsyncFunction(String keyword) async {
-    print("selectedKey1 $keyword");
-    resList.clear(); // Очистите массив перед началом операций
-    Future<List<TodoModel>> result = TodoRepository().searchDB(keyword);
-    List<TodoModel> resultList = await result; // Дождитесь завершения Future
-    for (int i = 0; i < resultList.length; i++) {
-      if (resultList[i].title.contains(keyword)) {
-        resList.add(resultList[i]);
-      }
-    }
-    print("resultList $resList");
-    print("resultList length ${resList.length}");
-  }
+  // late List<TodoModel> resList = [];
+  // Future<void> keywordAsyncFunction(String keyword) async {
+  //   print("selectedKey1 $keyword");
+  //   resList.clear(); // Очистите массив перед началом операций
+  //   Future<List<TodoModel>> result = TodoRepository().searchDB(keyword);
+  //   List<TodoModel> resultList = await result; // Дождитесь завершения Future
+  //   for (int i = 0; i < resultList.length; i++) {
+  //     if (resultList[i].title.contains(keyword)) {
+  //       resList.add(resultList[i]);
+  //     }
+  //   }
+  //   print("resultList $resList");
+  //   print("resultList length ${resList.length}");
+  // }
 
   String imageUrl = 'lib/assets/images/backgroundImages.jpg';
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Container(      
       width: double.infinity,
       height: 40,
       decoration: BoxDecoration(
@@ -269,22 +291,23 @@ class _MySearchState extends State<mySearch> {
               // ignore: unrelated_type_equality_checks
               keyword.text = value;
             });
-          },
-          decoration: InputDecoration(
+          },         
+          decoration: InputDecoration(            
             prefixIcon: IconButton(
               icon: const Icon(Icons.search),
               onPressed: () {
-                setState(() {
-                  keywordAsyncFunction(keyword.text);
-                });
+                // setState(() {
+                //   keywordAsyncFunction(keyword.text);
+                // });
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) {
                       if (keyword.text != '') {
-                        return takeSearchPage(
-                          resList: resList,
-                        );
+                        return takeSearchFirebasePage(
+                            // resList: resList,
+                           keyword: keyword.text
+                            );
                       } else {
                         return HomePage();
                       }

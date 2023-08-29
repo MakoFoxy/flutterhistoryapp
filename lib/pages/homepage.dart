@@ -7,6 +7,7 @@ import 'package:mausoleum/models/overview.dart';
 import 'package:mausoleum/models/generalwidgets.dart';
 import 'package:mausoleum/models/createpost/createpostscree.dart';
 import 'package:mausoleum/objectpage.dart';
+import 'package:mausoleum/qrscanner.dart';
 import 'package:todo_repo/todo_repo.dart';
 import 'package:mausoleum/pages/editPages.dart';
 import 'package:todo_models/todo_model.dart';
@@ -44,14 +45,17 @@ class AppHomePage extends State<HomePage> {
               children: <Widget>[
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.white, // Цвет подсветки
+                    image: DecorationImage(
+                      image: AssetImage(imageUrl),
+                      fit: BoxFit.cover,
+                    ),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                   ),
-                ),             
+                ),
                 Expanded(
                   child: Container(
                     padding: const EdgeInsets.only(left: 0, right: 0),
@@ -101,19 +105,19 @@ class MyHomePage extends StatefulWidget {
 //TextEditingController firebasekeyword = TextEditingController();
 
 class HomePageState extends State<MyHomePage> {
-  TextEditingController keyword = TextEditingController();
+  // TextEditingController keyword = TextEditingController();
 
-  @override
-  void initState() {
-    super.initState();
-    keyword = TextEditingController(); // Инициализируем контроллер
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   keyword = TextEditingController(); // Инициализируем контроллер
+  // }
 
-  @override
-  void dispose() {
-    keyword.dispose(); // Освобождаем контроллер при удалении виджета
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   keyword.dispose(); // Освобождаем контроллер при удалении виджета
+  //   super.dispose();
+  // }
 
   @override
   final whiteTexstStyle = TextStyle(color: Colors.white, fontSize: 24);
@@ -136,116 +140,117 @@ class HomePageState extends State<MyHomePage> {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 5),
           child: FutureBuilder(
-            future: keyword.text.length > 0
-                ? TodoRepository().searchDB(keyword.text)
-                : TodoRepository().getAllTodo(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState != ConnectionState.done) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else if (snapshot.hasError) {
-                // Обработка ошибок при загрузке данных.
-                return Text("Ошибка при загрузке данных");
-              } else if (!snapshot.hasData) {
-                return Text("Нет данных");
-              } else {
-                // Данные успешно загружены, отображаем их.
-                List<TodoModel> data = snapshot.data as List<TodoModel>;
-                return Column(
-                  children: [
-                    Container(
-                      width: double.infinity,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Center(
-                        child: TextField(
-                          controller: keyword,
-                          onSubmitted: (value) {
-                            setState(() {
-                              // ignore: unrelated_type_equality_checks
-                              keyword.text = value;
-                            });
-                          },
-                          decoration: InputDecoration(
-                            prefixIcon: IconButton(
-                              icon: const Icon(Icons.search),
-                              onPressed: () {
-                                setState(() {
-                                  TodoRepository().searchDB(keyword.text);
-                                });
-                              },
-                            ),
-                            suffixIcon: IconButton(
-                              icon: const Icon(Icons.clear),
-                              onPressed: () {
-                                keyword.text = '';
-                              },
-                            ),
-                            hintText: 'Іздеу...',
-                            border: InputBorder.none,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Mausoleum(),
-                    Expanded(
-                      child: ListView.separated(
-                        itemCount: data.length,
-                        separatorBuilder: (context, index) =>
-                            SizedBox(height: 10),
-                        itemBuilder: (context, index) {
-                          return Container(
-                            margin: const EdgeInsets.only(left: 50, right: 50),
-                            padding: const EdgeInsets.symmetric(vertical: 5),
-                            child: ElevatedButton(
-                              onPressed: () {
-                                // Обработчик нажатия кнопки с ключом
-                                print(
-                                    'Нажата кнопка с ключом: ${data[index].letId}');
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ObjectPage(
-                                        selectedId: data[index].letId,
-                                        selectedKey: data[index].title),
-                                  ),
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                primary: Colors.amber.withOpacity(0.8),
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 10,
-                                  horizontal: 30,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30),
-                                ),
-                              ),
-                              child: Text(
-                                // resulterList != null
-                                //     ? resulterList[index].title
-                                data[index].title,
-                                //  ? data[index].title
-                                // : widget.resulterList[index].title,
-                                style: colorTextStyle,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    FirebaseSearch(),
-                  ],
-                );
-              }
-            },
-          ),
+              // future: keyword.text.length > 0
+              //     ? TodoRepository().searchDB(keyword.text)
+              //     : TodoRepository().getAllTodo(),
+              builder: (context, snapshot) {
+            // if (snapshot.connectionState != ConnectionState.done) {
+            //   return Center(
+            //     child: CircularProgressIndicator(),
+            //   );
+            // } else if (snapshot.hasError) {
+            //   // Обработка ошибок при загрузке данных.
+            //   return Text("Ошибка при загрузке данных");
+            // } else if (!snapshot.hasData) {
+            //   return Text("Нет данных");
+            // } else {
+            // Данные успешно загружены, отображаем их.
+            // List<TodoModel> data = snapshot.data as List<TodoModel>;
+            // return Column(
+            //   children: [
+            //     Container(
+            //       width: double.infinity,
+            //       height: 40,
+            //       decoration: BoxDecoration(
+            //         color: Colors.white,
+            //         borderRadius: BorderRadius.circular(15),
+            //       ),
+            //       child: Center(
+            //         child: TextField(
+            //           controller: keyword,
+            //           onSubmitted: (value) {
+            //             setState(() {
+            //               // ignore: unrelated_type_equality_checks
+            //               keyword.text = value;
+            //             });
+            //           },
+            //           decoration: InputDecoration(
+            //             prefixIcon: IconButton(
+            //               icon: const Icon(Icons.search),
+            //               onPressed: () {
+            //                 setState(() {
+            //                   TodoRepository().searchDB(keyword.text);
+            //                 });
+            //               },
+            //             ),
+            //             suffixIcon: IconButton(
+            //               icon: const Icon(Icons.clear),
+            //               onPressed: () {
+            //                 keyword.text = '';
+            //               },
+            //             ),
+            //             hintText: 'Іздеу...',
+            //             border: InputBorder.none,
+            //           ),
+            //         ),
+            //       ),
+            //     ),
+            //     Mausoleum(),
+            //     Expanded(
+            //       child: ListView.separated(
+            //         itemCount: data.length,
+            //         separatorBuilder: (context, index) =>
+            //             SizedBox(height: 10),
+            //         itemBuilder: (context, index) {
+            //           return Container(
+            //             margin: const EdgeInsets.only(left: 50, right: 50),
+            //             padding: const EdgeInsets.symmetric(vertical: 5),
+            //             child: ElevatedButton(
+            //               onPressed: () {
+            //                 // Обработчик нажатия кнопки с ключом
+            //                 print(
+            //                     'Нажата кнопка с ключом: ${data[index].letId}');
+            //                 Navigator.push(
+            //                   context,
+            //                   MaterialPageRoute(
+            //                     builder: (context) => ObjectPage(
+            //                         selectedId: data[index].letId,
+            //                         selectedKey: data[index].title),
+            //                   ),
+            //                 );
+            //               },
+            //               style: ElevatedButton.styleFrom(
+            //                 primary: Colors.amber.withOpacity(0.8),
+            //                 padding: const EdgeInsets.symmetric(
+            //                   vertical: 10,
+            //                   horizontal: 30,
+            //                 ),
+            //                 shape: RoundedRectangleBorder(
+            //                   borderRadius: BorderRadius.circular(30),
+            //                 ),
+            //               ),
+            //               child: Text(
+            //                 // resulterList != null
+            //                 //     ? resulterList[index].title
+            //                 data[index].title,
+            //                 //  ? data[index].title
+            //                 // : widget.resulterList[index].title,
+            //                 style: colorTextStyle,
+            //               ),
+            //             ),
+            //           );
+            //         },
+            //       ),
+            //     ),
+            return FirebaseSearch();
+            //   ],
+            // );
+          }),
         ),
       ),
+      //     ),
+      //   ),
+      // ),
       floatingActionButton: Stack(
         children: [
           Positioned(
@@ -268,9 +273,9 @@ class HomePageState extends State<MyHomePage> {
             bottom: 0,
             child: FloatingActionButton(
               onPressed: () async {
-                setState(() {
-                  TodoRepository().deleteAlltables();
-                });
+                // setState(() {
+                //   TodoRepository().deleteAlltables();
+                // });
                 var collRef = FirebaseFirestore.instance.collection('data');
                 QuerySnapshot querySnapshot = await collRef.get();
                 List<QueryDocumentSnapshot> docs = querySnapshot.docs;
@@ -286,6 +291,21 @@ class HomePageState extends State<MyHomePage> {
                 });
               },
               child: const Icon(Icons.delete),
+            ),
+          ),
+          Positioned(
+            right: 120,
+            bottom: 0,
+            child: FloatingActionButton(
+              onPressed: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => QrScanner(),
+                  ),
+                );
+              },
+              child: const Icon(Icons.qr_code_scanner),
             ),
           ),
         ],
@@ -364,47 +384,56 @@ class FirebaseSearchWidget extends State<FirebaseSearch> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      Container(
-        width: double.infinity,
-        height: 40,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(15),
-        ),
-        child: Center(
-          child: TextField(
-            controller: keyword,
-            onSubmitted: (value) {
-              setState(() {
-                // ignore: unrelated_type_equality_checks
-                keyword.text = value;
-              });
-            },
-            decoration: InputDecoration(
-              prefixIcon: IconButton(
-                icon: const Icon(Icons.search),
-                onPressed: () {
-                  setState(() {
-                    getClientStream();
-                  });
-                },
+    return Column(
+      children: [
+        Container(
+          width: double.infinity,
+          height: 40,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: Center(
+            child: TextField(
+              controller: keyword,
+              onSubmitted: (value) {
+                setState(() {
+                  // ignore: unrelated_type_equality_checks
+                  keyword.text = value;
+                });
+              },
+              decoration: InputDecoration(
+                prefixIcon: IconButton(
+                  icon: const Icon(Icons.search),
+                  onPressed: () {
+                    setState(() {
+                      getClientStream();
+                    });
+                  },
+                ),
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.clear),
+                  onPressed: () {
+                    keyword.text = '';
+                  },
+                ),
+                hintText: 'Іздеу...',
+                border: InputBorder.none,
               ),
-              suffixIcon: IconButton(
-                icon: const Icon(Icons.clear),
-                onPressed: () {
-                  keyword.text = '';
-                },
-              ),
-              hintText: 'Іздеу...',
-              border: InputBorder.none,
             ),
           ),
         ),
-      ),
-      Mausoleum(),
-      streamBuild(resultList: resultList),
-    ]);
+        Mausoleum(),
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(// Один элемент, ваш streamBuild
+                children: [
+              streamBuild(resultList: resultList),
+            ]),
+          ),
+        ),
+      ],
+    );
   }
 }
 
@@ -436,6 +465,8 @@ class streamBuild extends StatelessWidget {
 
         if (resultList != "") {
           return Column(
+            // Оберните ListView.builder в Expanded
+
             children: resultList.map((data) {
               final doc = data.data() as Map<String, dynamic>;
               return Container(
