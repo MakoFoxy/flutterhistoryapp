@@ -13,7 +13,7 @@ import 'package:synchronized/synchronized.dart';
 import 'package:todo_models/todo_model.dart';
 import 'package:mausoleum/api/firebase-api.dart';
 
- 
+ v
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
