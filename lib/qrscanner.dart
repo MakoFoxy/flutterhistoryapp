@@ -5,6 +5,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:mausoleum/qrscanner.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:mausoleum/qroverlay.dart';
+import 'package:mausoleum/pages/qrobjectpage.dart';
 
 const bgColor = Colors.white;
 
@@ -28,7 +29,7 @@ class _QrScannerState extends State<QrScanner> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bgColor,
-     // drawer: const Drawer(),
+      // drawer: const Drawer(),
       appBar: AppBar(
         actions: [
           IconButton(
@@ -40,7 +41,7 @@ class _QrScannerState extends State<QrScanner> {
             },
             icon: Icon(
               Icons.flash_on,
-              color: isFlashOn ? Colors.blue: Colors.grey,
+              color: isFlashOn ? Colors.blue : Colors.grey,
             ),
           ),
           IconButton(
@@ -52,7 +53,7 @@ class _QrScannerState extends State<QrScanner> {
             },
             icon: Icon(
               Icons.camera_front,
-              color: isFrontCamera ? Colors.blue: Colors.grey,
+              color: isFrontCamera ? Colors.blue : Colors.grey,
             ),
           ),
         ],
@@ -84,7 +85,7 @@ class _QrScannerState extends State<QrScanner> {
                       fontWeight: FontWeight.bold,
                       letterSpacing: 1,
                     ),
-                  ),                                 
+                  ),
                 ],
               ),
             ),
@@ -108,6 +109,15 @@ class _QrScannerState extends State<QrScanner> {
                             ),
                           ),
                         );
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //     builder: (context) => QRobjectpage(
+                        //       closeScreen: closeScreen,
+                        //       selectedKey: code,
+                        //     ),
+                        //   ),
+                        // );
                       }
                     },
                   ),

@@ -79,15 +79,15 @@ class ResultScreen extends StatelessWidget {
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                 onPressed: () {
-                  //Clipboard.setData(ClipboardData(text: code));
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => QRobjectpage(
-                        selectedKey: code,
-                      ),
-                    ),
-                  );
+                  Clipboard.setData(ClipboardData(text: code));
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //     builder: (context) => QRobjectpage(
+                  //       selectedKey: code,
+                  //     ),
+                  //   ),
+                  // );
                 },
                 child: Text(
                   "Copy",

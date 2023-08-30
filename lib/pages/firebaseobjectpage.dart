@@ -83,6 +83,7 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
           Padding(
             padding: const EdgeInsets.only(left: 50.0, bottom: 0.0),
             child: FloatingActionButton(
+              heroTag: "editpage",
               onPressed: () async {
                 await Navigator.push(
                   context,
@@ -104,8 +105,9 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
           ),
           Positioned(
             left: 60,
-            bottom: 0,           
+            bottom: 0,
             child: FloatingActionButton(
+              heroTag: "qrpage",
               onPressed: () async {
                 await Navigator.push(
                   context,
@@ -125,6 +127,7 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
           Padding(
             padding: const EdgeInsets.only(right: 50.0, bottom: 0.0),
             child: FloatingActionButton(
+              heroTag: "homepage",
               onPressed: () async {
                 Navigator.push(
                   context,
@@ -158,7 +161,7 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
               ),
               child: const Icon(Icons.delete),
             ),
-          ),          
+          ),
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
@@ -276,7 +279,7 @@ class _MySearchState extends State<mySearch> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(      
+    return Container(
       width: double.infinity,
       height: 40,
       decoration: BoxDecoration(
@@ -291,8 +294,8 @@ class _MySearchState extends State<mySearch> {
               // ignore: unrelated_type_equality_checks
               keyword.text = value;
             });
-          },         
-          decoration: InputDecoration(            
+          },
+          decoration: InputDecoration(
             prefixIcon: IconButton(
               icon: const Icon(Icons.search),
               onPressed: () {
@@ -306,8 +309,7 @@ class _MySearchState extends State<mySearch> {
                       if (keyword.text != '') {
                         return takeSearchFirebasePage(
                             // resList: resList,
-                           keyword: keyword.text
-                            );
+                            keyword: keyword.text);
                       } else {
                         return HomePage();
                       }

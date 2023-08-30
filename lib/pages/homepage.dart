@@ -257,6 +257,7 @@ class HomePageState extends State<MyHomePage> {
             right: 0,
             bottom: 0,
             child: FloatingActionButton(
+              heroTag: "create",
               onPressed: () async {
                 await Navigator.push(
                   context,
@@ -272,6 +273,7 @@ class HomePageState extends State<MyHomePage> {
             left: 20,
             bottom: 0,
             child: FloatingActionButton(
+              heroTag: "delete",
               onPressed: () async {
                 // setState(() {
                 //   TodoRepository().deleteAlltables();
@@ -297,6 +299,7 @@ class HomePageState extends State<MyHomePage> {
             right: 120,
             bottom: 0,
             child: FloatingActionButton(
+              heroTag: "qrscanner",
               onPressed: () async {
                 await Navigator.push(
                   context,
@@ -416,7 +419,7 @@ class FirebaseSearchWidget extends State<FirebaseSearch> {
                   onPressed: () {
                     keyword.text = '';
                   },
-                ),
+                ),                
                 hintText: 'Іздеу...',
                 border: InputBorder.none,
               ),
@@ -470,35 +473,37 @@ class streamBuild extends StatelessWidget {
             children: resultList.map((data) {
               final doc = data.data() as Map<String, dynamic>;
               return Container(
-                margin: const EdgeInsets.only(left: 50, right: 50),
-                padding: const EdgeInsets.symmetric(vertical: 5),
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ObjectFirebasePage(
-                          selectedKey: doc['title'],
+                  margin: const EdgeInsets.only(left: 50, right: 50),
+                  padding: const EdgeInsets.symmetric(vertical: 5),
+                  child: Hero(
+                    tag: doc['title'], // Use the title as the heroTag
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ObjectFirebasePage(
+                              selectedKey: doc['title'],
+                            ),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.amber.withOpacity(0.8),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 10,
+                          horizontal: 30,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
                         ),
                       ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.amber.withOpacity(0.8),
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 10,
-                      horizontal: 30,
+                      child: Text(
+                        doc['title'],
+                        style: colorTextStyle,
+                      ),
                     ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                  ),
-                  child: Text(
-                    doc['title'],
-                    style: colorTextStyle,
-                  ),
-                ),
-              );
+                  ));
             }).toList(),
           );
         } else {
@@ -508,30 +513,33 @@ class streamBuild extends StatelessWidget {
               return Container(
                 margin: const EdgeInsets.only(left: 50, right: 50),
                 padding: const EdgeInsets.symmetric(vertical: 5),
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ObjectFirebasePage(
-                          selectedKey: doc['title'],
+                child: Hero(
+                  tag: doc['title'], // Use the title as the heroTag
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ObjectFirebasePage(
+                            selectedKey: doc['title'],
+                          ),
                         ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.amber.withOpacity(0.8),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 10,
+                        horizontal: 30,
                       ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.amber.withOpacity(0.8),
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 10,
-                      horizontal: 30,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
                     ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
+                    child: Text(
+                      doc['title'],
+                      style: colorTextStyle,
                     ),
-                  ),
-                  child: Text(
-                    doc['title'],
-                    style: colorTextStyle,
                   ),
                 ),
               );

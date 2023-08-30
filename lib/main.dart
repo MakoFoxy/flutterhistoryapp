@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mausoleum/components/sidebarmenu.dart';
 import 'package:mausoleum/objectpage.dart';
 import 'package:flutter/rendering.dart' show debugPaintSizeEnabled;
+import 'package:mausoleum/pages/firebaseobjectpage.dart';
 import 'package:mausoleum/pages/homepage.dart';
 import 'package:mausoleum/models/overview.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -12,6 +13,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:synchronized/synchronized.dart';
 import 'package:todo_models/todo_model.dart';
 import 'package:mausoleum/api/firebase-api.dart';
+import 'package:mausoleum/pages/takeSearchFirebasepage.dart';
 
 
 void main() async {
@@ -44,7 +46,7 @@ class MyApp extends StatelessWidget {
           Theme.of(context).textTheme,
         ),
       ),
-      home: HomePage(),
+      home: takeSearchFirebasePage(keyword: keyword.text,),
     );
   }
 }

@@ -16,7 +16,11 @@ import 'package:mausoleum/qrscanner.dart';
 
 class QRobjectpage extends StatefulWidget {
   final String selectedKey; // Добавьте параметр для выбранного ключа
+  final Function() closeScreen;
+
   QRobjectpage({
+    super.key,
+    required this.closeScreen, 
     required this.selectedKey,
   });
 
@@ -34,6 +38,27 @@ class _QRobjectpageState extends State<QRobjectpage> {
   Widget build(BuildContext context) {
     // fetchKeysFirebase();
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          onPressed: () {
+            widget.closeScreen();
+            Navigator.pop(context);
+          },
+          icon: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: Colors.black87,
+          ),
+        ),
+        centerTitle: true,
+        title: const Text(
+          "QR Scanner",
+          style: TextStyle(
+            color: Colors.black87,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1,
+          ),
+        ),
+      ),
       body: SafeArea(
         child: DefaultTextStyle(
           style: whiteTextStyle,
@@ -84,12 +109,29 @@ class _QRobjectpageState extends State<QRobjectpage> {
             padding: const EdgeInsets.only(left: 50.0, bottom: 0.0),
             child: FloatingActionButton(
               onPressed: () async {
+                late String keyforedit;
+                var collRef = FirebaseFirestore.instance.collection('data');
+                String targetTitle =
+                    widget.selectedKey; // Значение, которое вы ищете
+
+                QuerySnapshot querySnapshot = await collRef.get();
+                List<QueryDocumentSnapshot> docs = querySnapshot.docs;
+
+                for (QueryDocumentSnapshot doc in docs) {
+                  Map<String, dynamic> autodata =
+                      doc.data() as Map<String, dynamic>;
+                  String autokey = doc.id; // Получение ключа документа
+                  // Проверка, соответствует ли поле title значению, которое вы ищете
+                  if (autokey == targetTitle) {
+                    keyforedit = autodata['title'];
+                  }
+                }
                 await Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (BuildContext context) => EditFirebasePage(
                       //editMydb: editMydb,
-                      selectedKey: widget.selectedKey,
+                      selectedKey: keyforedit,
                     ),
                   ),
                 );
@@ -104,7 +146,7 @@ class _QRobjectpageState extends State<QRobjectpage> {
           ),
           Positioned(
             left: 60,
-            bottom: 0,           
+            bottom: 0,
             child: FloatingActionButton(
               onPressed: () async {
                 await Navigator.push(
@@ -140,11 +182,9 @@ class _QRobjectpageState extends State<QRobjectpage> {
                 List<QueryDocumentSnapshot> docs = querySnapshot.docs;
 
                 for (QueryDocumentSnapshot doc in docs) {
-                  Map<String, dynamic> autodata =
-                      doc.data() as Map<String, dynamic>;
                   String autokey = doc.id; // Получение ключа документа
                   // Проверка, соответствует ли поле title значению, которое вы ищете
-                  if (autodata['title'] == targetTitle) {
+                  if (autokey == targetTitle) {
                     await collRef.doc(autokey).delete();
                     print("Document deleted: $autokey");
                     break; // Прерываем цикл после обновления первого соответствующего документа
@@ -158,7 +198,7 @@ class _QRobjectpageState extends State<QRobjectpage> {
               ),
               child: const Icon(Icons.delete),
             ),
-          ),          
+          ),
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
@@ -182,40 +222,46 @@ class MyOverviewsState extends State<MyOverviews> {
   final whiteTextStyle =
       TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 20);
 
+  void initState() {
+    qrKeysFirebase(); // Загрузите ключи из Firebase
+    super.initState();
+  }
+
+  var collRef = FirebaseFirestore.instance.collection('data');
+
+  String discriptWidgets = "";
+  Future<void> qrKeysFirebase() async {
+    String targetQR = widget.selectedKey; // Значение, которое вы ищете
+    try {
+      QuerySnapshot querySnapshot = await collRef.get();
+      List<QueryDocumentSnapshot> docs = querySnapshot.docs;
+
+      for (QueryDocumentSnapshot doc in docs) {
+        Map<String, dynamic> autodata = doc.data() as Map<String, dynamic>;
+        String autokey = doc.id; // Получение ключа документа
+
+        // Проверка, соответствует ли поле title значению, которое вы ищете
+        if (autokey == targetQR) {
+          discriptWidgets = autodata['description'];
+        }
+      }
+    } catch (e) {
+      print("Error qr object page: $e");
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection('data').snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator(); // Показываем индикатор загрузки во время ожидания данных
-        }
-
-        if (snapshot.hasError) {
-          return Text("Ошибка: ${snapshot.error}");
-        }
-
-        String discripWidgets = "";
-
-        final keysfirebase = snapshot.data?.docs.toList();
-
-        for (var key in keysfirebase!) {
-          if (widget.selectedKey == key['title']) {
-            discripWidgets = key['description'];
-          }
-        }
-
-        return ListView.builder(
-          itemCount: 1,
-          itemBuilder: (context, index) {
-            return Container(
-              color: Colors.amber,
-              child: Text(
-                discripWidgets, // Убедиcь, что значение не null
-                style: whiteTextStyle,
-                textAlign: TextAlign.justify,
-              ),
-            );
-          },
+    return ListView.builder(
+      itemCount: 1,
+      itemBuilder: (context, index) {
+        return Container(
+          color: Colors.amber,
+          child: Text(
+            discriptWidgets, // Убедиcь, что значение не null
+            style: whiteTextStyle,
+            textAlign: TextAlign.justify,
+          ),
         );
       },
     );
@@ -255,7 +301,7 @@ class _MySearchState extends State<mySearch> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(      
+    return Container(
       width: double.infinity,
       height: 40,
       decoration: BoxDecoration(
@@ -270,8 +316,8 @@ class _MySearchState extends State<mySearch> {
               // ignore: unrelated_type_equality_checks
               keyword.text = value;
             });
-          },         
-          decoration: InputDecoration(            
+          },
+          decoration: InputDecoration(
             prefixIcon: IconButton(
               icon: const Icon(Icons.search),
               onPressed: () {
@@ -285,8 +331,7 @@ class _MySearchState extends State<mySearch> {
                       if (keyword.text != '') {
                         return takeSearchFirebasePage(
                             // resList: resList,
-                           keyword: keyword.text
-                            );
+                            keyword: keyword.text);
                       } else {
                         return HomePage();
                       }
@@ -316,51 +361,56 @@ class MyTextCont extends StatefulWidget {
   MyTextCont({required this.selectedKey});
 
   @override
-  State<MyTextCont> createState() => _MyTextContState();
+  State<MyTextCont> createState() => MyTextContState();
 }
 
-class _MyTextContState extends State<MyTextCont> {
+class MyTextContState extends State<MyTextCont> {
+  void initState() {
+    qrKeysFirebase(); // Загрузите ключи из Firebase
+    super.initState();
+  }
+
+  var collRef = FirebaseFirestore.instance.collection('data');
+
+  String textWidgets = "";
+  Future<void> qrKeysFirebase() async {
+    String targetQR = widget.selectedKey; // Значение, которое вы ищете
+    try {
+      QuerySnapshot querySnapshot = await collRef.get();
+      List<QueryDocumentSnapshot> docs = querySnapshot.docs;
+
+      for (QueryDocumentSnapshot doc in docs) {
+        Map<String, dynamic> autodata = doc.data() as Map<String, dynamic>;
+        String autokey = doc.id; // Получение ключа документа
+
+        // Проверка, соответствует ли поле title значению, которое вы ищете
+        if (autokey == targetQR) {
+          textWidgets = autodata['title'];
+        }
+      }
+    } catch (e) {
+      print("Error qr object page: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection('data').snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator(); // Показываем индикатор загрузки во время ожидания данных
-        }
-
-        if (snapshot.hasError) {
-          return Text("Ошибка: ${snapshot.error}");
-        }
-
-        String textWidgets = "";
-
-        final keysfirebase = snapshot.data?.docs.toList();
-        for (var key in keysfirebase!) {
-          if (widget.selectedKey == key['title']) {
-            textWidgets = key['title'];
-          }
-        }
-        print(textWidgets);
-        return Container(
-          width: 350,
-          alignment: Alignment.center,
-          color: Colors.amber,
-          child: Container(
-            margin:
-                const EdgeInsets.only(left: 0, right: 0, top: 10, bottom: 10),
-            color: Colors.amber,
-            child: Text(
-              textWidgets,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 20,
-                color: Colors.black,
-              ),
-            ),
+    return Container(
+      width: 350,
+      alignment: Alignment.center,
+      color: Colors.amber,
+      child: Container(
+        margin: const EdgeInsets.only(left: 0, right: 0, top: 10, bottom: 10),
+        color: Colors.amber,
+        child: Text(
+          textWidgets,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 20,
+            color: Colors.black,
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }
@@ -377,47 +427,52 @@ class MyPhotoCont extends StatefulWidget {
 }
 
 class _MyPhotoContState extends State<MyPhotoCont> {
+  void initState() {
+    qrKeysFirebase(); // Загрузите ключи из Firebase
+    super.initState();
+  }
+
+  var collRef = FirebaseFirestore.instance.collection('data');
+
+  String photoWidgets = "";
+  Future<void> qrKeysFirebase() async {
+    String targetQR = widget.selectedKey; // Значение, которое вы ищете
+    try {
+      QuerySnapshot querySnapshot = await collRef.get();
+      List<QueryDocumentSnapshot> docs = querySnapshot.docs;
+
+      for (QueryDocumentSnapshot doc in docs) {
+        Map<String, dynamic> autodata = doc.data() as Map<String, dynamic>;
+        String autokey = doc.id; // Получение ключа документа
+
+        // Проверка, соответствует ли поле title значению, которое вы ищете
+        if (autokey == targetQR) {
+          photoWidgets = autodata['filephotopath'];
+        }
+      }
+    } catch (e) {
+      print("Error qr object page: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection('data').snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator(); // Показываем индикатор загрузки во время ожидания данных
-        }
-
-        if (snapshot.hasError) {
-          return Text("Ошибка: ${snapshot.error}");
-        }
-
-        String photoWidgets = "";
-
-        final keysfirebase = snapshot.data?.docs.toList();
-        for (var key in keysfirebase!) {
-          if (widget.selectedKey == key['title']) {
-            photoWidgets = key['filephotopath'];
-          }
-        }
-        print(photoWidgets);
-        return Container(
-          height: 150,
-          width: 340,
-          child: Card(
-            margin:
-                const EdgeInsets.only(left: 0, right: 0, top: 0, bottom: 10),
-            elevation: 5,
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: Image.file(
-                File(photoWidgets),
-                fit: BoxFit.cover,
-              ),
-            ),
+    return Container(
+      height: 150,
+      width: 340,
+      child: Card(
+        margin: const EdgeInsets.only(left: 0, right: 0, top: 0, bottom: 10),
+        elevation: 5,
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(30),
           ),
-        );
-      },
+          child: Image.file(
+            File(photoWidgets),
+            fit: BoxFit.cover,
+          ),
+        ),
+      ),
     );
   }
 }

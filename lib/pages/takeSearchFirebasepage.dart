@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:mausoleum/models/overview.dart';
 import 'package:mausoleum/models/createpost/createpostscree.dart';
 import 'package:mausoleum/pages/homepage.dart';
-import 'package:todo_repo/todo_repo.dart';
-import 'package:todo_models/todo_model.dart';
-import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mausoleum/pages/firebaseobjectpage.dart';
+import 'package:mausoleum/qrscanner.dart';
 
 class takeSearchFirebasePage extends StatefulWidget {
   late String keyword;
-  takeSearchFirebasePage({required this.keyword});
+
+  takeSearchFirebasePage({required this.keyword, Key? key}) : super(key: key);
 
   // List<TodoModel> resList;
   // //TodoModel resModel;
@@ -25,15 +23,12 @@ class takeSearchFirebasePage extends StatefulWidget {
 }
 
 class ApptakeSearchPage extends State<takeSearchFirebasePage> {
-  //  ApptakeSearchPage({required this.resulterList});
-  // TodoModel resModel; // Добавьте это объявление
-
-  @override
   final whiteTexstStyle = TextStyle(color: Colors.white, fontSize: 24);
+
+  String imageUrl = 'lib/assets/images/backgroundImages.jpg';
 
   @override
   Widget build(BuildContext context) {
-    String imageUrl = 'lib/assets/images/backgroundImages.jpg';
     return Scaffold(
       body: SafeArea(
         child: DefaultTextStyle.merge(
@@ -45,10 +40,7 @@ class ApptakeSearchPage extends State<takeSearchFirebasePage> {
               children: <Widget>[
                 Container(
                   decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage(imageUrl),
-                      fit: BoxFit.cover,
-                    ), // Цвет подсветки
+                    color: Colors.white, // Цвет подсветки
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
@@ -65,7 +57,7 @@ class ApptakeSearchPage extends State<takeSearchFirebasePage> {
                         fit: BoxFit.cover,
                       ),
                     ),
-                    child: FirebaseSearch(
+                    child: MyTakePage(
                       keyword: widget.keyword,
                       backgroundImage: DecorationImage(
                         image: AssetImage(imageUrl),
@@ -88,12 +80,128 @@ class ApptakeSearchPage extends State<takeSearchFirebasePage> {
   }
 }
 
+class MyTakePage extends StatefulWidget {
+  String keyword;
+  final DecorationImage backgroundImage;
+
+  MyTakePage({required this.backgroundImage, required this.keyword, Key? key})
+      : super(key: key);
+
+  @override
+  MyTakePageState createState() => MyTakePageState();
+}
+
+//TextEditingController keyword = TextEditingController();
+//TextEditingController firebasekeyword = TextEditingController();
+
+class MyTakePageState extends State<MyTakePage> {
+  final whiteTexstStyle = TextStyle(color: Colors.white, fontSize: 24);
+
+  @override
+  Widget build(BuildContext context) {
+    final colorTextStyle = TextStyle(
+      color: Color.fromARGB(255, 78, 82, 26),
+      fontSize: 25,
+    ); // Обновленный размер текста
+    return Scaffold(
+      body: Container(
+        height: double.infinity,
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('lib/assets/images/backgroundImages.jpg'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 5),
+          child: FutureBuilder(
+            future:
+                keyword.text.length > 0 ? Future.value([]) : Future.value([]),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState != ConnectionState.done) {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else if (snapshot.hasError) {
+                // Обработка ошибок при загрузке данных.
+                return Text("Ошибка при загрузке данных");
+              } else if (!snapshot.hasData) {
+                return Text("Нет данных");
+              } else {
+                return FirebaseSearch(keyword: widget.keyword);
+              }
+            },
+          ),
+        ),
+      ),
+      floatingActionButton: Stack(
+        children: [
+          Positioned(
+            right: 0,
+            bottom: 0,
+            child: FloatingActionButton(
+              onPressed: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CreateHistoryPost(),
+                  ),
+                );
+              },
+              child: const Icon(Icons.create),
+            ),
+          ),
+          Positioned(
+            right: 120,
+            bottom: 0,
+            child: FloatingActionButton(
+              heroTag: "qrscanner",
+              onPressed: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => QrScanner(),
+                  ),
+                );
+              },
+              child: const Icon(Icons.qr_code_scanner),
+            ),
+          ),
+          Positioned(
+            left: 20,
+            bottom: 0,
+            child: FloatingActionButton(
+              onPressed: () async {
+                // setState(() {
+                //   TodoRepository().deleteAlltables();
+                // });
+                var collRef = FirebaseFirestore.instance.collection('data');
+                QuerySnapshot querySnapshot = await collRef.get();
+                List<QueryDocumentSnapshot> docs = querySnapshot.docs;
+                List<String> autokey = [];
+                for (QueryDocumentSnapshot doc in docs) {
+                  autokey.add(doc.id);
+                }
+                // for(int i = 0; i < autokey.length; i++) {
+                //   collRef.doc(autokey[i]).delete();
+                // }
+                autokey.forEach((element) {
+                  collRef.doc(element).delete();
+                });
+              },
+              child: const Icon(Icons.delete),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class FirebaseSearch extends StatefulWidget {
   String keyword;
-  late DecorationImage backgroundImage;
-  FirebaseSearch(
-      {required this.backgroundImage, required this.keyword, Key? key})
-      : super(key: key);
+
+  FirebaseSearch({required this.keyword, Key? key}) : super(key: key);
 
   // const FirebaseSearch({Key? key}) : super(key: key);
   @override
@@ -170,7 +278,7 @@ class FirebaseSearchWidget extends State<FirebaseSearch> {
           Container(
             width: double.infinity,
             height: 40,
-            decoration: BoxDecoration(
+            decoration: BoxDecoration(              
               color: Colors.white,
               borderRadius: BorderRadius.circular(15),
             ),
@@ -187,6 +295,14 @@ class FirebaseSearchWidget extends State<FirebaseSearch> {
                   prefixIcon: IconButton(
                     icon: const Icon(Icons.search),
                     onPressed: () {
+                      if (keyword.text == '') {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => HomePage(),
+                          ),
+                        );
+                      }
                       setState(() {
                         getClientStream();
                       });
@@ -211,50 +327,6 @@ class FirebaseSearchWidget extends State<FirebaseSearch> {
                   children: [
                 streamBuild(resultList: resultList),
               ]),
-            ),
-          ),
-        ],
-      ),
-      floatingActionButton: Stack(
-        children: [
-          Positioned(
-            right: 0,
-            bottom: 0,
-            child: FloatingActionButton(
-              onPressed: () async {
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => CreateHistoryPost(),
-                  ),
-                );
-              },
-              child: const Icon(Icons.create),
-            ),
-          ),
-          Positioned(
-            left: 20,
-            bottom: 0,
-            child: FloatingActionButton(
-              onPressed: () async {
-                // setState(() {
-                //   TodoRepository().deleteAlltables();
-                // });
-                var collRef = FirebaseFirestore.instance.collection('data');
-                QuerySnapshot querySnapshot = await collRef.get();
-                List<QueryDocumentSnapshot> docs = querySnapshot.docs;
-                List<String> autokey = [];
-                for (QueryDocumentSnapshot doc in docs) {
-                  autokey.add(doc.id);
-                }
-                // for(int i = 0; i < autokey.length; i++) {
-                //   collRef.doc(autokey[i]).delete();
-                // }
-                autokey.forEach((element) {
-                  collRef.doc(element).delete();
-                });
-              },
-              child: const Icon(Icons.delete),
             ),
           ),
         ],
