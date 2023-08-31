@@ -38,27 +38,27 @@ class _QRobjectpageState extends State<QRobjectpage> {
   Widget build(BuildContext context) {
     // fetchKeysFirebase();
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () {
-            widget.closeScreen();
-            Navigator.pop(context);
-          },
-          icon: Icon(
-            Icons.arrow_back_ios_new_rounded,
-            color: Colors.black87,
-          ),
-        ),
-        centerTitle: true,
-        title: const Text(
-          "QR Scanner",
-          style: TextStyle(
-            color: Colors.black87,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 1,
-          ),
-        ),
-      ),
+      // appBar: AppBar(
+      //   leading: IconButton(
+      //     onPressed: () {
+      //       widget.closeScreen();
+      //       Navigator.pop(context);
+      //     },
+      //     icon: Icon(
+      //       Icons.arrow_back_ios_new_rounded,
+      //       color: Colors.black87,
+      //     ),
+      //   ),
+      //   centerTitle: true,
+      //   title: const Text(
+      //     "QR Scanner",
+      //     style: TextStyle(
+      //       color: Colors.black87,
+      //       fontWeight: FontWeight.bold,
+      //       letterSpacing: 1,
+      //     ),
+      //   ),
+      // ),
       body: SafeArea(
         child: DefaultTextStyle(
           style: whiteTextStyle,

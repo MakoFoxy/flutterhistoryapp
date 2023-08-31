@@ -419,7 +419,7 @@ class FirebaseSearchWidget extends State<FirebaseSearch> {
                   onPressed: () {
                     keyword.text = '';
                   },
-                ),                
+                ),
                 hintText: 'Іздеу...',
                 border: InputBorder.none,
               ),
@@ -469,12 +469,13 @@ class streamBuild extends StatelessWidget {
         if (resultList != "") {
           return Column(
             // Оберните ListView.builder в Expanded
-
             children: resultList.map((data) {
               final doc = data.data() as Map<String, dynamic>;
               return Container(
-                  margin: const EdgeInsets.only(left: 50, right: 50),
-                  padding: const EdgeInsets.symmetric(vertical: 5),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 5,
+                  ),
                   child: Hero(
                     tag: doc['title'], // Use the title as the heroTag
                     child: ElevatedButton(
@@ -489,11 +490,6 @@ class streamBuild extends StatelessWidget {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.amber.withOpacity(0.8),
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 10,
-                          horizontal: 30,
-                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
@@ -511,8 +507,10 @@ class streamBuild extends StatelessWidget {
             children: keysfirebase!.map((data) {
               final doc = data.data() as Map<String, dynamic>;
               return Container(
-                margin: const EdgeInsets.only(left: 50, right: 50),
-                padding: const EdgeInsets.symmetric(vertical: 5),
+                margin: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 5,
+                ),
                 child: Hero(
                   tag: doc['title'], // Use the title as the heroTag
                   child: ElevatedButton(
@@ -527,11 +525,6 @@ class streamBuild extends StatelessWidget {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      primary: Colors.amber.withOpacity(0.8),
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 10,
-                        horizontal: 30,
-                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
@@ -572,9 +565,9 @@ class Mausoleum extends StatelessWidget {
         ],
         borderRadius: BorderRadius.circular(30),
         gradient: LinearGradient(colors: [
-          Color.fromARGB(255, 187, 185, 60),
-          Color.fromARGB(235, 233, 229, 16),
-          Color.fromARGB(255, 187, 185, 60),
+          Color.fromARGB(255, 67, 83, 68),
+          Color.fromARGB(255, 67, 83, 68),
+          Color.fromARGB(255, 67, 83, 68),
         ]),
       ),
       child: Text(
@@ -609,7 +602,7 @@ class MenuTileWidget extends State<MenuTile> {
               elevation: 5,
               margin: const EdgeInsets.all(0),
               child: Container(
-                color: Colors.amber,
+                color: Color.fromARGB(255, 67, 83, 68),
                 padding: const EdgeInsets.all(10),
                 child: _buildAction(),
               ),
@@ -617,7 +610,7 @@ class MenuTileWidget extends State<MenuTile> {
           ],
         ),
         decoration: BoxDecoration(
-          color: Color.fromARGB(255, 231, 177, 15),
+          color: Color.fromARGB(255, 67, 83, 68),
           border: Border.all(),
         ),
       ),
@@ -660,7 +653,7 @@ class MenuTileWidget extends State<MenuTile> {
         children: <Widget>[
           Icon(
             icon,
-            color: Colors.brown,
+            color: Colors.deepOrange,
           ),
           Container(
             child: Text(

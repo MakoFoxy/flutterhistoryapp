@@ -32,15 +32,18 @@ class ApptakeSearchPage extends State<takeSearchFirebasePage> {
     return Scaffold(
       body: SafeArea(
         child: DefaultTextStyle.merge(
-          style: whiteTexstStyle,
+          //style: whiteTexstStyle,
           child: Container(
-            color: Colors.white,
+            // color: Colors.white,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              //crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.white, // Цвет подсветки
+                    image: DecorationImage(
+                      image: AssetImage(imageUrl),
+                      fit: BoxFit.cover,
+                    ),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
@@ -49,20 +52,17 @@ class ApptakeSearchPage extends State<takeSearchFirebasePage> {
                   ),
                 ),
                 Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.only(left: 0, right: 0),
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage(imageUrl),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    child: MyTakePage(
-                      keyword: widget.keyword,
-                      backgroundImage: DecorationImage(
-                        image: AssetImage(imageUrl),
-                        fit: BoxFit.cover,
-                      ),
+                  // decoration: BoxDecoration(
+                  //   image: DecorationImage(
+                  //     image: AssetImage(imageUrl),
+                  //     fit: BoxFit.cover,
+                  //   ),
+                  // ),
+                  child: MyTakePage(
+                    keyword: widget.keyword,
+                    backgroundImage: DecorationImage(
+                      image: AssetImage(imageUrl),
+                      fit: BoxFit.cover,
                     ),
                   ),
                 ),
@@ -86,7 +86,7 @@ class MyTakePage extends StatefulWidget {
 
   MyTakePage({required this.backgroundImage, required this.keyword, Key? key})
       : super(key: key);
-
+  // MyTakePage({required this.keyword, Key? key}) : super(key: key);
   @override
   MyTakePageState createState() => MyTakePageState();
 }
@@ -104,35 +104,26 @@ class MyTakePageState extends State<MyTakePage> {
       fontSize: 25,
     ); // Обновленный размер текста
     return Scaffold(
-      body: Container(
-        height: double.infinity,
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('lib/assets/images/backgroundImages.jpg'),
-            fit: BoxFit.cover,
+      body: Stack(
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('lib/assets/images/backgroundImages.jpg'),
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 5),
-          child: FutureBuilder(
-            future:
-                keyword.text.length > 0 ? Future.value([]) : Future.value([]),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState != ConnectionState.done) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else if (snapshot.hasError) {
-                // Обработка ошибок при загрузке данных.
-                return Text("Ошибка при загрузке данных");
-              } else if (!snapshot.hasData) {
-                return Text("Нет данных");
-              } else {
+          Positioned.fill(
+            child: Container(
+              color: Color.fromRGBO(0, 0, 0, 0), // Прозрачный цвет фона
+              padding: const EdgeInsets.symmetric(),
+              child: FutureBuilder(builder: (context, snapshot) {
                 return FirebaseSearch(keyword: widget.keyword);
-              }
-            },
+              }),
+            ),
           ),
-        ),
+        ],
       ),
       floatingActionButton: Stack(
         children: [
@@ -278,7 +269,7 @@ class FirebaseSearchWidget extends State<FirebaseSearch> {
           Container(
             width: double.infinity,
             height: 40,
-            decoration: BoxDecoration(              
+            decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(15),
             ),
