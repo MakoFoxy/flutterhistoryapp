@@ -40,33 +40,21 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
           child: Container(
             color: Colors.amber,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 mySearch(),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    MyTextCont(selectedKey: widget.selectedKey),
-                    //MyPhotoCont(),
-                  ],
-                ),
                 Expanded(
-                  // Оберните ListView.builder в Expanded
-                  child: ListView.builder(
-                    itemCount: 1, // Замените itemCount на актуальное значение
-                    itemBuilder: (context, index) {
-                      return Column(
+                  child: ListView(
+                    children: <Widget>[
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          MyPhotoCont(selectedKey: widget.selectedKey),
-                          // const ScreenInit(),
+                          MyTextCont(selectedKey: widget.selectedKey),
+                          //MyPhotoCont(),
                         ],
-                      );
-                    },
-                  ),
-                ),
-                Expanded(
-                  child: MyOverviews(
-                    selectedKey: widget.selectedKey,
+                      ),
+                      MyPhotoCont(selectedKey: widget.selectedKey),
+                      MyOverviews(selectedKey: widget.selectedKey),
+                    ],
                   ),
                 ),
                 Container(
@@ -207,18 +195,13 @@ class MyOverviewsState extends State<MyOverviews> {
           }
         }
 
-        return ListView.builder(
-          itemCount: 1,
-          itemBuilder: (context, index) {
-            return Container(
-              color: Colors.amber,
-              child: Text(
-                discripWidgets, // Убедиcь, что значение не null
-                style: whiteTextStyle,
-                textAlign: TextAlign.justify,
-              ),
-            );
-          },
+        return Container(
+          color: Colors.amber,
+          child: Text(
+            discripWidgets, // Убедиcь, что значение не null
+            style: whiteTextStyle,
+            textAlign: TextAlign.justify,
+          ),
         );
       },
     );

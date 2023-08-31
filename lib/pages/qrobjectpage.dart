@@ -20,7 +20,7 @@ class QRobjectpage extends StatefulWidget {
 
   QRobjectpage({
     super.key,
-    required this.closeScreen, 
+    required this.closeScreen,
     required this.selectedKey,
   });
 
@@ -65,33 +65,21 @@ class _QRobjectpageState extends State<QRobjectpage> {
           child: Container(
             color: Colors.amber,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 mySearch(),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    MyTextCont(selectedKey: widget.selectedKey),
-                    //MyPhotoCont(),
-                  ],
-                ),
                 Expanded(
-                  // Оберните ListView.builder в Expanded
-                  child: ListView.builder(
-                    itemCount: 1, // Замените itemCount на актуальное значение
-                    itemBuilder: (context, index) {
-                      return Column(
+                  child: ListView(
+                    children: <Widget>[
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          MyPhotoCont(selectedKey: widget.selectedKey),
-                          // const ScreenInit(),
+                          MyTextCont(selectedKey: widget.selectedKey),
+                          //MyPhotoCont(),
                         ],
-                      );
-                    },
-                  ),
-                ),
-                Expanded(
-                  child: MyOverviews(
-                    selectedKey: widget.selectedKey,
+                      ),
+                      MyPhotoCont(selectedKey: widget.selectedKey),
+                      MyOverviews(selectedKey: widget.selectedKey),
+                    ],
                   ),
                 ),
                 Container(
@@ -223,8 +211,8 @@ class MyOverviewsState extends State<MyOverviews> {
       TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 20);
 
   void initState() {
-    qrKeysFirebase(); // Загрузите ключи из Firebase
     super.initState();
+    qrKeysFirebase(); // Загрузите ключи из Firebase
   }
 
   var collRef = FirebaseFirestore.instance.collection('data');
@@ -235,6 +223,7 @@ class MyOverviewsState extends State<MyOverviews> {
     try {
       QuerySnapshot querySnapshot = await collRef.get();
       List<QueryDocumentSnapshot> docs = querySnapshot.docs;
+      String newDescription = "";
 
       for (QueryDocumentSnapshot doc in docs) {
         Map<String, dynamic> autodata = doc.data() as Map<String, dynamic>;
@@ -242,9 +231,12 @@ class MyOverviewsState extends State<MyOverviews> {
 
         // Проверка, соответствует ли поле title значению, которое вы ищете
         if (autokey == targetQR) {
-          discriptWidgets = autodata['description'];
+          newDescription = autodata['description'];
         }
       }
+      setState(() {
+        discriptWidgets = newDescription;
+      });
     } catch (e) {
       print("Error qr object page: $e");
     }
@@ -252,18 +244,13 @@ class MyOverviewsState extends State<MyOverviews> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: 1,
-      itemBuilder: (context, index) {
-        return Container(
-          color: Colors.amber,
-          child: Text(
-            discriptWidgets, // Убедиcь, что значение не null
-            style: whiteTextStyle,
-            textAlign: TextAlign.justify,
-          ),
-        );
-      },
+    return Container(
+      color: Colors.amber,
+      child: Text(
+        discriptWidgets ?? '',
+        style: whiteTextStyle,
+        textAlign: TextAlign.justify,
+      ),
     );
   }
 }
@@ -277,26 +264,6 @@ TextEditingController keyword = TextEditingController();
 
 class _MySearchState extends State<mySearch> {
   @override
-  // void initState() {
-  //   super.initState();
-  //   keywordAsyncFunction(keyword.text);
-  // }
-
-  // late List<TodoModel> resList = [];
-  // Future<void> keywordAsyncFunction(String keyword) async {
-  //   print("selectedKey1 $keyword");
-  //   resList.clear(); // Очистите массив перед началом операций
-  //   Future<List<TodoModel>> result = TodoRepository().searchDB(keyword);
-  //   List<TodoModel> resultList = await result; // Дождитесь завершения Future
-  //   for (int i = 0; i < resultList.length; i++) {
-  //     if (resultList[i].title.contains(keyword)) {
-  //       resList.add(resultList[i]);
-  //     }
-  //   }
-  //   print("resultList $resList");
-  //   print("resultList length ${resList.length}");
-  // }
-
   String imageUrl = 'lib/assets/images/backgroundImages.jpg';
 
   @override
@@ -366,8 +333,8 @@ class MyTextCont extends StatefulWidget {
 
 class MyTextContState extends State<MyTextCont> {
   void initState() {
-    qrKeysFirebase(); // Загрузите ключи из Firebase
     super.initState();
+    qrKeysFirebase(); // Загрузите ключи из Firebase
   }
 
   var collRef = FirebaseFirestore.instance.collection('data');
@@ -378,6 +345,8 @@ class MyTextContState extends State<MyTextCont> {
     try {
       QuerySnapshot querySnapshot = await collRef.get();
       List<QueryDocumentSnapshot> docs = querySnapshot.docs;
+      String newDescription =
+          ""; // Создаем новую переменную для обновления описания
 
       for (QueryDocumentSnapshot doc in docs) {
         Map<String, dynamic> autodata = doc.data() as Map<String, dynamic>;
@@ -385,9 +354,12 @@ class MyTextContState extends State<MyTextCont> {
 
         // Проверка, соответствует ли поле title значению, которое вы ищете
         if (autokey == targetQR) {
-          textWidgets = autodata['title'];
+          newDescription = autodata['title'];
         }
       }
+      setState(() {
+        textWidgets = newDescription;
+      });
     } catch (e) {
       print("Error qr object page: $e");
     }
@@ -428,18 +400,19 @@ class MyPhotoCont extends StatefulWidget {
 
 class _MyPhotoContState extends State<MyPhotoCont> {
   void initState() {
-    qrKeysFirebase(); // Загрузите ключи из Firebase
     super.initState();
+    qrKeysFirebase(); // Загрузите ключи из Firebase
   }
 
   var collRef = FirebaseFirestore.instance.collection('data');
-
   String photoWidgets = "";
+
   Future<void> qrKeysFirebase() async {
     String targetQR = widget.selectedKey; // Значение, которое вы ищете
     try {
       QuerySnapshot querySnapshot = await collRef.get();
       List<QueryDocumentSnapshot> docs = querySnapshot.docs;
+      String newDescription = "";
 
       for (QueryDocumentSnapshot doc in docs) {
         Map<String, dynamic> autodata = doc.data() as Map<String, dynamic>;
@@ -447,9 +420,12 @@ class _MyPhotoContState extends State<MyPhotoCont> {
 
         // Проверка, соответствует ли поле title значению, которое вы ищете
         if (autokey == targetQR) {
-          photoWidgets = autodata['filephotopath'];
+          newDescription = autodata['filephotopath'];
         }
       }
+      setState(() {
+        photoWidgets = newDescription;
+      });
     } catch (e) {
       print("Error qr object page: $e");
     }

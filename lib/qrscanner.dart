@@ -45,18 +45,18 @@ class _QrScannerState extends State<QrScanner> {
               color: isFlashOn ? Colors.blue : Colors.grey,
             ),
           ),
-          IconButton(
-            onPressed: () {
-              setState(() {
-                isFrontCamera = !isFrontCamera;
-              });
-              controller.switchCamera();
-            },
-            icon: Icon(
-              Icons.camera_front,
-              color: isFrontCamera ? Colors.blue : Colors.grey,
-            ),
-          ),
+          // IconButton(
+          //   onPressed: () {
+          //     setState(() {
+          //       isFrontCamera = !isFrontCamera;
+          //     });
+          //     controller.switchCamera();
+          //   },
+          //   icon: Icon(
+          //     Icons.camera_front,
+          //     color: isFrontCamera ? Colors.blue : Colors.grey,
+          //   ),
+          // ),
         ],
         iconTheme: IconThemeData(color: Colors.black87),
         centerTitle: true,
@@ -95,47 +95,34 @@ class _QrScannerState extends State<QrScanner> {
               child: Stack(
                 children: [
                   MobileScanner(
-                      // controller: controller,
-                      controller: MobileScannerController(
-                        detectionSpeed: DetectionSpeed.normal,
-                        facing: CameraFacing.back,
-                        torchEnabled: true,
-                        autoStart: true,
-                      ),
-                      // allowDuplicates: true,
-                      onDetect: (capture) {
-                        final List<Barcode> barcodes = capture.barcodes;
-                        for (final barcode in barcodes) {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text('Barcode found! ${barcode.rawValue}'),
-                          ));
+                    // controller: controller,
+                    controller: MobileScannerController(
+                      detectionSpeed: DetectionSpeed.normal,
+                      facing: CameraFacing.back,
+                      torchEnabled: false,
+                      autoStart: true,
+                    ),
+                    // allowDuplicates: true,
+                    onDetect: (capture) {
+                      final List<Barcode> barcodes = capture.barcodes;
+                      for (final barcode in barcodes) {
+                        if (!isScanComplated) {
+                          String code = barcode.rawValue ?? '---';
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => QRobjectpage(
+                                  closeScreen: closeScreen, selectedKey: code),
+                            ),
+                          );
+                          isScanComplated = true;
                         }
+                        // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        //   content: Text('Barcode found! ${barcode.rawValue}'),
+                        // ));
                       }
-                      // onDetect: (barcode, args) {
-                      //   if (isScanComplated) {
-                      //     String code = barcode.rawValue ?? '---';
-                      //     isScanComplated = true;
-                      //     // Navigator.push(
-                      //     //   context,
-                      //     //   MaterialPageRoute(
-                      //     //     builder: (context) => ResultScreen(
-                      //     //       closeScreen: closeScreen,
-                      //     //       code: code,
-                      //     //     ),
-                      //     //   ),
-                      //     // );
-                      //     Navigator.push(
-                      //       context,
-                      //       MaterialPageRoute(
-                      //         builder: (context) => QRobjectpage(
-                      //           closeScreen: closeScreen,
-                      //           selectedKey: code,
-                      //         ),
-                      //       ),
-                      //     );
-                      //   }
-                      // },
-                      ),
+                    },
+                  ),
                   const QRScannerOverlay(overlayColour: bgColor),
                 ],
               ),
