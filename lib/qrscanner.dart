@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mausoleum/result_screen.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -94,33 +95,47 @@ class _QrScannerState extends State<QrScanner> {
               child: Stack(
                 children: [
                   MobileScanner(
-                    controller: controller,
-                    allowDuplicates: true,
-                    onDetect: (barcode, args) {
-                      if (isScanComplated) {
-                        String code = barcode.rawValue ?? '---';
-                        isScanComplated = true;
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ResultScreen(
-                              closeScreen: closeScreen,
-                              code: code,
-                            ),
-                          ),
-                        );
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) => QRobjectpage(
-                        //       closeScreen: closeScreen,
-                        //       selectedKey: code,
-                        //     ),
-                        //   ),
-                        // );
+                      // controller: controller,
+                      controller: MobileScannerController(
+                        detectionSpeed: DetectionSpeed.normal,
+                        facing: CameraFacing.back,
+                        torchEnabled: true,
+                        autoStart: true,
+                      ),
+                      // allowDuplicates: true,
+                      onDetect: (capture) {
+                        final List<Barcode> barcodes = capture.barcodes;
+                        for (final barcode in barcodes) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text('Barcode found! ${barcode.rawValue}'),
+                          ));
+                        }
                       }
-                    },
-                  ),
+                      // onDetect: (barcode, args) {
+                      //   if (isScanComplated) {
+                      //     String code = barcode.rawValue ?? '---';
+                      //     isScanComplated = true;
+                      //     // Navigator.push(
+                      //     //   context,
+                      //     //   MaterialPageRoute(
+                      //     //     builder: (context) => ResultScreen(
+                      //     //       closeScreen: closeScreen,
+                      //     //       code: code,
+                      //     //     ),
+                      //     //   ),
+                      //     // );
+                      //     Navigator.push(
+                      //       context,
+                      //       MaterialPageRoute(
+                      //         builder: (context) => QRobjectpage(
+                      //           closeScreen: closeScreen,
+                      //           selectedKey: code,
+                      //         ),
+                      //       ),
+                      //     );
+                      //   }
+                      // },
+                      ),
                   const QRScannerOverlay(overlayColour: bgColor),
                 ],
               ),

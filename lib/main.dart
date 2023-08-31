@@ -46,7 +46,7 @@ class MyApp extends StatelessWidget {
           Theme.of(context).textTheme,
         ),
       ),
-      home: takeSearchFirebasePage(keyword: keyword.text,),
+      home: HomePage(),
     );
   }
 }
