@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:mausoleum/videorepo/screens/splash_screen.dart';
-import 'package:todo_repo/todo_repo.dart';
-import 'package:todo_models/todo_model.dart';
-import 'package:mausoleum/pages/editPages.dart';
 import 'package:mausoleum/pages/homepage.dart';
-import 'package:mausoleum/pages/takeSearchPage.dart';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mausoleum/pages/editFirebasePages.dart';
 import 'package:mausoleum/pages/takeSearchFirebasepage.dart';
-import 'package:mausoleum/qrscanner.dart';
+import 'package:mausoleum/pages/qrscanner.dart';
 
 // Overview dataInform = Overview();
 
@@ -25,9 +19,6 @@ class ObjectFirebasePage extends StatefulWidget {
 }
 
 class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
-  // QueryDocumentSnapshot<Map<String, dynamic>>? editMydb;
-  // QueryDocumentSnapshot<Map<String, dynamic>>? firebaseMyId;
-  //List<QueryDocumentSnapshot<Map<String, dynamic>>>? datafirebase;
   final whiteTextStyle = TextStyle(color: Colors.white, fontSize: 24);
 
   @override
@@ -208,27 +199,6 @@ class MyOverviewsState extends State<MyOverviews> {
   }
 }
 
-// class ScreenInit extends StatelessWidget {
-//   const ScreenInit({super.key});
-//   @override
-//   Widget build(BuildContext context) {
-//     return ScreenUtilInit(
-//       designSize: const Size(360, 720),
-//       minTextAdapt: true,
-//       splitScreenMode: true,
-//       builder: (context, widget) => MaterialApp(
-//           debugShowCheckedModeBanner: false,
-//           home: const SplashScreen(),
-//           builder: (context, widget) {
-//             ScreenUtil.registerToBuild(context);
-//             return MediaQuery(
-//                 data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
-//                 child: widget!);
-//           }),
-//     );
-//   }
-// }
-
 class mySearch extends StatefulWidget {
   @override
   State<mySearch> createState() => _MySearchState();
@@ -238,26 +208,7 @@ TextEditingController keyword = TextEditingController();
 
 class _MySearchState extends State<mySearch> {
   @override
-  // void initState() {
-  //   super.initState();
-  //   keywordAsyncFunction(keyword.text);
-  // }
-
-  // late List<TodoModel> resList = [];
-  // Future<void> keywordAsyncFunction(String keyword) async {
-  //   print("selectedKey1 $keyword");
-  //   resList.clear(); // Очистите массив перед началом операций
-  //   Future<List<TodoModel>> result = TodoRepository().searchDB(keyword);
-  //   List<TodoModel> resultList = await result; // Дождитесь завершения Future
-  //   for (int i = 0; i < resultList.length; i++) {
-  //     if (resultList[i].title.contains(keyword)) {
-  //       resList.add(resultList[i]);
-  //     }
-  //   }
-  //   print("resultList $resList");
-  //   print("resultList length ${resList.length}");
-  // }
-
+ 
   String imageUrl = 'lib/assets/images/backgroundImages.jpg';
 
   @override
@@ -556,53 +507,3 @@ class _FavoriteWidjetState extends State<FavoriteWidjet> {
     });
   }
 }
-
-// @override
-// void initState() {
-//   super.initState();
-//   fetchKeysFirebase(); // Загрузите ключи из Firebase
-// }
-
-// Future<void> fetchKeysFirebase() async {
-//   QuerySnapshot<Map<String, dynamic>> snapshot =
-//       await FirebaseFirestore.instance.collection('data').get();
-//   datafirebase = snapshot.docs.toList();
-
-//   // for (int i = 0; i < datafirebase!.length; i++) {
-//   //   if (widget.selectedKey == datafirebase![i]['title']) {
-//   //     editMydb = datafirebase![i];
-//   //     firebaseMyId = datafirebase![i]['id'];
-//   //     break;
-//   //   }
-//   // }
-//   setState(() {
-//     fetchKeysFirebase();
-//   });
-// }
-
-// TodoModel editRes = TodoModel(
-//   letId: 0,
-//   title: "",
-//   description: "",
-//   filephotopath: "",
-// );
-
-// int resultID = 0;
-// Future<void> asyncFunction(String selectedKey) async {
-//   print("selectedKey $selectedKey");
-//   Future<List<TodoModel>> result = TodoRepository().searchDB(selectedKey);
-//   List<TodoModel> resultList = await result; // Дождитесь завершения Future
-
-//   for (int i = 0; i < resultList.length; i++) {
-//     print("resultList.length ${resultList.length}");
-//     if (resultList[i].title == selectedKey) {
-//       setState(() {
-//         resultID = resultID + resultList[i].letId;
-//         editRes = resultList[i];
-//       });
-//       print(resultID);
-//     }
-//   }
-//   print("selectedId info ${editRes}");
-//   print("resultID info $resultID");
-// }

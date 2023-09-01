@@ -14,7 +14,6 @@ dependencies:
     sdk: flutter
   http: ^1.1.0  
   path: ^1.8.3
-  sqflite: ^2.3.0
   path_provider: ^2.0.15
   synchronized: ^3.1.0  
   cupertino_icons: ^1.0.2
@@ -30,12 +29,7 @@ dependencies:
   water_drop_nav_bar: ^2.2.0+5
   file_manager: ^1.0.2
   flutter_video_info: ^1.3.1
-  file_picker: ^5.3.3
-  
-  todo_models:
-   path: packages/todo_models
-  todo_repo:
-   path: packages/todo_repo
+  file_picker: ^5.3.3 
   firebase_auth: ^4.7.3
   firebase_storage: ^11.2.6
   firebase_messaging: ^14.6.6

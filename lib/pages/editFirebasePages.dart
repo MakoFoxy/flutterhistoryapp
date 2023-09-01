@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mausoleum/pages/homepage.dart';
-import 'package:todo_models/todo_model.dart';
-import 'package:todo_repo/todo_repo.dart';
-import 'package:todo_services/data_models/dbtodo.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class EditFirebasePage extends StatefulWidget {
@@ -251,39 +246,3 @@ class EditFirebasePageState extends State<EditFirebasePage> {
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-  // QuerySnapshot querySnapshot = await collRef
-                  //     .where('title', isEqualTo: teTitle.text)
-                  //     .get();
-
-                  // try {
-                  //   // Если найдены соответствующие документы
-                  //   if (querySnapshot.docs.isNotEmpty) {
-                  //     for (QueryDocumentSnapshot docSnapshot
-                  //         in querySnapshot.docs) {
-                  //       newAutoId =
-                  //           docSnapshot.id; // Получение ключа документа
-                  //       print('Ключ документа: $newAutoId');
-
-                  //       print(
-                  //           'Данные документа $newAutoId успешно обновлены.');
-                  //     }
-                  //   } else {
-                  //     print('Документы с указанными условиями не найдены.');
-                  //   }
-                  // } catch (error) {
-                  //   print('Ошибка: $error');
-                  // }
-
-                  // print("newAutoId $newAutoId");

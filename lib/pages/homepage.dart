@@ -1,33 +1,16 @@
-import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:mausoleum/components/sidebarmenu.dart';
-import 'package:mausoleum/models/overview.dart';
 import 'package:flutter/material.dart';
-import 'package:mausoleum/models/overview.dart';
-import 'package:mausoleum/models/generalwidgets.dart';
-import 'package:mausoleum/models/createpost/createpostscree.dart';
-import 'package:mausoleum/objectpage.dart';
-import 'package:mausoleum/qrscanner.dart';
-import 'package:todo_repo/todo_repo.dart';
-import 'package:mausoleum/pages/editPages.dart';
-import 'package:todo_models/todo_model.dart';
-import 'package:todo_services/data_models/dbtodo.dart';
-import 'package:mausoleum/models/generalwidgets.dart';
+import 'package:mausoleum/pages/createpostscree.dart';
+import 'package:mausoleum/pages/qrscanner.dart';
 import 'package:mausoleum/pages/firebaseobjectpage.dart';
 
 class HomePage extends StatefulWidget {
-  // List<TodoModel> resulterList;
-  // HomePage({required this.resulterList});
-
   @override
-  //State<HomePage> createState() => AppHomePage(resulterList: resulterList);
   State<HomePage> createState() => AppHomePage();
 }
 
 class AppHomePage extends State<HomePage> {
   String imageUrl = 'lib/assets/images/backgroundImages.jpg';
-  // List<TodoModel> resulterList; // Добавьте это объявление
-  // AppHomePage({required this.resulterList});
 
   @override
   final whiteTexstStyle = TextStyle(color: Colors.white, fontSize: 24);
@@ -75,7 +58,6 @@ class AppHomePage extends State<HomePage> {
                   ),
                 ),
                 Container(
-                  //height: 118,
                   padding: const EdgeInsets.all(0),
                   child: MenuTile(),
                 ),
@@ -89,36 +71,14 @@ class AppHomePage extends State<HomePage> {
 }
 
 class MyHomePage extends StatefulWidget {
-  // List<TodoModel> resulterList; // Добавьте это поле
   final DecorationImage backgroundImage;
-  // MyHomePage(
-  //     {required this.resulterList, required this.backgroundImage, Key? key})
-  //     : super(key: key);
   MyHomePage({required this.backgroundImage, Key? key}) : super(key: key);
 
   @override
-  //HomePageState createState() => HomePageState(resulterList: resulterList);
   HomePageState createState() => HomePageState();
 }
 
-//TextEditingController keyword = TextEditingController();
-//TextEditingController firebasekeyword = TextEditingController();
-
 class HomePageState extends State<MyHomePage> {
-  // TextEditingController keyword = TextEditingController();
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   keyword = TextEditingController(); // Инициализируем контроллер
-  // }
-
-  // @override
-  // void dispose() {
-  //   keyword.dispose(); // Освобождаем контроллер при удалении виджета
-  //   super.dispose();
-  // }
-
   @override
   final whiteTexstStyle = TextStyle(color: Colors.white, fontSize: 24);
 
@@ -139,118 +99,11 @@ class HomePageState extends State<MyHomePage> {
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 5),
-          child: FutureBuilder(
-              // future: keyword.text.length > 0
-              //     ? TodoRepository().searchDB(keyword.text)
-              //     : TodoRepository().getAllTodo(),
-              builder: (context, snapshot) {
-            // if (snapshot.connectionState != ConnectionState.done) {
-            //   return Center(
-            //     child: CircularProgressIndicator(),
-            //   );
-            // } else if (snapshot.hasError) {
-            //   // Обработка ошибок при загрузке данных.
-            //   return Text("Ошибка при загрузке данных");
-            // } else if (!snapshot.hasData) {
-            //   return Text("Нет данных");
-            // } else {
-            // Данные успешно загружены, отображаем их.
-            // List<TodoModel> data = snapshot.data as List<TodoModel>;
-            // return Column(
-            //   children: [
-            //     Container(
-            //       width: double.infinity,
-            //       height: 40,
-            //       decoration: BoxDecoration(
-            //         color: Colors.white,
-            //         borderRadius: BorderRadius.circular(15),
-            //       ),
-            //       child: Center(
-            //         child: TextField(
-            //           controller: keyword,
-            //           onSubmitted: (value) {
-            //             setState(() {
-            //               // ignore: unrelated_type_equality_checks
-            //               keyword.text = value;
-            //             });
-            //           },
-            //           decoration: InputDecoration(
-            //             prefixIcon: IconButton(
-            //               icon: const Icon(Icons.search),
-            //               onPressed: () {
-            //                 setState(() {
-            //                   TodoRepository().searchDB(keyword.text);
-            //                 });
-            //               },
-            //             ),
-            //             suffixIcon: IconButton(
-            //               icon: const Icon(Icons.clear),
-            //               onPressed: () {
-            //                 keyword.text = '';
-            //               },
-            //             ),
-            //             hintText: 'Іздеу...',
-            //             border: InputBorder.none,
-            //           ),
-            //         ),
-            //       ),
-            //     ),
-            //     Mausoleum(),
-            //     Expanded(
-            //       child: ListView.separated(
-            //         itemCount: data.length,
-            //         separatorBuilder: (context, index) =>
-            //             SizedBox(height: 10),
-            //         itemBuilder: (context, index) {
-            //           return Container(
-            //             margin: const EdgeInsets.only(left: 50, right: 50),
-            //             padding: const EdgeInsets.symmetric(vertical: 5),
-            //             child: ElevatedButton(
-            //               onPressed: () {
-            //                 // Обработчик нажатия кнопки с ключом
-            //                 print(
-            //                     'Нажата кнопка с ключом: ${data[index].letId}');
-            //                 Navigator.push(
-            //                   context,
-            //                   MaterialPageRoute(
-            //                     builder: (context) => ObjectPage(
-            //                         selectedId: data[index].letId,
-            //                         selectedKey: data[index].title),
-            //                   ),
-            //                 );
-            //               },
-            //               style: ElevatedButton.styleFrom(
-            //                 primary: Colors.amber.withOpacity(0.8),
-            //                 padding: const EdgeInsets.symmetric(
-            //                   vertical: 10,
-            //                   horizontal: 30,
-            //                 ),
-            //                 shape: RoundedRectangleBorder(
-            //                   borderRadius: BorderRadius.circular(30),
-            //                 ),
-            //               ),
-            //               child: Text(
-            //                 // resulterList != null
-            //                 //     ? resulterList[index].title
-            //                 data[index].title,
-            //                 //  ? data[index].title
-            //                 // : widget.resulterList[index].title,
-            //                 style: colorTextStyle,
-            //               ),
-            //             ),
-            //           );
-            //         },
-            //       ),
-            //     ),
+          child: FutureBuilder(builder: (context, snapshot) {
             return FirebaseSearch();
-            //   ],
-            // );
           }),
         ),
       ),
-      //     ),
-      //   ),
-      // ),
       floatingActionButton: Stack(
         children: [
           Positioned(
@@ -275,9 +128,7 @@ class HomePageState extends State<MyHomePage> {
             child: FloatingActionButton(
               heroTag: "delete",
               onPressed: () async {
-                // setState(() {
-                //   TodoRepository().deleteAlltables();
-                // });
+            
                 var collRef = FirebaseFirestore.instance.collection('data');
                 QuerySnapshot querySnapshot = await collRef.get();
                 List<QueryDocumentSnapshot> docs = querySnapshot.docs;
@@ -285,9 +136,7 @@ class HomePageState extends State<MyHomePage> {
                 for (QueryDocumentSnapshot doc in docs) {
                   autokey.add(doc.id);
                 }
-                // for(int i = 0; i < autokey.length; i++) {
-                //   collRef.doc(autokey[i]).delete();
-                // }
+              
                 autokey.forEach((element) {
                   collRef.doc(element).delete();
                 });
@@ -318,7 +167,6 @@ class HomePageState extends State<MyHomePage> {
 }
 
 class FirebaseSearch extends StatefulWidget {
-  // const FirebaseSearch({Key? key}) : super(key: key);
   @override
   FirebaseSearchWidget createState() => FirebaseSearchWidget();
 }
@@ -331,10 +179,8 @@ class FirebaseSearchWidget extends State<FirebaseSearch> {
 
   @override
   void initState() {
-    // getClientStream();
     keyword.addListener(_onSearchChanged);
     super.initState();
-    // mapdata = mapOver.mapdatas;
   }
 
   _onSearchChanged() {
@@ -591,12 +437,7 @@ class MenuTileWidget extends State<MenuTile> {
       child: Container(
         // padding: const EdgeInsets.only(left: 0, right: 0),
         child: Column(
-          children: <Widget>[
-            // Container(
-            //   color: Colors.amber[500],
-            //   margin: const EdgeInsets.all(0),
-            //   child: _buildRating(),
-            // ),
+          children: <Widget>[      
             SizedBox(height: 0),
             Card(
               elevation: 5,
@@ -717,109 +558,3 @@ class _FavoriteWidjetState extends State<FavoriteWidjet> {
     });
   }
 }
-
-
-// class sqfliteSearch extends StatefulWidget {
-//   List<TodoModel> data; // Добавьте поле для хранения списка data
-
-//   // Конструктор для передачи данных
-//   sqfliteSearch({required this.data});
-//   @override
-//   State<sqfliteSearch> createState() => sqfliteSearchState();
-// }
-
-// class sqfliteSearchState extends State<sqfliteSearch> {
-//   @override
-//   final colorTextStyle = TextStyle(color: Colors.white, fontSize: 24);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Column(
-//       children: [
-//         Container(
-//           width: double.infinity,
-//           height: 40,
-//           decoration: BoxDecoration(
-//             color: Colors.white,
-//             borderRadius: BorderRadius.circular(15),
-//           ),
-//           child: Center(
-//             child: TextField(
-//               controller: keyword,
-//               onSubmitted: (value) {
-//                 setState(() {
-//                   // ignore: unrelated_type_equality_checks
-//                   keyword.text = value;
-//                 });
-//               },
-//               decoration: InputDecoration(
-//                 prefixIcon: IconButton(
-//                   icon: const Icon(Icons.search),
-//                   onPressed: () {
-//                     setState(() {
-//                       TodoRepository().searchDB(keyword.text);
-//                     });
-//                   },
-//                 ),
-//                 suffixIcon: IconButton(
-//                   icon: const Icon(Icons.clear),
-//                   onPressed: () {
-//                     keyword.text = '';
-//                   },
-//                 ),
-//                 hintText: 'Іздеу...',
-//                 border: InputBorder.none,
-//               ),
-//             ),
-//           ),
-//         ),
-//         Mausoleum(),
-//         Expanded(
-//           child: ListView.separated(
-//             itemCount: widget.data.length,
-//             separatorBuilder: (context, index) => SizedBox(height: 10),
-//             itemBuilder: (context, index) {
-//               return Container(
-//                 margin: const EdgeInsets.only(left: 50, right: 50),
-//                 padding: const EdgeInsets.symmetric(vertical: 5),
-//                 child: ElevatedButton(
-//                   onPressed: () {
-//                     // Обработчик нажатия кнопки с ключом
-//                     print(
-//                         'Нажата кнопка с ключом: ${widget.data[index].letId}');
-//                     Navigator.push(
-//                       context,
-//                       MaterialPageRoute(
-//                         builder: (context) => ObjectPage(
-//                             selectedId: widget.data[index].letId,
-//                             selectedKey: widget.data[index].title),
-//                       ),
-//                     );
-//                   },
-//                   style: ElevatedButton.styleFrom(
-//                     primary: Colors.amber.withOpacity(0.8),
-//                     padding: const EdgeInsets.symmetric(
-//                       vertical: 10,
-//                       horizontal: 30,
-//                     ),
-//                     shape: RoundedRectangleBorder(
-//                       borderRadius: BorderRadius.circular(30),
-//                     ),
-//                   ),
-//                   child: Text(
-//                     // resulterList != null
-//                     //     ? resulterList[index].title
-//                     widget.data[index].title,
-//                     //  ? data[index].title
-//                     // : widget.resulterList[index].title,
-//                     style: colorTextStyle,
-//                   ),
-//                 ),
-//               );
-//             },
-//           ),
-//         ),
-//       ],
-//     );
-//   }
-// }

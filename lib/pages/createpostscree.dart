@@ -1,11 +1,7 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:todo_models/todo_model.dart';
-import 'package:todo_repo/todo_repo.dart';
-import 'package:todo_services/data_models/dbtodo.dart';
 import 'dart:io';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CreateHistoryPost extends StatefulWidget {
@@ -157,23 +153,8 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
                 margin: const EdgeInsets.all(15),
                 child: ElevatedButton(
                   onPressed: () async {
-                   // DBtodo dbTodo = DBtodo();
                     CollectionReference collRef =
-                        FirebaseFirestore.instance.collection('data');
-                    // await dbTodo
-                    //     .checkData(); // Получаем уникальное значение letId
-
-                    // var todo = TodoModel(
-                    //   letId: dbTodo.letId,
-                    //   title: teTitle.text,
-                    //   description: teDescription.text,
-                    //   filephotopath: pickedFile!.path!,
-                    // );
-
-                    // TodoRepository().addTodo(todo);
-
-                    // dbTodo.checkData();
-
+                    FirebaseFirestore.instance.collection('data');
                     Map<String, dynamic> data = {
                       //'id': dbTodo.letId,
                       'title': teTitle.text,

@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:mausoleum/videorepo/screens/splash_screen.dart';
-import 'package:todo_repo/todo_repo.dart';
-import 'package:todo_models/todo_model.dart';
-import 'package:mausoleum/pages/editPages.dart';
 import 'package:mausoleum/pages/homepage.dart';
-import 'package:mausoleum/pages/takeSearchPage.dart';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mausoleum/pages/editFirebasePages.dart';
 import 'package:mausoleum/pages/takeSearchFirebasepage.dart';
-import 'package:mausoleum/qrscanner.dart';
+import 'package:mausoleum/pages/qrscanner.dart';
 
 // Overview dataInform = Overview();
 
@@ -29,36 +23,11 @@ class QRobjectpage extends StatefulWidget {
 }
 
 class _QRobjectpageState extends State<QRobjectpage> {
-  // QueryDocumentSnapshot<Map<String, dynamic>>? editMydb;
-  // QueryDocumentSnapshot<Map<String, dynamic>>? firebaseMyId;
-  //List<QueryDocumentSnapshot<Map<String, dynamic>>>? datafirebase;
   final whiteTextStyle = TextStyle(color: Colors.white, fontSize: 24);
 
   @override
   Widget build(BuildContext context) {
-    // fetchKeysFirebase();
     return Scaffold(
-      // appBar: AppBar(
-      //   leading: IconButton(
-      //     onPressed: () {
-      //       widget.closeScreen();
-      //       Navigator.pop(context);
-      //     },
-      //     icon: Icon(
-      //       Icons.arrow_back_ios_new_rounded,
-      //       color: Colors.black87,
-      //     ),
-      //   ),
-      //   centerTitle: true,
-      //   title: const Text(
-      //     "QR Scanner",
-      //     style: TextStyle(
-      //       color: Colors.black87,
-      //       fontWeight: FontWeight.bold,
-      //       letterSpacing: 1,
-      //     ),
-      //   ),
-      // ),
       body: SafeArea(
         child: DefaultTextStyle(
           style: whiteTextStyle,
@@ -288,17 +257,12 @@ class _MySearchState extends State<mySearch> {
             prefixIcon: IconButton(
               icon: const Icon(Icons.search),
               onPressed: () {
-                // setState(() {
-                //   keywordAsyncFunction(keyword.text);
-                // });
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) {
                       if (keyword.text != '') {
-                        return takeSearchFirebasePage(
-                            // resList: resList,
-                            keyword: keyword.text);
+                        return takeSearchFirebasePage(keyword: keyword.text);
                       } else {
                         return HomePage();
                       }
@@ -345,8 +309,7 @@ class MyTextContState extends State<MyTextCont> {
     try {
       QuerySnapshot querySnapshot = await collRef.get();
       List<QueryDocumentSnapshot> docs = querySnapshot.docs;
-      String newDescription =
-          ""; // Создаем новую переменную для обновления описания
+      String newDescription = "";
 
       for (QueryDocumentSnapshot doc in docs) {
         Map<String, dynamic> autodata = doc.data() as Map<String, dynamic>;
@@ -581,24 +544,3 @@ class _FavoriteWidjetState extends State<FavoriteWidjet> {
     });
   }
 }
-
-// class ScreenInit extends StatelessWidget {
-//   const ScreenInit({super.key});
-//   @override
-//   Widget build(BuildContext context) {
-//     return ScreenUtilInit(
-//       designSize: const Size(360, 720),
-//       minTextAdapt: true,
-//       splitScreenMode: true,
-//       builder: (context, widget) => MaterialApp(
-//           debugShowCheckedModeBanner: false,
-//           home: const SplashScreen(),
-//           builder: (context, widget) {
-//             ScreenUtil.registerToBuild(context);
-//             return MediaQuery(
-//                 data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
-//                 child: widget!);
-//           }),
-//     );
-//   }
-// }

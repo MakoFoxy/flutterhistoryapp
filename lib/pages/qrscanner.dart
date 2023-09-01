@@ -1,11 +1,6 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:mausoleum/result_screen.dart';
-import 'package:qr_flutter/qr_flutter.dart';
-import 'package:mausoleum/qrscanner.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:mausoleum/qroverlay.dart';
+import 'package:mausoleum/pages/qroverlay.dart';
 import 'package:mausoleum/pages/qrobjectpage.dart';
 
 const bgColor = Colors.white;
@@ -45,18 +40,6 @@ class _QrScannerState extends State<QrScanner> {
               color: isFlashOn ? Colors.blue : Colors.grey,
             ),
           ),
-          // IconButton(
-          //   onPressed: () {
-          //     setState(() {
-          //       isFrontCamera = !isFrontCamera;
-          //     });
-          //     controller.switchCamera();
-          //   },
-          //   icon: Icon(
-          //     Icons.camera_front,
-          //     color: isFrontCamera ? Colors.blue : Colors.grey,
-          //   ),
-          // ),
         ],
         iconTheme: IconThemeData(color: Colors.black87),
         centerTitle: true,
@@ -116,10 +99,7 @@ class _QrScannerState extends State<QrScanner> {
                             ),
                           );
                           isScanComplated = true;
-                        }
-                        // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        //   content: Text('Barcode found! ${barcode.rawValue}'),
-                        // ));
+                        }                      
                       }
                     },
                   ),
