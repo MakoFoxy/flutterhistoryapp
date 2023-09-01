@@ -34,7 +34,7 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
               children: <Widget>[
                 mySearch(),
                 Container(
-                  height: MediaQuery.of(context).size.height - 163,             
+                  height: MediaQuery.of(context).size.height - 163,
                   child: ListView(
                     children: <Widget>[
                       Column(
@@ -82,24 +82,19 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
               child: const Icon(Icons.create),
             ),
           ),
-          Positioned(
-            left: 60,
-            bottom: 0,
-            child: FloatingActionButton(
-              onPressed: () async {
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => QrScanner(),
-                  ),
-                );
-              },
-              child: const Icon(Icons.qr_code_scanner),
-              mini: true, // Установите mini: true для уменьшения размера кнопки
-              shape: RoundedRectangleBorder(
-                borderRadius:
-                    BorderRadius.circular(15), // Настройте форму кнопки
-              ),
+          FloatingActionButton(
+            onPressed: () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => QrScanner(),
+                ),
+              );
+            },
+            child: const Icon(Icons.qr_code_scanner),
+            mini: true, // Установите mini: true для уменьшения размера кнопки
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15), // Настройте форму кнопки
             ),
           ),
           Padding(
@@ -206,7 +201,6 @@ TextEditingController keyword = TextEditingController();
 
 class _MySearchState extends State<mySearch> {
   @override
- 
   String imageUrl = 'lib/assets/images/backgroundImages.jpg';
 
   @override

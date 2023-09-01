@@ -108,10 +108,7 @@ class QRobjectpageState extends State<QRobjectpage> {
               child: const Icon(Icons.create),
             ),
           ),
-          Positioned(
-            left: 60,
-            bottom: 0,
-            child: FloatingActionButton(
+          FloatingActionButton(
               onPressed: () async {
                 await Navigator.push(
                   context,
@@ -126,8 +123,7 @@ class QRobjectpageState extends State<QRobjectpage> {
                 borderRadius:
                     BorderRadius.circular(15), // Настройте форму кнопки
               ),
-            ),
-          ),
+            ),        
           Padding(
             padding: const EdgeInsets.only(right: 50.0, bottom: 0.0),
             child: FloatingActionButton(
