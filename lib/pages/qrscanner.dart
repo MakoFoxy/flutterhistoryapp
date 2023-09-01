@@ -57,7 +57,7 @@ class _QrScannerState extends State<QrScanner> {
         padding: EdgeInsets.all(16),
         child: Column(
           children: [
-            Expanded(
+             Expanded(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: const [

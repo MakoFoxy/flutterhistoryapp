@@ -406,10 +406,11 @@ class _MyPhotoContState extends State<MyPhotoCont> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(30),
           ),
-          child: Image.file(
-            File(photoWidgets),
-            fit: BoxFit.cover,
-          ),
+          child: Text('No image'),
+          // child: Image.file(
+          //   File(photoWidgets),
+          //   fit: BoxFit.cover,
+          // ),
         ),
       ),
     );

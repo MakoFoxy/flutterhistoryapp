@@ -10,9 +10,7 @@ class takeSearchFirebasePage extends StatefulWidget {
 
   takeSearchFirebasePage({required this.keyword, Key? key}) : super(key: key);
 
-
   @override
- 
   State<takeSearchFirebasePage> createState() => ApptakeSearchPage();
 }
 
@@ -26,11 +24,10 @@ class ApptakeSearchPage extends State<takeSearchFirebasePage> {
     return Scaffold(
       body: SafeArea(
         child: DefaultTextStyle.merge(
-          //style: whiteTexstStyle,
+          style: whiteTexstStyle,
           child: Container(
-            // color: Colors.white,
-            child: Column(
-              //crossAxisAlignment: CrossAxisAlignment.start,
+            color: Colors.white,
+            child: ListView(             
               children: <Widget>[
                 Container(
                   decoration: BoxDecoration(
@@ -45,7 +42,15 @@ class ApptakeSearchPage extends State<takeSearchFirebasePage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                   ),
                 ),
-                Expanded(              
+                Container(
+                  height: MediaQuery.of(context).size.height - 89,
+                  padding: const EdgeInsets.only(left: 0, right: 0),
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage(imageUrl),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                   child: MyTakePage(
                     keyword: widget.keyword,
                     backgroundImage: DecorationImage(
@@ -77,7 +82,6 @@ class MyTakePage extends StatefulWidget {
   @override
   MyTakePageState createState() => MyTakePageState();
 }
-
 
 class MyTakePageState extends State<MyTakePage> {
   final whiteTexstStyle = TextStyle(color: Colors.white, fontSize: 24);
@@ -131,7 +135,6 @@ class MyTakePageState extends State<MyTakePage> {
             right: 120,
             bottom: 0,
             child: FloatingActionButton(
-              heroTag: "qrscanner",
               onPressed: () async {
                 await Navigator.push(
                   context,
@@ -147,10 +150,7 @@ class MyTakePageState extends State<MyTakePage> {
             left: 20,
             bottom: 0,
             child: FloatingActionButton(
-              onPressed: () async {
-                // setState(() {
-                //   TodoRepository().deleteAlltables();
-                // });
+              onPressed: () async {             
                 var collRef = FirebaseFirestore.instance.collection('data');
                 QuerySnapshot querySnapshot = await collRef.get();
                 List<QueryDocumentSnapshot> docs = querySnapshot.docs;
@@ -248,65 +248,69 @@ class FirebaseSearchWidget extends State<FirebaseSearch> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: [
-          Container(
-            width: double.infinity,
-            height: 40,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(15),
-            ),
-            child: Center(
-              child: TextField(
-                controller: keyword,
-                onSubmitted: (value) {
-                  setState(() {
-                    // ignore: unrelated_type_equality_checks
-                    keyword.text = value;
-                  });
-                },
-                decoration: InputDecoration(
-                  prefixIcon: IconButton(
-                    icon: const Icon(Icons.search),
-                    onPressed: () {
-                      if (keyword.text == '') {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => HomePage(),
-                          ),
-                        );
-                      }
-                      setState(() {
-                        getClientStream();
-                      });
-                    },
-                  ),
-                  suffixIcon: IconButton(
-                    icon: const Icon(Icons.clear),
-                    onPressed: () {
-                      keyword.text = '';
-                    },
-                  ),
-                  hintText: 'Іздеу...',
-                  border: InputBorder.none,
+    return ListView(
+      children: [
+        Container(
+          width: double.infinity,
+          height: 40,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: Center(
+            child: TextField(
+              controller: keyword,
+              onSubmitted: (value) {
+                setState(() {
+                  // ignore: unrelated_type_equality_checks
+                  keyword.text = value;
+                });
+              },
+              decoration: InputDecoration(
+                prefixIcon: IconButton(
+                  icon: const Icon(Icons.search),
+                  onPressed: () {
+                    if (keyword.text == '') {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => HomePage(),
+                        ),
+                      );
+                    }
+                    setState(() {
+                      getClientStream();
+                    });
+                  },
                 ),
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.clear),
+                  onPressed: () {
+                    keyword.text = '';
+                  },
+                ),
+                hintText: 'Іздеу...',
+                border: InputBorder.none,
               ),
             ),
           ),
-          Mausoleum(),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(// Один элемент, ваш streamBuild
-                  children: [
+        ),
+        Mausoleum(),
+        SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context)
+                  .size
+                  .height, // appBarHeight - это высота вашего AppBar
+            ),
+            child: ListView(
+              children: [
                 streamBuild(resultList: resultList),
-              ]),
+              ],
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -339,8 +343,6 @@ class streamBuild extends StatelessWidget {
 
         if (resultList != "") {
           return Column(
-            // Оберните ListView.builder в Expanded
-
             children: resultList.map((data) {
               final doc = data.data() as Map<String, dynamic>;
               return Container(
@@ -433,32 +435,29 @@ class MenuTile extends StatefulWidget {
 class MenuTileWidget extends State<MenuTile> {
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        // padding: const EdgeInsets.only(left: 0, right: 0),
-        child: Column(
-          children: <Widget>[
-            Container(
-              color: Colors.amber[500],
-              margin: const EdgeInsets.all(0),
-              child: _buildRating(),
+    return Container(
+      child: Column(
+        children: <Widget>[
+          // Container(
+          //   color: Colors.amber[500],
+          //   margin: const EdgeInsets.all(0),
+          //   child: _buildRating(),
+          // ),
+          SizedBox(height: 0),
+          Card(
+            elevation: 5,
+            margin: const EdgeInsets.all(0),
+            child: Container(
+              color: Colors.amber,
+              padding: const EdgeInsets.all(10),
+              child: _buildAction(),
             ),
-            SizedBox(height: 0),
-            Card(
-              elevation: 5,
-              margin: const EdgeInsets.all(0),
-              child: Container(
-                color: Colors.amber,
-                padding: const EdgeInsets.all(10),
-                child: _buildAction(),
-              ),
-            ),
-          ],
-        ),
-        decoration: BoxDecoration(
-          color: Color.fromARGB(255, 231, 177, 15),
-          border: Border.all(),
-        ),
+          ),
+        ],
+      ),
+      decoration: BoxDecoration(
+        color: Color.fromARGB(255, 231, 177, 15),
+        border: Border.all(),
       ),
     );
   }

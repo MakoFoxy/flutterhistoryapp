@@ -30,10 +30,11 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
           style: whiteTextStyle,
           child: Container(
             color: Colors.amber,
-            child: Column(
+            child: ListView(
               children: <Widget>[
                 mySearch(),
-                Expanded(
+                Container(
+                  height: MediaQuery.of(context).size.height - 163,             
                   child: ListView(
                     children: <Widget>[
                       Column(
@@ -62,7 +63,6 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
           Padding(
             padding: const EdgeInsets.only(left: 50.0, bottom: 0.0),
             child: FloatingActionButton(
-              heroTag: "editpage",
               onPressed: () async {
                 await Navigator.push(
                   context,
@@ -86,7 +86,6 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
             left: 60,
             bottom: 0,
             child: FloatingActionButton(
-              heroTag: "qrpage",
               onPressed: () async {
                 await Navigator.push(
                   context,
@@ -106,7 +105,6 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
           Padding(
             padding: const EdgeInsets.only(right: 50.0, bottom: 0.0),
             child: FloatingActionButton(
-              heroTag: "homepage",
               onPressed: () async {
                 Navigator.push(
                   context,
@@ -367,10 +365,11 @@ class _MyPhotoContState extends State<MyPhotoCont> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(30),
               ),
-              child: Image.file(
-                File(photoWidgets),
-                fit: BoxFit.cover,
-              ),
+              child: Text('No image'),
+              // Image.file(
+              //   File(photoWidgets),
+              //   fit: BoxFit.cover,
+              // ),
             ),
           ),
         );

@@ -23,8 +23,7 @@ class AppHomePage extends State<HomePage> {
           style: whiteTexstStyle,
           child: Container(
             color: Colors.white,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: ListView(             
               children: <Widget>[
                 Container(
                   decoration: BoxDecoration(
@@ -39,21 +38,20 @@ class AppHomePage extends State<HomePage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                   ),
                 ),
-                Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.only(left: 0, right: 0),
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage(imageUrl),
-                        fit: BoxFit.cover,
-                      ),
+                Container(
+                  height: MediaQuery.of(context).size.height - 89,
+                  padding: const EdgeInsets.only(left: 0, right: 0),
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage(imageUrl),
+                      fit: BoxFit.cover,
                     ),
-                    child: MyHomePage(
-                      //resulterList: resulterList, // Передаем resulterList сюда
-                      backgroundImage: DecorationImage(
-                        image: AssetImage(imageUrl),
-                        fit: BoxFit.cover,
-                      ),
+                  ),
+                  child: MyHomePage(
+                    //resulterList: resulterList, // Передаем resulterList сюда
+                    backgroundImage: DecorationImage(
+                      image: AssetImage(imageUrl),
+                      fit: BoxFit.cover,
                     ),
                   ),
                 ),
@@ -99,9 +97,12 @@ class HomePageState extends State<MyHomePage> {
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 5),
-          child: FutureBuilder(builder: (context, snapshot) {
-            return FirebaseSearch();
-          }),
+          child: FutureBuilder(
+            builder: (context, snapshot) {
+              return FirebaseSearch();
+            },
+            future: Future.delayed(const Duration(seconds: 1)),
+          ),
         ),
       ),
       floatingActionButton: Stack(
@@ -110,7 +111,6 @@ class HomePageState extends State<MyHomePage> {
             right: 0,
             bottom: 0,
             child: FloatingActionButton(
-              heroTag: "create",
               onPressed: () async {
                 await Navigator.push(
                   context,
@@ -126,9 +126,7 @@ class HomePageState extends State<MyHomePage> {
             left: 20,
             bottom: 0,
             child: FloatingActionButton(
-              heroTag: "delete",
               onPressed: () async {
-            
                 var collRef = FirebaseFirestore.instance.collection('data');
                 QuerySnapshot querySnapshot = await collRef.get();
                 List<QueryDocumentSnapshot> docs = querySnapshot.docs;
@@ -136,7 +134,7 @@ class HomePageState extends State<MyHomePage> {
                 for (QueryDocumentSnapshot doc in docs) {
                   autokey.add(doc.id);
                 }
-              
+
                 autokey.forEach((element) {
                   collRef.doc(element).delete();
                 });
@@ -148,7 +146,6 @@ class HomePageState extends State<MyHomePage> {
             right: 120,
             bottom: 0,
             child: FloatingActionButton(
-              heroTag: "qrscanner",
               onPressed: () async {
                 await Navigator.push(
                   context,
@@ -233,7 +230,7 @@ class FirebaseSearchWidget extends State<FirebaseSearch> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return ListView(
       children: [
         Container(
           width: double.infinity,
@@ -273,12 +270,18 @@ class FirebaseSearchWidget extends State<FirebaseSearch> {
           ),
         ),
         Mausoleum(),
-        Expanded(
-          child: SingleChildScrollView(
-            child: Column(// Один элемент, ваш streamBuild
-                children: [
-              streamBuild(resultList: resultList),
-            ]),
+        SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context)
+                  .size
+                  .height, // appBarHeight - это высота вашего AppBar
+            ),
+            child: ListView(
+              children: [
+                streamBuild(resultList: resultList),
+              ],
+            ),
           ),
         ),
       ],
@@ -314,7 +317,6 @@ class streamBuild extends StatelessWidget {
 
         if (resultList != "") {
           return Column(
-            // Оберните ListView.builder в Expanded
             children: resultList.map((data) {
               final doc = data.data() as Map<String, dynamic>;
               return Container(
@@ -323,7 +325,7 @@ class streamBuild extends StatelessWidget {
                     vertical: 5,
                   ),
                   child: Hero(
-                    tag: doc['title'], // Use the title as the heroTag
+                    tag: 'title_${doc['title']}',
                     child: ElevatedButton(
                       onPressed: () {
                         Navigator.push(
@@ -358,7 +360,7 @@ class streamBuild extends StatelessWidget {
                   vertical: 5,
                 ),
                 child: Hero(
-                  tag: doc['title'], // Use the title as the heroTag
+                  tag: 'title_${doc['title']}', 
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.push(
@@ -433,27 +435,24 @@ class MenuTile extends StatefulWidget {
 class MenuTileWidget extends State<MenuTile> {
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        // padding: const EdgeInsets.only(left: 0, right: 0),
-        child: Column(
-          children: <Widget>[      
-            SizedBox(height: 0),
-            Card(
-              elevation: 5,
-              margin: const EdgeInsets.all(0),
-              child: Container(
-                color: Color.fromARGB(255, 67, 83, 68),
-                padding: const EdgeInsets.all(10),
-                child: _buildAction(),
-              ),
+    return Container(
+      child: Column(
+        children: <Widget>[
+          SizedBox(height: 0),
+          Card(
+            elevation: 5,
+            margin: const EdgeInsets.all(0),
+            child: Container(
+              color: Color.fromARGB(255, 67, 83, 68),
+              padding: const EdgeInsets.all(10),
+              child: _buildAction(),
             ),
-          ],
-        ),
-        decoration: BoxDecoration(
-          color: Color.fromARGB(255, 67, 83, 68),
-          border: Border.all(),
-        ),
+          ),
+        ],
+      ),
+      decoration: BoxDecoration(
+        color: Color.fromARGB(255, 67, 83, 68),
+        border: Border.all(),
       ),
     );
   }
