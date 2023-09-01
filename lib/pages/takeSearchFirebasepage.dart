@@ -6,28 +6,31 @@ import 'package:mausoleum/pages/firebaseobjectpage.dart';
 import 'package:mausoleum/pages/qrscanner.dart';
 
 class takeSearchFirebasePage extends StatefulWidget {
-  late String keyword;
+  final String mykeyword;
 
-  takeSearchFirebasePage({required this.keyword, Key? key}) : super(key: key);
+  takeSearchFirebasePage({required this.mykeyword});
 
   @override
-  State<takeSearchFirebasePage> createState() => ApptakeSearchPage();
+  State<takeSearchFirebasePage> createState() => _ApptakeSearchPage();
 }
 
-class ApptakeSearchPage extends State<takeSearchFirebasePage> {
+class _ApptakeSearchPage extends State<takeSearchFirebasePage> {
   final whiteTexstStyle = TextStyle(color: Colors.white, fontSize: 24);
 
   String imageUrl = 'lib/assets/images/backgroundImages.jpg';
-
   @override
   Widget build(BuildContext context) {
+    String mykeyword = widget.mykeyword;    
+
+    print('keywordnowright $keyword');
+
     return Scaffold(
       body: SafeArea(
         child: DefaultTextStyle.merge(
           style: whiteTexstStyle,
           child: Container(
             color: Colors.white,
-            child: ListView(             
+            child: ListView(
               children: <Widget>[
                 Container(
                   decoration: BoxDecoration(
@@ -52,7 +55,7 @@ class ApptakeSearchPage extends State<takeSearchFirebasePage> {
                     ),
                   ),
                   child: MyTakePage(
-                    keyword: widget.keyword,
+                    keyword: mykeyword,
                     backgroundImage: DecorationImage(
                       image: AssetImage(imageUrl),
                       fit: BoxFit.cover,
@@ -102,14 +105,14 @@ class MyTakePageState extends State<MyTakePage> {
                 fit: BoxFit.cover,
               ),
             ),
-          ),
-          Positioned.fill(
-            child: Container(
-              color: Color.fromRGBO(0, 0, 0, 0), // Прозрачный цвет фона
-              padding: const EdgeInsets.symmetric(),
-              child: FutureBuilder(builder: (context, snapshot) {
-                return FirebaseSearch(keyword: widget.keyword);
-              }),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 5),
+              child: FutureBuilder(
+                builder: (context, snapshot) {
+                  return FirebaseSearch(keyword: widget.keyword);
+                },
+                future: Future.delayed(const Duration(seconds: 1)),
+              ),
             ),
           ),
         ],
@@ -150,7 +153,7 @@ class MyTakePageState extends State<MyTakePage> {
             left: 20,
             bottom: 0,
             child: FloatingActionButton(
-              onPressed: () async {             
+              onPressed: () async {
                 var collRef = FirebaseFirestore.instance.collection('data');
                 QuerySnapshot querySnapshot = await collRef.get();
                 List<QueryDocumentSnapshot> docs = querySnapshot.docs;

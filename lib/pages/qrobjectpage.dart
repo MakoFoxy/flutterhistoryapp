@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:mausoleum/pages/homepage.dart';
-import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mausoleum/pages/editFirebasePages.dart';
 import 'package:mausoleum/pages/takeSearchFirebasepage.dart';
@@ -33,10 +32,11 @@ class _QRobjectpageState extends State<QRobjectpage> {
           style: whiteTextStyle,
           child: Container(
             color: Colors.amber,
-            child: Column(
+            child: ListView(
               children: <Widget>[
                 mySearch(),
-                Expanded(
+                Container(
+                  height: MediaQuery.of(context).size.height - 163,
                   child: ListView(
                     children: <Widget>[
                       Column(
@@ -262,13 +262,15 @@ class _MySearchState extends State<mySearch> {
                   MaterialPageRoute(
                     builder: (context) {
                       if (keyword.text != '') {
-                        return takeSearchFirebasePage(keyword: keyword.text);
+                       String mykeyword = keyword.text;
+                        return takeSearchFirebasePage(mykeyword: mykeyword);
                       } else {
                         return HomePage();
                       }
                     },
                   ),
                 );
+                print('keyword.text ${keyword.text}');
               },
             ),
             suffixIcon: IconButton(

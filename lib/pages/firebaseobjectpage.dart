@@ -241,7 +241,7 @@ class _MySearchState extends State<mySearch> {
                       if (keyword.text != '') {
                         return takeSearchFirebasePage(
                             // resList: resList,
-                            keyword: keyword.text);
+                            mykeyword: keyword.text);
                       } else {
                         return HomePage();
                       }

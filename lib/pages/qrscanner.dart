@@ -57,7 +57,7 @@ class _QrScannerState extends State<QrScanner> {
         padding: EdgeInsets.all(16),
         child: Column(
           children: [
-             Expanded(
+            Container(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: const [
@@ -73,11 +73,13 @@ class _QrScannerState extends State<QrScanner> {
                 ],
               ),
             ),
-            Expanded(
-              flex: 4,
-              child: Stack(
-                children: [
-                  MobileScanner(
+            Stack(
+              children: [
+                SizedBox(
+                  width: MediaQuery.of(context).size.width, // Ширина экрана
+                  height:
+                      MediaQuery.of(context).size.height - 250, // Высота экрана
+                  child: MobileScanner(
                     // controller: controller,
                     controller: MobileScannerController(
                       detectionSpeed: DetectionSpeed.normal,
@@ -99,16 +101,18 @@ class _QrScannerState extends State<QrScanner> {
                             ),
                           );
                           isScanComplated = true;
-                        }                      
+                        }
                       }
+                      const QRScannerOverlay(overlayColour: bgColor);
                     },
                   ),
-                  const QRScannerOverlay(overlayColour: bgColor),
-                ],
-              ),
+                )
+              ],
             ),
-            Expanded(
-                child: Container(
+            SizedBox(
+              height: MediaQuery.of(context).size.height / 6,
+            ),
+            Container(
               alignment: Alignment.center,
               child: const Text(
                 "Developed version 1.0",
@@ -118,7 +122,7 @@ class _QrScannerState extends State<QrScanner> {
                   letterSpacing: 1,
                 ),
               ),
-            )),
+            ),
           ],
         ),
       ),
