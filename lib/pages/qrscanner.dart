@@ -22,6 +22,12 @@ class _QrScannerState extends State<QrScanner> {
   }
 
   @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bgColor,
@@ -127,5 +133,6 @@ class _QrScannerState extends State<QrScanner> {
         ),
       ),
     );
+
   }
 }

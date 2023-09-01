@@ -18,14 +18,20 @@ class QRobjectpage extends StatefulWidget {
   });
 
   @override
-  State<QRobjectpage> createState() => _QRobjectpageState();
+  State<QRobjectpage> createState() => QRobjectpageState();
 }
 
-class _QRobjectpageState extends State<QRobjectpage> {
+class QRobjectpageState extends State<QRobjectpage> {
   final whiteTextStyle = TextStyle(color: Colors.white, fontSize: 24);
 
+  // void initState() {
+  //   widget.closeScreen();
+  //   super.initState();
+  //   // mapdata = mapOver.mapdatas;
+  // }
   @override
   Widget build(BuildContext context) {
+    // widget.closeScreen();
     return Scaffold(
       body: SafeArea(
         child: DefaultTextStyle(
@@ -92,6 +98,7 @@ class _QRobjectpageState extends State<QRobjectpage> {
                     ),
                   ),
                 );
+                await widget.closeScreen();
               },
               mini: true, // Установите mini: true для уменьшения размера кнопки
               shape: RoundedRectangleBorder(
@@ -262,7 +269,7 @@ class _MySearchState extends State<mySearch> {
                   MaterialPageRoute(
                     builder: (context) {
                       if (keyword.text != '') {
-                       String mykeyword = keyword.text;
+                        String mykeyword = keyword.text;
                         return takeSearchFirebasePage(mykeyword: mykeyword);
                       } else {
                         return HomePage();
