@@ -201,9 +201,6 @@ TextEditingController keyword = TextEditingController();
 
 class _MySearchState extends State<mySearch> {
   @override
-  String imageUrl = 'lib/assets/images/backgroundImages.jpg';
-
-  @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
@@ -359,11 +356,11 @@ class _MyPhotoContState extends State<MyPhotoCont> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(30),
               ),
-              child: Text('No image'),
-              // Image.file(
-              //   File(photoWidgets),
-              //   fit: BoxFit.cover,
-              // ),
+              //child: Text('No image'),
+              child: Image.file(
+                File(photoWidgets),
+                fit: BoxFit.cover,
+              ),
             ),
           ),
         );

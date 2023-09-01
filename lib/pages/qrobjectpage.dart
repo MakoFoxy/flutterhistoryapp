@@ -4,8 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mausoleum/pages/editFirebasePages.dart';
 import 'package:mausoleum/pages/takeSearchFirebasepage.dart';
 import 'package:mausoleum/pages/qrscanner.dart';
-
-// Overview dataInform = Overview();
+import 'dart:io';
 
 class QRobjectpage extends StatefulWidget {
   final String selectedKey; // Добавьте параметр для выбранного ключа
@@ -109,21 +108,20 @@ class QRobjectpageState extends State<QRobjectpage> {
             ),
           ),
           FloatingActionButton(
-              onPressed: () async {
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => QrScanner(),
-                  ),
-                );
-              },
-              child: const Icon(Icons.qr_code_scanner),
-              mini: true, // Установите mini: true для уменьшения размера кнопки
-              shape: RoundedRectangleBorder(
-                borderRadius:
-                    BorderRadius.circular(15), // Настройте форму кнопки
-              ),
-            ),        
+            onPressed: () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => QrScanner(),
+                ),
+              );
+            },
+            child: const Icon(Icons.qr_code_scanner),
+            mini: true, // Установите mini: true для уменьшения размера кнопки
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15), // Настройте форму кнопки
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.only(right: 50.0, bottom: 0.0),
             child: FloatingActionButton(
@@ -235,9 +233,6 @@ class mySearch extends StatefulWidget {
 TextEditingController keyword = TextEditingController();
 
 class _MySearchState extends State<mySearch> {
-  @override
-  String imageUrl = 'lib/assets/images/backgroundImages.jpg';
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -411,11 +406,11 @@ class _MyPhotoContState extends State<MyPhotoCont> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(30),
           ),
-          child: Text('No image'),
-          // child: Image.file(
-          //   File(photoWidgets),
-          //   fit: BoxFit.cover,
-          // ),
+          // child: Text('No image'),
+          child: Image.file(
+            File(photoWidgets),
+            fit: BoxFit.cover,
+          ),
         ),
       ),
     );
