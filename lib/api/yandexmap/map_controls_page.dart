@@ -5,7 +5,7 @@ import 'package:mausoleum/api/yandexmap/widgets/control_button.dart';
 import 'package:mausoleum/api/yandexmap/widgets/map_page.dart';
 
 class MapControlsPage extends MapPage {
-  const MapControlsPage({Key? key}) : super('Map controls example', key: key);
+  const MapControlsPage({Key? key}) : super('Map controls', key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +23,7 @@ class _MapControlsExampleState extends State<_MapControlsExample> {
   final List<MapObject> mapObjects = [];
 
   final MapObjectId targetMapObjectId = const MapObjectId('target_placemark');
-  static const Point _point = Point(latitude: 59.945933, longitude: 30.320045);
+  static const Point _point = Point(latitude: 43.297884990740634, longitude: 68.27107852164164);
   final animation = const MapAnimation(type: MapAnimationType.smooth, duration: 2.0);
 
   bool tiltGesturesEnabled = true;
@@ -228,8 +228,8 @@ class _MapControlsExampleState extends State<_MapControlsExample> {
                   ControlButton(
                     onPressed: () async {
                       const newBounds = BoundingBox(
-                        northEast: Point(latitude: 65.0, longitude: 40.0),
-                        southWest: Point(latitude: 60.0, longitude: 30.0),
+                        northEast: Point(latitude: 43.297884990740634, longitude: 68.27107852164164),
+                        southWest: Point(latitude: 43.297884990740634, longitude: 68.27107852164164),
                       );
                       await controller.moveCamera(CameraUpdate.newBounds(newBounds), animation: animation);
                     },
@@ -238,8 +238,8 @@ class _MapControlsExampleState extends State<_MapControlsExample> {
                   ControlButton(
                     onPressed: () async {
                       final newGeometry = Geometry.fromBoundingBox(const BoundingBox(
-                        northEast: Point(latitude: 65.0, longitude: 40.0),
-                        southWest: Point(latitude: 60.0, longitude: 30.0),
+                        northEast: Point(latitude: 43.297884990740634, longitude: 68.27107852164164),
+                        southWest: Point(latitude: 43.297884990740634, longitude: 68.27107852164164),
                       ));
                       await controller.moveCamera(
                         CameraUpdate.newTiltAzimuthGeometry(newGeometry, azimuth: 1, tilt: 1),
