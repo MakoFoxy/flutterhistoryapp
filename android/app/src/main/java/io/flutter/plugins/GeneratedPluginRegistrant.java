@@ -85,5 +85,10 @@ public final class GeneratedPluginRegistrant {
     } catch(Exception e) {
       Log.e(TAG, "Error registering plugin rive_common, app.rive.rive.RivePlugin", e);
     }
+    try {
+      flutterEngine.getPlugins().add(new com.unact.yandexmapkit.YandexMapkitPlugin());
+    } catch(Exception e) {
+      Log.e(TAG, "Error registering plugin yandex_mapkit, com.unact.yandexmapkit.YandexMapkitPlugin", e);
+    }
   }
 }

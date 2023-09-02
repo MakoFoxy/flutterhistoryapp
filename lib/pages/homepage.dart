@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mausoleum/pages/createpostscree.dart';
 import 'package:mausoleum/pages/qrscanner.dart';
 import 'package:mausoleum/pages/firebaseobjectpage.dart';
+import 'package:mausoleum/pages/yandexmap.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -143,7 +144,7 @@ class HomePageState extends State<MyHomePage> {
             ),
           ),
           Positioned(
-            right: 120,
+            right: 160,
             bottom: 0,
             child: FloatingActionButton(
               onPressed: () async {
@@ -155,6 +156,21 @@ class HomePageState extends State<MyHomePage> {
                 );
               },
               child: const Icon(Icons.qr_code_scanner),
+            ),
+          ),
+          Positioned(
+            right: 80,
+            bottom: 0,
+            child: FloatingActionButton(
+              onPressed: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MainPage(),
+                  ),
+                );
+              },
+              child: const Icon(Icons.map),
             ),
           ),
         ],
