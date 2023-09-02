@@ -72,6 +72,12 @@ flutter {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation platform("com.google.firebase:firebase-bom:32.2.2")
-    implementation 'com.yandex.android:maps.mobile:4.3.2-full'
+     implementation 'com.yandex.android:maps.mobile:4.3.2-full'
+    //implementation 'com.yandex.android:maps.mobile:4.3.1-lite'
 }
 
+// repositories {       
+//     maven {
+//         url "http://maven.google.com/"
+//     }       
+// }
