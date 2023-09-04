@@ -1,34 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
 import 'package:mausoleum/api/yandexmap/widgets/map_page.dart';
-import 'package:mausoleum/api/yandexmap/bicycle_page.dart';
-import 'package:mausoleum/api/yandexmap/clusterized_placemark_collection_page.dart';
-import 'package:mausoleum/api/yandexmap/circle_map_object_page.dart';
-import 'package:mausoleum/api/yandexmap/driving_page.dart';
 import 'package:mausoleum/api/yandexmap/map_controls_page.dart';
-import 'package:mausoleum/api/yandexmap/map_object_collection_page.dart';
-import 'package:mausoleum/api/yandexmap/placemark_map_object_page.dart';
-import 'package:mausoleum/api/yandexmap/polyline_map_object_page.dart';
-import 'package:mausoleum/api/yandexmap/polygon_map_object_page.dart';
-import 'package:mausoleum/api/yandexmap/reverse_search_page.dart';
-import 'package:mausoleum/api/yandexmap/search_page.dart';
-import 'package:mausoleum/api/yandexmap/suggest_page.dart';
-import 'package:mausoleum/api/yandexmap/user_layer_page.dart';
 
 const List<MapPage> _allPages = <MapPage>[
   MapControlsPage(),
-  ClusterizedPlacemarkCollectionPage(),
-  MapObjectCollectionPage(),
-  PlacemarkMapObjectPage(),
-  PolylineMapObjectPage(),
-  PolygonMapObjectPage(),
-  CircleMapObjectPage(),
-  UserLayerPage(),
-  SuggestionsPage(),
-  SearchPage(),
-  ReverseSearchPage(),
-  BicyclePage(),
-  DrivingPage(),
+  // ClusterizedPlacemarkCollectionPage(),
+  // MapObjectCollectionPage(),
+  // PlacemarkMapObjectPage(),
+  // PolylineMapObjectPage(),
+  // PolygonMapObjectPage(),
+  // CircleMapObjectPage(),
+  // UserLayerPage(),
+  // SuggestionsPage(),
+  // SearchPage(),
+  // ReverseSearchPage(),
+  // BicyclePage(),
+  // DrivingPage(),
 ];
 
 @override
