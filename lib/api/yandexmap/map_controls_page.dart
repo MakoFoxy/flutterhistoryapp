@@ -5,30 +5,53 @@ import 'package:mausoleum/api/yandexmap/widgets/control_button.dart';
 import 'package:mausoleum/api/yandexmap/widgets/map_page.dart';
 
 class MapControlsPage extends MapPage {
-  const MapControlsPage({Key? key}) : super('Map controls', key: key);
+  late double selectedX;
+  late double selectedY;
+  MapControlsPage({
+    required String title,
+    required this.selectedX,
+    required this.selectedY,
+    Key? key,
+  }) : super(title, key: key);
 
   @override
   Widget build(BuildContext context) {
-    return _MapControlsExample();
+    return MapControlsExample(selectedX: selectedX, selectedY: selectedY);
   }
 }
 
-class _MapControlsExample extends StatefulWidget {
+class MapControlsExample extends StatefulWidget {
+  late double selectedX;
+  late double selectedY;
+
+  MapControlsExample({
+    required this.selectedX,
+    required this.selectedY,
+    Key? key,
+  });
+
   @override
-  _MapControlsExampleState createState() => _MapControlsExampleState();
+  MapControlsExampleState createState() => MapControlsExampleState();
 }
 
-class _MapControlsExampleState extends State<_MapControlsExample> {
+class MapControlsExampleState extends State<MapControlsExample> {
   late YandexMapController controller;
+
   final List<MapObject> mapObjects = [];
 
   final MapObjectId targetMapObjectId = const MapObjectId('target_placemark');
-  static const Point _point =
-      Point(latitude: 43.297884990740634, longitude: 68.27107852164164);
-  static const Point _pointTauke =
-      Point(latitude: 25.297884990740634, longitude: 74.27107852164164);
-  static const Point _pointKazybek =
-      Point(latitude: 25.297884990740634, longitude: 74.27107852164164);
+
+  late Point _point;
+  bool nightModeEnabled = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Доступ к свойству widget в initState
+    _point = Point(latitude: widget.selectedX, longitude: widget.selectedY);
+  }
+
   final animation =
       const MapAnimation(type: MapAnimationType.smooth, duration: 2.0);
 
@@ -48,6 +71,9 @@ class _MapControlsExampleState extends State<_MapControlsExample> {
       }
     ]
   ''';
+  String _enabledText(bool enabled) {
+    return enabled ? 'on' : 'off';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,6 +83,7 @@ class _MapControlsExampleState extends State<_MapControlsExample> {
         children: <Widget>[
           Expanded(
               child: YandexMap(
+            nightModeEnabled: nightModeEnabled,
             poiLimit: poiLimit,
             mapObjects: mapObjects,
             onMapCreated: (YandexMapController yandexMapController) async {
@@ -93,71 +120,53 @@ class _MapControlsExampleState extends State<_MapControlsExample> {
               }
             },
           )),
-          const SizedBox(height: 20),
-          Expanded(
+          Container(
+            decoration: const BoxDecoration(
+              color: Colors.white,
+            ),
             child: SingleChildScrollView(
               child: Table(
                 children: <TableRow>[
-                  TableRow(children: <Widget>[
-                    ControlButton(
+                  TableRow(
+                    children: <Widget>[
+                      ControlButton(
                         onPressed: () async {
                           await controller.moveCamera(
-                              CameraUpdate.newCameraPosition(
-                                  const CameraPosition(target: _point)),
-                              animation: animation);
+                            CameraUpdate.newCameraPosition(
+                                CameraPosition(target: _point)),
+                            animation: animation,
+                          );
                         },
-                        title: 'Specific position'),
-                    ControlButton(
+                        title: 'My place',
+                      ),
+                      ControlButton(
                         onPressed: () async {
-                          await controller.moveCamera(CameraUpdate.zoomTo(1),
-                              animation: animation);
+                          setState(() {
+                            nightModeEnabled = !nightModeEnabled;
+                          });
                         },
-                        title: 'Specific zoom')
-                  ]),
-                  TableRow(children: <Widget>[
-                    ControlButton(
-                        onPressed: () async {
-                          await controller.moveCamera(
-                              CameraUpdate.newCameraPosition(
-                                  const CameraPosition(target: _pointTauke)),
-                              animation: animation);
-                        },
-                        title: 'Tauke position'),
-                    ControlButton(
-                        onPressed: () async {
-                          await controller.moveCamera(
-                              CameraUpdate.newCameraPosition(
-                                  const CameraPosition(target: _pointKazybek)),
-                              animation: animation);
-                        },
-                        title: 'Kazybek position'),
-                  ]),
-                  TableRow(children: <Widget>[
-                    ControlButton(
+                        title: 'Night mode: ${_enabledText(nightModeEnabled)}',
+                      ),
+                    ],
+                  ),
+                  TableRow(
+                    children: <Widget>[
+                      ControlButton(
                         onPressed: () async {
                           await controller.moveCamera(CameraUpdate.zoomIn(),
                               animation: animation);
                         },
-                        title: 'Zoom in'),
-                    ControlButton(
+                        title: 'Zoom in',
+                      ),
+                      ControlButton(
                         onPressed: () async {
                           await controller.moveCamera(CameraUpdate.zoomOut(),
                               animation: animation);
                         },
-                        title: 'Zoom out'),
-                  ]),
-                  TableRow(children: <Widget>[
-                    ControlButton(
-                        onPressed: () async {
-                          await controller.setMapStyle(style);
-                        },
-                        title: 'Set Style'),
-                    ControlButton(
-                        onPressed: () async {
-                          await controller.setMapStyle('');
-                        },
-                        title: 'Remove style'),
-                  ]),
+                        title: 'Zoom out',
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),

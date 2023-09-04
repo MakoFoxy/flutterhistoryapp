@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mausoleum/pages/createpostscree.dart';
 import 'package:mausoleum/pages/qrscanner.dart';
 import 'package:mausoleum/pages/firebaseobjectpage.dart';
-import 'package:mausoleum/pages/yandexmap.dart';
+import 'package:mausoleum/api/yandexmap/map_controls_page.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -11,7 +11,6 @@ class HomePage extends StatefulWidget {
 }
 
 class AppHomePage extends State<HomePage> {
-  String imageUrl = 'lib/assets/images/backgroundImages.jpg';
 
   @override
   final whiteTexstStyle = TextStyle(color: Colors.white, fontSize: 24);
@@ -24,12 +23,12 @@ class AppHomePage extends State<HomePage> {
           style: whiteTexstStyle,
           child: Container(
             color: Colors.white,
-            child: ListView(             
+            child: ListView(
               children: <Widget>[
                 Container(
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage(imageUrl),
+                      image: AssetImage('lib/assets/images/backgroundImages.jpg'),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -44,14 +43,14 @@ class AppHomePage extends State<HomePage> {
                   padding: const EdgeInsets.only(left: 0, right: 0),
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage(imageUrl),
+                      image: AssetImage('lib/assets/images/backgroundImages.jpg'),
                       fit: BoxFit.cover,
                     ),
                   ),
                   child: MyHomePage(
                     //resulterList: resulterList, // Передаем resulterList сюда
                     backgroundImage: DecorationImage(
-                      image: AssetImage(imageUrl),
+                      image: AssetImage('lib/assets/images/backgroundImages.jpg'),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -166,7 +165,11 @@ class HomePageState extends State<MyHomePage> {
                 await Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => MainPage(),
+                    builder: (context) => MapControlsPage(
+                      title: "Қожа Ахмет Ясауи кесенесі",
+                      selectedX: 43.29785383147346,
+                      selectedY: 68.27119119202341,
+                    ),
                   ),
                 );
               },
@@ -376,7 +379,7 @@ class streamBuild extends StatelessWidget {
                   vertical: 5,
                 ),
                 child: Hero(
-                  tag: 'title_${doc['title']}', 
+                  tag: 'title_${doc['title']}',
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.push(

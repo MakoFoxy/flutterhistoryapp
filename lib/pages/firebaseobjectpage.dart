@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mausoleum/pages/editFirebasePages.dart';
 import 'package:mausoleum/pages/takeSearchFirebasepage.dart';
 import 'package:mausoleum/pages/qrscanner.dart';
+import 'package:mausoleum/api/yandexmap/map_controls_page.dart';
 
 // Overview dataInform = Overview();
 
@@ -47,6 +48,11 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
                       MyPhotoCont(selectedKey: widget.selectedKey),
                       MyOverviews(selectedKey: widget.selectedKey),
                     ],
+                  ),
+                ),
+                Container(
+                  child: MyCoordinate(
+                    selectedKey: widget.selectedKey,
                   ),
                 ),
                 Container(
@@ -185,6 +191,74 @@ class MyOverviewsState extends State<MyOverviews> {
             discripWidgets, // Убедиcь, что значение не null
             style: whiteTextStyle,
             textAlign: TextAlign.justify,
+          ),
+        );
+      },
+    );
+  }
+}
+
+class MyCoordinate extends StatefulWidget {
+  String selectedKey;
+
+  MyCoordinate({
+    //required this.mapdata,
+    required this.selectedKey,
+  });
+
+  @override
+  State<MyCoordinate> createState() => MyCoordinateState();
+}
+
+class MyCoordinateState extends State<MyCoordinate> {
+  final whiteTextStyle =
+      TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 20);
+
+  Widget build(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance.collection('data').snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator(); // Показываем индикатор загрузки во время ожидания данных
+        }
+
+        if (snapshot.hasError) {
+          return Text("Ошибка: ${snapshot.error}");
+        }
+
+        late double xCoordinateWidgets;
+        late double yCoordinateWidgets;
+
+        final keysfirebase = snapshot.data?.docs.toList();
+
+        for (var key in keysfirebase!) {
+          if (widget.selectedKey == key['title']) {
+            xCoordinateWidgets = key['xCoordinate'];
+            yCoordinateWidgets = key['yCoordinate'];
+          }
+        }
+
+        return Container(
+          padding: const EdgeInsets.only(left: 50.0, bottom: 0.0),
+          child: FloatingActionButton(
+            onPressed: () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext context) => MapControlsPage(
+                    //editMydb: editMydb,
+                    title: widget.selectedKey,
+                    selectedX: xCoordinateWidgets,
+                    selectedY: yCoordinateWidgets,
+                  ),
+                ),
+              );
+            },
+            mini: true, // Установите mini: true для уменьшения размера кнопки
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15), // Настройте форму кнопки
+            ),
+            child: const Icon(Icons.map),
           ),
         );
       },

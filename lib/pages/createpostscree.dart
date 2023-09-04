@@ -56,6 +56,18 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
 
   TextEditingController teDescription = TextEditingController();
 
+  TextEditingController xCoordinate = TextEditingController();
+
+  TextEditingController yCoordinate = TextEditingController();
+
+  late double xCoordinateInt;
+  late double yCoordinateInt;
+
+  position(xCoordinate, yCoordinate) {
+    xCoordinateInt = double.parse(xCoordinate.text);
+    yCoordinateInt = double.parse(yCoordinate.text);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,6 +101,38 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
                   controller: teDescription,
                   decoration: const InputDecoration(
                     hintText: 'Сиппатама',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(30)),
+                    ),
+                  ),
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.only(
+                  top: 10,
+                  left: 15,
+                  right: 15,
+                ),
+                child: TextField(
+                  controller: xCoordinate,
+                  decoration: const InputDecoration(
+                    hintText: 'xCoordinate',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(30)),
+                    ),
+                  ),
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.only(
+                  top: 10,
+                  left: 15,
+                  right: 15,
+                ),
+                child: TextField(
+                  controller: yCoordinate,
+                  decoration: const InputDecoration(
+                    hintText: 'yCoordinate',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(30)),
                     ),
@@ -153,11 +197,14 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
                 margin: const EdgeInsets.all(15),
                 child: ElevatedButton(
                   onPressed: () async {
+                    position(xCoordinate, yCoordinate);
                     CollectionReference collRef =
-                    FirebaseFirestore.instance.collection('data');
+                        FirebaseFirestore.instance.collection('data');
                     Map<String, dynamic> data = {
                       //'id': dbTodo.letId,
                       'title': teTitle.text,
+                      'xCoordinate': xCoordinateInt,
+                      'yCoordinate': yCoordinateInt,
                       'description': teDescription.text,
                       'filephotopath': pickedFile!.path!,
                     };

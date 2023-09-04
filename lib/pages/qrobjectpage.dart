@@ -5,6 +5,7 @@ import 'package:mausoleum/pages/editFirebasePages.dart';
 import 'package:mausoleum/pages/takeSearchFirebasepage.dart';
 import 'package:mausoleum/pages/qrscanner.dart';
 import 'dart:io';
+import 'package:mausoleum/api/yandexmap/map_controls_page.dart';
 
 class QRobjectpage extends StatefulWidget {
   final String selectedKey; // Добавьте параметр для выбранного ключа
@@ -54,6 +55,11 @@ class QRobjectpageState extends State<QRobjectpage> {
                       MyPhotoCont(selectedKey: widget.selectedKey),
                       MyOverviews(selectedKey: widget.selectedKey),
                     ],
+                  ),
+                ),
+                Container(
+                  child: MyCoordinate(
+                    selectedKey: widget.selectedKey,
                   ),
                 ),
                 Container(
@@ -220,6 +226,86 @@ class MyOverviewsState extends State<MyOverviews> {
         discriptWidgets ?? '',
         style: whiteTextStyle,
         textAlign: TextAlign.justify,
+      ),
+    );
+  }
+}
+
+class MyCoordinate extends StatefulWidget {
+  String selectedKey;
+
+  MyCoordinate({
+    //required this.mapdata,
+    required this.selectedKey,
+  });
+
+  @override
+  State<MyCoordinate> createState() => MyCoordinateState();
+}
+
+class MyCoordinateState extends State<MyCoordinate> {
+  final whiteTextStyle =
+      TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 20);
+
+  void initState() {
+    super.initState();
+    qrKeysFirebase(); // Загрузите ключи из Firebase
+  }
+
+  var collRef = FirebaseFirestore.instance.collection('data');
+
+  late double xCoordinateWidget;
+  late double yCoordinateWidget;
+
+  Future<void> qrKeysFirebase() async {
+    String targetQR = widget.selectedKey; // Значение, которое вы ищете
+    try {
+      QuerySnapshot querySnapshot = await collRef.get();
+      List<QueryDocumentSnapshot> docs = querySnapshot.docs;
+      late double xCoordinate;
+      late double yCoordinate;
+
+      for (QueryDocumentSnapshot doc in docs) {
+        Map<String, dynamic> autodata = doc.data() as Map<String, dynamic>;
+        String autokey = doc.id; // Получение ключа документа
+
+        // Проверка, соответствует ли поле title значению, которое вы ищете
+        if (autokey == targetQR) {
+          xCoordinate = autodata['xCoordinate'];
+          yCoordinate = autodata['yCoordinate'];
+        }
+      }
+      setState(() {
+        xCoordinateWidget = xCoordinate;
+        yCoordinateWidget = yCoordinate;
+      });
+    } catch (e) {
+      print("Error qr object page: $e");
+    }
+  }
+
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.only(left: 50.0, bottom: 0.0),
+      child: FloatingActionButton(
+        onPressed: () async {
+          await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (BuildContext context) => MapControlsPage(
+                //editMydb: editMydb,
+                title: widget.selectedKey,
+                selectedX: xCoordinateWidget,
+                selectedY: yCoordinateWidget,
+              ),
+            ),
+          );
+        },
+        mini: true, // Установите mini: true для уменьшения размера кнопки
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15), // Настройте форму кнопки
+        ),
+        child: const Icon(Icons.map),
       ),
     );
   }

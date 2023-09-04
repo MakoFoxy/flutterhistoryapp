@@ -22,18 +22,26 @@ class EditFirebasePageState extends State<EditFirebasePage> {
   late String image_url;
   late String description = "";
   late String title = "";
+
   //late String idnum = "";
   //late int id=0;
   List<QueryDocumentSnapshot<Map<String, dynamic>>>? datafirebase;
+  TextEditingController xCoordinate = TextEditingController();
+  TextEditingController yCoordinate = TextEditingController();
 
   final teTitle = TextEditingController();
   final teDecsription = TextEditingController();
   final teId = TextEditingController();
 
-  void initState() {
-    fetchKeysFirebase(); // Загрузите ключи из Firebase
-    super.initState();
+  late double xCoordinateNum;
+  late double yCoordinateNum;
+
+  position(xCoordinate, yCoordinate) {
+    xCoordinateNum = double.parse(xCoordinate.text);
+    yCoordinateNum = double.parse(yCoordinate.text);
   }
+
+
 
   Future<void> fetchKeysFirebase() async {
     QuerySnapshot<Map<String, dynamic>> snapshot =
@@ -44,6 +52,9 @@ class EditFirebasePageState extends State<EditFirebasePage> {
       if (widget.selectedKey == datafirebase![i]['title']) {
         description = datafirebase![i]['description'];
         title = datafirebase![i]['title'];
+        xCoordinate = datafirebase![i]['xCoordinate'];
+        yCoordinate = datafirebase![i]['yCoordinate'];
+
         //idnum = datafirebase![i]['id'];
         teTitle.text = title; // Инициализация контроллера
         teDecsription.text = description; // Инициализация контроллера
@@ -135,6 +146,38 @@ class EditFirebasePageState extends State<EditFirebasePage> {
                 ),
               ),
             ),
+            Container(
+              margin: const EdgeInsets.only(
+                top: 10,
+                left: 15,
+                right: 15,
+              ),
+              child: TextField(
+                controller: xCoordinate,
+                decoration: const InputDecoration(
+                  hintText: 'xCoordinate',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(30)),
+                  ),
+                ),
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.only(
+                top: 10,
+                left: 15,
+                right: 15,
+              ),
+              child: TextField(
+                controller: yCoordinate,
+                decoration: const InputDecoration(
+                  hintText: 'yCoordinate',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(30)),
+                  ),
+                ),
+              ),
+            ),
             SizedBox(height: 10),
             Column(
               children: [
@@ -192,6 +235,7 @@ class EditFirebasePageState extends State<EditFirebasePage> {
               margin: const EdgeInsets.all(15),
               child: ElevatedButton(
                 onPressed: () async {
+                  position(xCoordinate, yCoordinate);
                   var collRef = FirebaseFirestore.instance.collection('data');
                   String targetTitle =
                       widget.selectedKey; // Значение, которое вы ищете
@@ -219,6 +263,8 @@ class EditFirebasePageState extends State<EditFirebasePage> {
                           'title': teTitle.text,
                           'description': teDecsription.text,
                           'filephotopath': teFilePhoto!.path!,
+                          'xCoordinate': xCoordinateNum,
+                          'yCoordinate': yCoordinateNum,
                         });
                         print("Document updated: $autokey");
                         break; // Прерываем цикл после обновления первого соответствующего документа
