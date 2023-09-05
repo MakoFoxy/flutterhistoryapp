@@ -4,6 +4,8 @@ import 'package:mausoleum/pages/createpostscree.dart';
 import 'package:mausoleum/pages/qrscanner.dart';
 import 'package:mausoleum/pages/firebaseobjectpage.dart';
 import 'package:mausoleum/api/yandexmap/map_controls_page.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:mausoleum/api/dropdawn_flag/dropdawn_flag.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -11,13 +13,30 @@ class HomePage extends StatefulWidget {
 }
 
 class AppHomePage extends State<HomePage> {
-
   @override
   final whiteTexstStyle = TextStyle(color: Colors.white, fontSize: 24);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.greenAccent[70],
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.white,
+        title: Text(
+          'mytitlepage'.tr(),
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: Colors.green,
+          ),
+        ),
+        actions: [
+          DropdawnFlag(changedLanguage: (value) {
+            context.setLocale(Locale((value)));
+          })
+        ],
+      ),
       body: SafeArea(
         child: DefaultTextStyle.merge(
           style: whiteTexstStyle,
@@ -28,7 +47,8 @@ class AppHomePage extends State<HomePage> {
                 Container(
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage('lib/assets/images/backgroundImages.jpg'),
+                      image:
+                          AssetImage('lib/assets/images/backgroundImages.jpg'),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -43,14 +63,16 @@ class AppHomePage extends State<HomePage> {
                   padding: const EdgeInsets.only(left: 0, right: 0),
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage('lib/assets/images/backgroundImages.jpg'),
+                      image:
+                          AssetImage('lib/assets/images/backgroundImages.jpg'),
                       fit: BoxFit.cover,
                     ),
                   ),
                   child: MyHomePage(
                     //resulterList: resulterList, // Передаем resulterList сюда
                     backgroundImage: DecorationImage(
-                      image: AssetImage('lib/assets/images/backgroundImages.jpg'),
+                      image:
+                          AssetImage('lib/assets/images/backgroundImages.jpg'),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -438,7 +460,7 @@ class Mausoleum extends StatelessWidget {
         ]),
       ),
       child: Text(
-        'Мавзолей',
+        'mytitlepage'.tr(),
         textAlign: TextAlign.center,
         style: colorTextStyle,
       ),
@@ -476,29 +498,29 @@ class MenuTileWidget extends State<MenuTile> {
     );
   }
 
-  Widget _buildRating() => ListTile(
-        title: Text(
-          'Добавить в избранное',
-          style: TextStyle(
-            fontWeight: FontWeight.w500,
-            fontSize: 16.0,
-          ),
-        ),
-        // subtitle: Text('Выбирите небходимый раздел'),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            FavoriteWidjet(),
-          ],
-        ),
-      );
+  // Widget _buildRating() => ListTile(
+  //       title: Text(
+  //         'Добавить в избранное',
+  //         style: TextStyle(
+  //           fontWeight: FontWeight.w500,
+  //           fontSize: 16.0,
+  //         ),
+  //       ),
+  //       // subtitle: Text('Выбирите небходимый раздел'),
+  //       trailing: Row(
+  //         mainAxisSize: MainAxisSize.min,
+  //         children: <Widget>[
+  //           FavoriteWidjet(),
+  //         ],
+  //       ),
+  //     );
 
   Widget _buildAction() => Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          _buildButton("Меню", Icons.menu, Colors.transparent),
-          _buildButton("Карта", Icons.map, Colors.transparent),
-          _buildButton("Избранное", Icons.favorite, Colors.transparent),
+          _buildButton("myhomepage".tr(), Icons.home, Colors.transparent),
+          _buildButton("myQR".tr(), Icons.qr_code, Colors.transparent),
+          _buildButton("mymap".tr(), Icons.map, Colors.transparent),
         ],
       );
 

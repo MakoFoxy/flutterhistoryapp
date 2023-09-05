@@ -41,7 +41,11 @@ dependencies:
   qr_scanner: ^0.0.2-259.9.beta
   mobile_scanner: ^3.4.1
   yandex_mapkit: ^3.3.3
+  easy_localization: ^3.0.3
+  dropdown_button2: ^2.3.9
   
+
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -51,7 +55,8 @@ flutter:
   uses-material-design: true
   assets:
     - lib/assets/images/
-    
+    - lib/assets/translations/
+
 flutter_icons:
   android: launcher_icon
   image_path: assets/images/launcher_icon.png
