@@ -18,13 +18,13 @@ class DropdawnFlagState extends State<DropdawnFlag> {
   String dropdownValue = "";
 
   @override
-  void didUpadateWidget(covariant DropdawnFlag oldWidget) {
+  void didUpdateWidget(covariant DropdawnFlag oldWidget) {
     dropdownValue = context.locale.languageCode;
     super.didUpdateWidget(oldWidget);
   }
 
   @override
-  void didChangeDependicies() {
+  void didChangeDependencies() {
     dropdownValue = context.locale.languageCode;
     super.didChangeDependencies();
   }
@@ -79,9 +79,7 @@ class DropdawnFlagState extends State<DropdawnFlag> {
             ),
           );
         }).toList(),
-        onChanged: (value) {
-          
-        },
+        onChanged: (value) {},
       ),
     );
   }

@@ -8,6 +8,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:mausoleum/api/dropdawn_flag/dropdawn_flag.dart';
 
 class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
   @override
   State<HomePage> createState() => AppHomePage();
 }
@@ -19,30 +21,12 @@ class AppHomePage extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.greenAccent[70],
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        title: Text(
-          'mytitlepage'.tr(),
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: Colors.green,
-          ),
-        ),
-        actions: [
-          DropdawnFlag(changedLanguage: (value) {
-            context.setLocale(Locale((value)));
-          })
-        ],
-      ),
       body: SafeArea(
         child: DefaultTextStyle.merge(
           style: whiteTexstStyle,
           child: Container(
             color: Colors.white,
-            child: ListView(
+            child: Column(
               children: <Widget>[
                 Container(
                   decoration: BoxDecoration(
@@ -58,8 +42,32 @@ class AppHomePage extends State<HomePage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                   ),
                 ),
+                AppBar(
+                  elevation: 0,
+                  backgroundColor: Color.fromARGB(255, 83, 112, 85),
+                  title: Text(
+                    'mytitlepage'.tr(),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Color.fromARGB(255, 184, 182, 156),
+                    ),
+                  ),
+                  actions: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: 20),
+                      child: DropdawnFlag(
+                        changedLanguage: (value) {
+                          setState(() {
+                            context.setLocale(Locale((value)));
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
                 Container(
-                  height: MediaQuery.of(context).size.height - 89,
+                  height: MediaQuery.of(context).size.height - 145,
                   padding: const EdgeInsets.only(left: 0, right: 0),
                   decoration: BoxDecoration(
                     image: DecorationImage(
@@ -271,7 +279,7 @@ class FirebaseSearchWidget extends State<FirebaseSearch> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
+    return Column(
       children: [
         Container(
           width: double.infinity,
@@ -304,7 +312,7 @@ class FirebaseSearchWidget extends State<FirebaseSearch> {
                     keyword.text = '';
                   },
                 ),
-                hintText: 'Іздеу...',
+                hintText: 'searchword'.tr(),
                 border: InputBorder.none,
               ),
             ),
@@ -314,9 +322,8 @@ class FirebaseSearchWidget extends State<FirebaseSearch> {
         SingleChildScrollView(
           child: ConstrainedBox(
             constraints: BoxConstraints(
-              maxHeight: MediaQuery.of(context)
-                  .size
-                  .height, // appBarHeight - это высота вашего AppBar
+              maxHeight: MediaQuery.of(context).size.height -
+                  228, // appBarHeight - это высота вашего AppBar
             ),
             child: ListView(
               children: [
@@ -498,29 +505,12 @@ class MenuTileWidget extends State<MenuTile> {
     );
   }
 
-  // Widget _buildRating() => ListTile(
-  //       title: Text(
-  //         'Добавить в избранное',
-  //         style: TextStyle(
-  //           fontWeight: FontWeight.w500,
-  //           fontSize: 16.0,
-  //         ),
-  //       ),
-  //       // subtitle: Text('Выбирите небходимый раздел'),
-  //       trailing: Row(
-  //         mainAxisSize: MainAxisSize.min,
-  //         children: <Widget>[
-  //           FavoriteWidjet(),
-  //         ],
-  //       ),
-  //     );
-
   Widget _buildAction() => Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          _buildButton("myhomepage".tr(), Icons.home, Colors.transparent),
-          _buildButton("myQR".tr(), Icons.qr_code, Colors.transparent),
-          _buildButton("mymap".tr(), Icons.map, Colors.transparent),
+          _buildButton("myhomepage".tr(), Icons.home, Colors.black),
+          _buildButton("myQR".tr(), Icons.qr_code, Colors.black),
+          _buildButton("mymap".tr(), Icons.map, Colors.black),
         ],
       );
 
@@ -549,52 +539,52 @@ class MenuTileWidget extends State<MenuTile> {
       );
 }
 
-class FavoriteWidjet extends StatefulWidget {
-  @override
-  _FavoriteWidjetState createState() => _FavoriteWidjetState();
-}
+// class FavoriteWidjet extends StatefulWidget {
+//   @override
+//   _FavoriteWidjetState createState() => _FavoriteWidjetState();
+// }
 
-class _FavoriteWidjetState extends State<FavoriteWidjet> {
-  bool _choiceFavor = false;
-  int _favorCount = 123;
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: <Widget>[
-        Container(
-          child: IconButton(
-            icon: (_choiceFavor
-                ? Icon(Icons.favorite)
-                : Icon(Icons.favorite_border)),
-            onPressed: _toggleFavorite,
-            color: Colors.brown[500],
-          ),
-        ),
-        SizedBox(
-          width: 40,
-          child: Container(
-              child: Text(
-            '$_favorCount',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 20, // Увеличиваем размер шрифта на 24
-              color: Colors.brown[500],
-            ),
-          )),
-        ),
-      ],
-    );
-  }
+// class _FavoriteWidjetState extends State<FavoriteWidjet> {
+//   bool _choiceFavor = false;
+//   int _favorCount = 123;
+//   @override
+//   Widget build(BuildContext context) {
+//     return Row(
+//       children: <Widget>[
+//         Container(
+//           child: IconButton(
+//             icon: (_choiceFavor
+//                 ? Icon(Icons.favorite)
+//                 : Icon(Icons.favorite_border)),
+//             onPressed: _toggleFavorite,
+//             color: Colors.brown[500],
+//           ),
+//         ),
+//         SizedBox(
+//           width: 40,
+//           child: Container(
+//               child: Text(
+//             '$_favorCount',
+//             style: TextStyle(
+//               fontWeight: FontWeight.bold,
+//               fontSize: 20, // Увеличиваем размер шрифта на 24
+//               color: Colors.brown[500],
+//             ),
+//           )),
+//         ),
+//       ],
+//     );
+//   }
 
-  void _toggleFavorite() {
-    setState(() {
-      if (_choiceFavor == true) {
-        _choiceFavor = false;
-        _favorCount = _favorCount - 1;
-      } else {
-        _choiceFavor = true;
-        _favorCount = _favorCount + 1;
-      }
-    });
-  }
-}
+//   void _toggleFavorite() {
+//     setState(() {
+//       if (_choiceFavor == true) {
+//         _choiceFavor = false;
+//         _favorCount = _favorCount - 1;
+//       } else {
+//         _choiceFavor = true;
+//         _favorCount = _favorCount + 1;
+//       }
+//     });
+//   }
+// }

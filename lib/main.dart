@@ -21,24 +21,27 @@ void main() async {
   debugPaintSizeEnabled = false;
   runApp(
     EasyLocalization(
-      supportedLocales: const [
+      supportedLocales: [
         Locale('kk'),
-        Locale('ru'),
         Locale('en'),
+        Locale('ru'),
       ],
       path: 'lib/assets/translations',
-      fallbackLocale: const Locale('kk'),
+      fallbackLocale: Locale('kk'),
       child: MyApp(),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
+  MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
       locale: context.locale,
       title: 'Turkestan',
       theme: ThemeData(
