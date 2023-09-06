@@ -199,8 +199,8 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
                   onPressed: () async {
                     position(xCoordinate, yCoordinate);
                     CollectionReference collRef =
-                        FirebaseFirestore.instance.collection('data');
-                    Map<String, dynamic> data = {
+                        FirebaseFirestore.instance.collection('datakz');
+                    Map<String, dynamic> datakz = {
                       //'id': dbTodo.letId,
                       'title': teTitle.text,
                       'xCoordinate': xCoordinateInt,
@@ -209,7 +209,7 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
                       'filephotopath': pickedFile!.path!,
                     };
 
-                    DocumentReference docRef = await collRef.add(data);
+                    DocumentReference docRef = await collRef.add(datakz);
 
                     String parentKey = docRef.parent.id;
 
@@ -221,7 +221,82 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
 
                     Navigator.pop(context);
                   },
-                  child: const Text('Тарихи тұлғаны сақтау'),
+                  child:
+                      const Text('Тарихи объектіні мәліметтер базасына сақтау'),
+                ),
+              ),
+              Container(
+                width: double.infinity,
+                height: 60,
+                decoration: const BoxDecoration(
+                  color: Colors.amber,
+                  borderRadius: BorderRadius.all(Radius.circular(30)),
+                ),
+                margin: const EdgeInsets.all(15),
+                child: ElevatedButton(
+                  onPressed: () async {
+                    position(xCoordinate, yCoordinate);
+                    CollectionReference collRef =
+                        FirebaseFirestore.instance.collection('dataru');
+                    Map<String, dynamic> dataru = {
+                      //'id': dbTodo.letId,
+                      'title': teTitle.text,
+                      'xCoordinate': xCoordinateInt,
+                      'yCoordinate': yCoordinateInt,
+                      'description': teDescription.text,
+                      'filephotopath': pickedFile!.path!,
+                    };
+
+                    DocumentReference docRef = await collRef.add(dataru);
+
+                    String parentKey = docRef.parent.id;
+
+                    print('parentKey $parentKey');
+
+                    teTitle.clear();
+                    teDescription.clear();
+                    pickedFile = null;
+
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Сохранить исторический объект в базу данных'),
+                ),
+              ),
+              Container(
+                width: double.infinity,
+                height: 60,
+                decoration: const BoxDecoration(
+                  color: Colors.amber,
+                  borderRadius: BorderRadius.all(Radius.circular(30)),
+                ),
+                margin: const EdgeInsets.all(15),
+                child: ElevatedButton(
+                  onPressed: () async {
+                    position(xCoordinate, yCoordinate);
+                    CollectionReference collRef =
+                        FirebaseFirestore.instance.collection('dataen');
+                    Map<String, dynamic> dataen = {
+                      //'id': dbTodo.letId,
+                      'title': teTitle.text,
+                      'xCoordinate': xCoordinateInt,
+                      'yCoordinate': yCoordinateInt,
+                      'description': teDescription.text,
+                      'filephotopath': pickedFile!.path!,
+                    };
+
+                    DocumentReference docRef = await collRef.add(dataen);
+
+                    String parentKey = docRef.parent.id;
+
+                    print('parentKey $parentKey');
+
+                    teTitle.clear();
+                    teDescription.clear();
+                    pickedFile = null;
+
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Saving historical object in the database'),
                 ),
               ),
             ],

@@ -26,7 +26,7 @@ class AppHomePage extends State<HomePage> {
           style: whiteTexstStyle,
           child: Container(
             color: Colors.white,
-            child: Column(
+            child: ListView(
               children: <Widget>[
                 Container(
                   decoration: BoxDecoration(
@@ -157,16 +157,37 @@ class HomePageState extends State<MyHomePage> {
             bottom: 0,
             child: FloatingActionButton(
               onPressed: () async {
-                var collRef = FirebaseFirestore.instance.collection('data');
-                QuerySnapshot querySnapshot = await collRef.get();
-                List<QueryDocumentSnapshot> docs = querySnapshot.docs;
+                var collRefkz = FirebaseFirestore.instance.collection('datakz');
+                var collRefru = FirebaseFirestore.instance.collection('dataru');
+                var collRefen = FirebaseFirestore.instance.collection('dataen');
+
+                QuerySnapshot querySnapshotkz = await collRefkz.get();
+                QuerySnapshot querySnapshotru = await collRefru.get();
+                QuerySnapshot querySnapshoten = await collRefen.get();
+
+                List<QueryDocumentSnapshot> docskz = querySnapshotkz.docs;
+                List<QueryDocumentSnapshot> docsru = querySnapshotru.docs;
+                List<QueryDocumentSnapshot> docsen = querySnapshoten.docs;
+
                 List<String> autokey = [];
-                for (QueryDocumentSnapshot doc in docs) {
+                for (QueryDocumentSnapshot doc in docskz) {
+                  autokey.add(doc.id);
+                }
+                for (QueryDocumentSnapshot doc in docsru) {
+                  autokey.add(doc.id);
+                }
+                for (QueryDocumentSnapshot doc in docsen) {
                   autokey.add(doc.id);
                 }
 
                 autokey.forEach((element) {
-                  collRef.doc(element).delete();
+                  collRefkz.doc(element).delete();
+                });
+                autokey.forEach((element) {
+                  collRefru.doc(element).delete();
+                });
+                autokey.forEach((element) {
+                  collRefen.doc(element).delete();
                 });
               },
               child: const Icon(Icons.delete),
@@ -253,13 +274,25 @@ class FirebaseSearchWidget extends State<FirebaseSearch> {
   }
 
   getClientStream() async {
-    var data = await FirebaseFirestore.instance
-        .collection('data')
-        .orderBy('title')
-        .get();
-
+    late QuerySnapshot<Map<String, dynamic>> datalingua;
+    if (Localizations.localeOf(context).languageCode == 'kk') {
+      datalingua = await FirebaseFirestore.instance
+          .collection('datakz')
+          .orderBy('title')
+          .get();
+    } else if (Localizations.localeOf(context).languageCode == 'ru') {
+      datalingua = await FirebaseFirestore.instance
+          .collection('dataru')
+          .orderBy('title')
+          .get();
+    } else if (Localizations.localeOf(context).languageCode == 'en') {
+      datalingua = await FirebaseFirestore.instance
+          .collection('dataen')
+          .orderBy('title')
+          .get();
+    }
     setState(() {
-      allResults = data.docs;
+      allResults = datalingua.docs;
     });
     searchResultList();
   }
@@ -349,8 +382,16 @@ class streamBuild extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    late Stream<QuerySnapshot<Map<String, dynamic>>> datastream;
+    if (Localizations.localeOf(context).languageCode == 'kk') {
+      datastream = FirebaseFirestore.instance.collection('datakz').snapshots();
+    } else if (Localizations.localeOf(context).languageCode == 'ru') {
+      datastream = FirebaseFirestore.instance.collection('dataru').snapshots();
+    } else if (Localizations.localeOf(context).languageCode == 'en') {
+      datastream = FirebaseFirestore.instance.collection('dataen').snapshots();
+    }
     return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection('data').snapshots(),
+      stream: datastream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return CircularProgressIndicator();
