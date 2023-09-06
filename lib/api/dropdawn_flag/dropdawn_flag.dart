@@ -44,13 +44,13 @@ class DropdawnFlagState extends State<DropdawnFlag> {
         ),
         buttonStyleData: const ButtonStyleData(
           height: 40,
-          width: 140,
+          width: 90,
         ),
         menuItemStyleData: const MenuItemStyleData(
           height: 40,
         ),
         dropdownStyleData: const DropdownStyleData(
-          width: 100,
+          width: 90,
         ),
         underline: const SizedBox(),
         items: List.generate(context.supportedLocales.length, (index) {

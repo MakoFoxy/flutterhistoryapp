@@ -397,10 +397,10 @@ class streamBuild extends StatelessWidget {
           return CircularProgressIndicator();
         }
         if (snapshot.hasError) {
-          return Text('Произошла ошибка');
+          return Text('Error');
         }
         if (!snapshot.hasData || snapshot.data == null) {
-          return Text('Нет данных');
+          return Text('No data');
         }
         final keysfirebase = snapshot.data?.docs.toList();
 

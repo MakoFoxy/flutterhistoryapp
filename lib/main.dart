@@ -23,8 +23,8 @@ void main() async {
     EasyLocalization(
       supportedLocales: [
         Locale('kk'),
-        Locale('en'),
         Locale('ru'),
+        Locale('en'),
       ],
       path: 'lib/assets/translations',
       fallbackLocale: Locale('kk'),

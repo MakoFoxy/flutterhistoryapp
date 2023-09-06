@@ -6,8 +6,8 @@ import 'package:mausoleum/pages/editFirebasePages.dart';
 import 'package:mausoleum/pages/takeSearchFirebasepage.dart';
 import 'package:mausoleum/pages/qrscanner.dart';
 import 'package:mausoleum/api/yandexmap/map_controls_page.dart';
-
-// Overview dataInform = Overview();
+import 'package:easy_localization/easy_localization.dart';
+import 'package:mausoleum/api/dropdawn_flag/dropdawn_flag.dart';
 
 class ObjectFirebasePage extends StatefulWidget {
   final String selectedKey; // Добавьте параметр для выбранного ключа
@@ -33,6 +33,30 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
             color: Colors.amber,
             child: ListView(
               children: <Widget>[
+                AppBar(
+                  elevation: 0,
+                  backgroundColor: Color.fromARGB(255, 83, 112, 85),
+                  title: Text(
+                    'mytitlepage'.tr(),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Color.fromARGB(255, 184, 182, 156),
+                    ),
+                  ),
+                  actions: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: 20),
+                      child: DropdawnFlag(
+                        changedLanguage: (value) {
+                          setState(() {
+                            context.setLocale(Locale((value)));
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
                 mySearch(),
                 Container(
                   height: MediaQuery.of(context).size.height - 163,
@@ -113,6 +137,7 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
                     builder: (context) => HomePage(),
                   ),
                 );
+
                 var collRef = FirebaseFirestore.instance.collection('data');
                 String targetTitle =
                     widget.selectedKey; // Значение, которое вы ищете
@@ -164,15 +189,23 @@ class MyOverviewsState extends State<MyOverviews> {
       TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 20);
 
   Widget build(BuildContext context) {
+    late Stream<QuerySnapshot<Map<String, dynamic>>> datastream;
+    if (Localizations.localeOf(context).languageCode == 'kk') {
+      datastream = FirebaseFirestore.instance.collection('datakz').snapshots();
+    } else if (Localizations.localeOf(context).languageCode == 'ru') {
+      datastream = FirebaseFirestore.instance.collection('dataru').snapshots();
+    } else if (Localizations.localeOf(context).languageCode == 'en') {
+      datastream = FirebaseFirestore.instance.collection('dataen').snapshots();
+    }
     return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection('data').snapshots(),
+      stream: datastream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return CircularProgressIndicator(); // Показываем индикатор загрузки во время ожидания данных
         }
 
         if (snapshot.hasError) {
-          return Text("Ошибка: ${snapshot.error}");
+          return Text("Error: ${snapshot.error}");
         }
 
         String discripWidgets = "";
@@ -215,15 +248,23 @@ class MyCoordinateState extends State<MyCoordinate> {
       TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 20);
 
   Widget build(BuildContext context) {
+    late Stream<QuerySnapshot<Map<String, dynamic>>> datastream;
+    if (Localizations.localeOf(context).languageCode == 'kk') {
+      datastream = FirebaseFirestore.instance.collection('datakz').snapshots();
+    } else if (Localizations.localeOf(context).languageCode == 'ru') {
+      datastream = FirebaseFirestore.instance.collection('dataru').snapshots();
+    } else if (Localizations.localeOf(context).languageCode == 'en') {
+      datastream = FirebaseFirestore.instance.collection('dataen').snapshots();
+    }
     return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection('data').snapshots(),
+      stream: datastream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return CircularProgressIndicator(); // Показываем индикатор загрузки во время ожидания данных
         }
 
         if (snapshot.hasError) {
-          return Text("Ошибка: ${snapshot.error}");
+          return Text("Error: ${snapshot.error}");
         }
 
         late double xCoordinateWidgets;
@@ -321,7 +362,7 @@ class _MySearchState extends State<mySearch> {
                 keyword.text = '';
               },
             ),
-            hintText: 'Іздеу...',
+            hintText: 'searchword'.tr(),
             border: InputBorder.none,
           ),
         ),
@@ -342,15 +383,23 @@ class MyTextCont extends StatefulWidget {
 class _MyTextContState extends State<MyTextCont> {
   @override
   Widget build(BuildContext context) {
+    late Stream<QuerySnapshot<Map<String, dynamic>>> datastream;
+    if (Localizations.localeOf(context).languageCode == 'kk') {
+      datastream = FirebaseFirestore.instance.collection('datakz').snapshots();
+    } else if (Localizations.localeOf(context).languageCode == 'ru') {
+      datastream = FirebaseFirestore.instance.collection('dataru').snapshots();
+    } else if (Localizations.localeOf(context).languageCode == 'en') {
+      datastream = FirebaseFirestore.instance.collection('dataen').snapshots();
+    }
     return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection('data').snapshots(),
+      stream: datastream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return CircularProgressIndicator(); // Показываем индикатор загрузки во время ожидания данных
         }
 
         if (snapshot.hasError) {
-          return Text("Ошибка: ${snapshot.error}");
+          return Text("Error: ${snapshot.error}");
         }
 
         String textWidgets = "";
@@ -399,15 +448,23 @@ class MyPhotoCont extends StatefulWidget {
 class _MyPhotoContState extends State<MyPhotoCont> {
   @override
   Widget build(BuildContext context) {
+    late Stream<QuerySnapshot<Map<String, dynamic>>> datastream;
+    if (Localizations.localeOf(context).languageCode == 'kk') {
+      datastream = FirebaseFirestore.instance.collection('datakz').snapshots();
+    } else if (Localizations.localeOf(context).languageCode == 'ru') {
+      datastream = FirebaseFirestore.instance.collection('dataru').snapshots();
+    } else if (Localizations.localeOf(context).languageCode == 'en') {
+      datastream = FirebaseFirestore.instance.collection('dataen').snapshots();
+    }
     return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection('data').snapshots(),
+      stream: datastream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return CircularProgressIndicator(); // Показываем индикатор загрузки во время ожидания данных
         }
 
         if (snapshot.hasError) {
-          return Text("Ошибка: ${snapshot.error}");
+          return Text("Error: ${snapshot.error}");
         }
 
         String photoWidgets = "";
@@ -451,49 +508,34 @@ class MenuTile extends StatefulWidget {
 class MenuTileWidget extends State<MenuTile> {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        Container(
-          color: Colors.amber,
-          margin: const EdgeInsets.all(0),
-          child: _buildRating(),
-        ),
-        Card(
-          elevation: 5,
-          margin: const EdgeInsets.all(0),
-          child: Container(
-            color: Colors.amber,
-            padding: const EdgeInsets.all(0),
-            child: _buildAction(),
+    return Container(
+      child: Column(
+        children: <Widget>[
+          SizedBox(height: 0),
+          Card(
+            elevation: 5,
+            margin: const EdgeInsets.all(0),
+            child: Container(
+              color: Color.fromARGB(255, 67, 83, 68),
+              padding: const EdgeInsets.all(10),
+              child: _buildAction(),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
+      decoration: BoxDecoration(
+        color: Color.fromARGB(255, 67, 83, 68),
+        border: Border.all(),
+      ),
     );
   }
-
-  Widget _buildRating() => ListTile(
-        title: Text(
-          'Добавить в избранное',
-          style: TextStyle(
-            fontWeight: FontWeight.w500,
-            fontSize: 16.0,
-          ),
-        ),
-        // subtitle: Text('Выбирите небходимый раздел'),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            FavoriteWidjet(),
-          ],
-        ),
-      );
 
   Widget _buildAction() => Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          _buildButton("Меню", Icons.menu, Colors.transparent),
-          _buildButton("Карта", Icons.map, Colors.transparent),
-          _buildButton("Избранное", Icons.favorite, Colors.transparent),
+          _buildButton("myhomepage".tr(), Icons.home, Colors.black),
+          _buildButton("myQR".tr(), Icons.qr_code, Colors.black),
+          _buildButton("mymap".tr(), Icons.map, Colors.black),
         ],
       );
 
@@ -507,7 +549,7 @@ class MenuTileWidget extends State<MenuTile> {
         children: <Widget>[
           Icon(
             icon,
-            color: Colors.brown,
+            color: Colors.deepOrange,
           ),
           Container(
             child: Text(
@@ -520,54 +562,4 @@ class MenuTileWidget extends State<MenuTile> {
           ),
         ],
       );
-}
-
-class FavoriteWidjet extends StatefulWidget {
-  @override
-  _FavoriteWidjetState createState() => _FavoriteWidjetState();
-}
-
-class _FavoriteWidjetState extends State<FavoriteWidjet> {
-  bool _choiceFavor = false;
-  int _favorCount = 123;
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: <Widget>[
-        Container(
-          child: IconButton(
-            icon: (_choiceFavor
-                ? Icon(Icons.favorite)
-                : Icon(Icons.favorite_border)),
-            onPressed: _toggleFavorite,
-            color: Colors.brown[500],
-          ),
-        ),
-        SizedBox(
-          width: 40,
-          child: Container(
-              child: Text(
-            '$_favorCount',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 20, // Увеличиваем размер шрифта на 24
-              color: Colors.brown[500],
-            ),
-          )),
-        ),
-      ],
-    );
-  }
-
-  void _toggleFavorite() {
-    setState(() {
-      if (_choiceFavor == true) {
-        _choiceFavor = false;
-        _favorCount = _favorCount - 1;
-      } else {
-        _choiceFavor = true;
-        _favorCount = _favorCount + 1;
-      }
-    });
-  }
 }

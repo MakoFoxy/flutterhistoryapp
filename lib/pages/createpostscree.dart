@@ -52,9 +52,17 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
     });
   }
 
-  TextEditingController teTitle = TextEditingController();
+  TextEditingController teTitleKz = TextEditingController();
 
-  TextEditingController teDescription = TextEditingController();
+  TextEditingController teDescriptionKz = TextEditingController();
+
+  TextEditingController teTitleRu = TextEditingController();
+
+  TextEditingController teDescriptionRu = TextEditingController();
+
+  TextEditingController teTitleEn = TextEditingController();
+
+  TextEditingController teDescriptionEn = TextEditingController();
 
   TextEditingController xCoordinate = TextEditingController();
 
@@ -82,7 +90,7 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
                   right: 15,
                 ),
                 child: TextField(
-                  controller: teTitle,
+                  controller: teTitleKz,
                   decoration: const InputDecoration(
                     hintText: 'Тарихи тұлға немесе ғимарат',
                     border: OutlineInputBorder(
@@ -98,9 +106,73 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
                   right: 15,
                 ),
                 child: TextField(
-                  controller: teDescription,
+                  controller: teTitleRu,
+                  decoration: const InputDecoration(
+                    hintText: 'Историческая персона или объект',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(30)),
+                    ),
+                  ),
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.only(
+                  top: 10,
+                  left: 15,
+                  right: 15,
+                ),
+                child: TextField(
+                  controller: teTitleEn,
+                  decoration: const InputDecoration(
+                    hintText: 'Historical person or object',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(30)),
+                    ),
+                  ),
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.only(
+                  top: 10,
+                  left: 15,
+                  right: 15,
+                ),
+                child: TextField(
+                  controller: teDescriptionKz,
                   decoration: const InputDecoration(
                     hintText: 'Сиппатама',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(30)),
+                    ),
+                  ),
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.only(
+                  top: 10,
+                  left: 15,
+                  right: 15,
+                ),
+                child: TextField(
+                  controller: teDescriptionRu,
+                  decoration: const InputDecoration(
+                    hintText: 'Описание',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(30)),
+                    ),
+                  ),
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.only(
+                  top: 10,
+                  left: 15,
+                  right: 15,
+                ),
+                child: TextField(
+                  controller: teDescriptionEn,
+                  decoration: const InputDecoration(
+                    hintText: 'description',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(30)),
                     ),
@@ -198,105 +270,57 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
                 child: ElevatedButton(
                   onPressed: () async {
                     position(xCoordinate, yCoordinate);
-                    CollectionReference collRef =
+                    CollectionReference collRefKz =
                         FirebaseFirestore.instance.collection('datakz');
+                    CollectionReference collRefRu =
+                        FirebaseFirestore.instance.collection('dataru');
+                    CollectionReference collRefEn =
+                        FirebaseFirestore.instance.collection('dataen');
                     Map<String, dynamic> datakz = {
                       //'id': dbTodo.letId,
-                      'title': teTitle.text,
+                      'title': teTitleKz.text,
+                      'description': teDescriptionKz.text,
                       'xCoordinate': xCoordinateInt,
                       'yCoordinate': yCoordinateInt,
-                      'description': teDescription.text,
+                      'filephotopath': pickedFile!.path!,
+                    };
+                    Map<String, dynamic> dataru = {
+                      //'id': dbTodo.letId,
+                      'title': teTitleRu.text,
+                      'description': teDescriptionRu.text,
+                      'xCoordinate': xCoordinateInt,
+                      'yCoordinate': yCoordinateInt,
+                      'filephotopath': pickedFile!.path!,
+                    };
+                    Map<String, dynamic> dataen = {
+                      //'id': dbTodo.letId,
+                      'title': teTitleEn.text,
+                      'description': teDescriptionEn.text,
+                      'xCoordinate': xCoordinateInt,
+                      'yCoordinate': yCoordinateInt,
                       'filephotopath': pickedFile!.path!,
                     };
 
-                    DocumentReference docRef = await collRef.add(datakz);
+                    DocumentReference docRefKz = await collRefKz.add(datakz);
+                    DocumentReference docRefRu = await collRefRu.add(dataru);
+                    DocumentReference docRefEn = await collRefEn.add(dataen);
 
-                    String parentKey = docRef.parent.id;
+                    String parentKeyKz = docRefKz.parent.id;
+                    String parentKeyRu = docRefRu.parent.id;
+                    String parentKeyEn = docRefEn.parent.id;
 
-                    print('parentKey $parentKey');
+                    print('parentKeyKz $parentKeyKz');
+                    print('parentKeyRu $parentKeyRu');
+                    print('parentKeyEn $parentKeyEn');
 
-                    teTitle.clear();
-                    teDescription.clear();
+                    teTitleKz.clear();
+                    teDescriptionKz.clear();
                     pickedFile = null;
 
                     Navigator.pop(context);
                   },
                   child:
                       const Text('Тарихи объектіні мәліметтер базасына сақтау'),
-                ),
-              ),
-              Container(
-                width: double.infinity,
-                height: 60,
-                decoration: const BoxDecoration(
-                  color: Colors.amber,
-                  borderRadius: BorderRadius.all(Radius.circular(30)),
-                ),
-                margin: const EdgeInsets.all(15),
-                child: ElevatedButton(
-                  onPressed: () async {
-                    position(xCoordinate, yCoordinate);
-                    CollectionReference collRef =
-                        FirebaseFirestore.instance.collection('dataru');
-                    Map<String, dynamic> dataru = {
-                      //'id': dbTodo.letId,
-                      'title': teTitle.text,
-                      'xCoordinate': xCoordinateInt,
-                      'yCoordinate': yCoordinateInt,
-                      'description': teDescription.text,
-                      'filephotopath': pickedFile!.path!,
-                    };
-
-                    DocumentReference docRef = await collRef.add(dataru);
-
-                    String parentKey = docRef.parent.id;
-
-                    print('parentKey $parentKey');
-
-                    teTitle.clear();
-                    teDescription.clear();
-                    pickedFile = null;
-
-                    Navigator.pop(context);
-                  },
-                  child: const Text('Сохранить исторический объект в базу данных'),
-                ),
-              ),
-              Container(
-                width: double.infinity,
-                height: 60,
-                decoration: const BoxDecoration(
-                  color: Colors.amber,
-                  borderRadius: BorderRadius.all(Radius.circular(30)),
-                ),
-                margin: const EdgeInsets.all(15),
-                child: ElevatedButton(
-                  onPressed: () async {
-                    position(xCoordinate, yCoordinate);
-                    CollectionReference collRef =
-                        FirebaseFirestore.instance.collection('dataen');
-                    Map<String, dynamic> dataen = {
-                      //'id': dbTodo.letId,
-                      'title': teTitle.text,
-                      'xCoordinate': xCoordinateInt,
-                      'yCoordinate': yCoordinateInt,
-                      'description': teDescription.text,
-                      'filephotopath': pickedFile!.path!,
-                    };
-
-                    DocumentReference docRef = await collRef.add(dataen);
-
-                    String parentKey = docRef.parent.id;
-
-                    print('parentKey $parentKey');
-
-                    teTitle.clear();
-                    teDescription.clear();
-                    pickedFile = null;
-
-                    Navigator.pop(context);
-                  },
-                  child: const Text('Saving historical object in the database'),
                 ),
               ),
             ],
