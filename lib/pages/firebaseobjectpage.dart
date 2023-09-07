@@ -138,22 +138,30 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
                   ),
                 );
 
-                var collRef = FirebaseFirestore.instance.collection('data');
+                late CollectionReference<Map<String, dynamic>> collRef;
+                if (Localizations.localeOf(context).languageCode == 'kk') {
+                  collRef = FirebaseFirestore.instance.collection('datakz');
+                } else if (Localizations.localeOf(context).languageCode ==
+                    'ru') {
+                  collRef = FirebaseFirestore.instance.collection('dataru');
+                } else if (Localizations.localeOf(context).languageCode ==
+                    'en') {
+                  collRef = FirebaseFirestore.instance.collection('dataen');
+                }
                 String targetTitle =
                     widget.selectedKey; // Значение, которое вы ищете
 
-                QuerySnapshot querySnapshot = await collRef.get();
-                List<QueryDocumentSnapshot> docs = querySnapshot.docs;
-
-                for (QueryDocumentSnapshot doc in docs) {
-                  Map<String, dynamic> autodata =
-                      doc.data() as Map<String, dynamic>;
+                QuerySnapshot<Map<String, dynamic>> querySnapshot =
+                    await collRef.get();
+                List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
+                    querySnapshot.docs;
+                for (QueryDocumentSnapshot<Map<String, dynamic>> doc in docs) {
+                  Map<String, dynamic> autodata = doc.data();
                   String autokey = doc.id; // Получение ключа документа
                   // Проверка, соответствует ли поле title значению, которое вы ищете
                   if (autodata['title'] == targetTitle) {
                     await collRef.doc(autokey).delete();
                     print("Document deleted: $autokey");
-                    break; // Прерываем цикл после обновления первого соответствующего документа
                   }
                 }
               },
@@ -209,13 +217,21 @@ class MyOverviewsState extends State<MyOverviews> {
         }
 
         String discripWidgets = "";
+        late String autokey;
+        late Map<String, dynamic> autodata;
 
         final keysfirebase = snapshot.data?.docs.toList();
 
         for (var key in keysfirebase!) {
+          autokey = key.id;
+          autodata = key.data() as Map<String, dynamic>;
           if (widget.selectedKey == key['title']) {
             discripWidgets = key['description'];
+            break;
           }
+        }
+        if (discripWidgets.isEmpty && autokey == autokey) {
+          discripWidgets = autodata['description'];
         }
 
         return Container(
@@ -269,14 +285,22 @@ class MyCoordinateState extends State<MyCoordinate> {
 
         late double xCoordinateWidgets;
         late double yCoordinateWidgets;
-
+        late String autokey;
+        late Map<String, dynamic> autodata;
         final keysfirebase = snapshot.data?.docs.toList();
 
         for (var key in keysfirebase!) {
+          autokey = key.id;
+          autodata = key.data() as Map<String, dynamic>;
           if (widget.selectedKey == key['title']) {
             xCoordinateWidgets = key['xCoordinate'];
             yCoordinateWidgets = key['yCoordinate'];
+            break;
           }
+        }
+        if (autokey == autokey) {
+          xCoordinateWidgets = autodata['xCoordinate'];
+          yCoordinateWidgets = autodata['yCoordinate'];
         }
 
         return Container(
@@ -478,13 +502,22 @@ class _MyPhotoContState extends State<MyPhotoCont> {
         }
 
         String photoWidgets = "";
+        late String autokey;
+        late Map<String, dynamic> autodata;
 
         final keysfirebase = snapshot.data?.docs.toList();
         for (var key in keysfirebase!) {
+          autokey = key.id;
+          autodata = key.data() as Map<String, dynamic>;
           if (widget.selectedKey == key['title']) {
             photoWidgets = key['filephotopath'];
+            break;
           }
         }
+        if (photoWidgets.isEmpty && autokey == autokey) {
+          photoWidgets = autodata['filephotopath'];
+        }
+
         print(photoWidgets);
         return Container(
           height: 150,
