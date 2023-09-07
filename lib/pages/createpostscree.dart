@@ -163,6 +163,7 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
                   ),
                 ),
               ),
+              
               Container(
                 margin: const EdgeInsets.only(
                   top: 10,
@@ -172,7 +173,7 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
                 child: TextField(
                   controller: teDescriptionEn,
                   decoration: const InputDecoration(
-                    hintText: 'description',
+                    hintText: 'Description',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(30)),
                     ),

@@ -24,7 +24,6 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
 
   @override
   Widget build(BuildContext context) {
-    // fetchKeysFirebase();
     return Scaffold(
       body: SafeArea(
         child: DefaultTextStyle(
