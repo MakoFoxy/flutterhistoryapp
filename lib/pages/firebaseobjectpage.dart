@@ -404,12 +404,22 @@ class _MyTextContState extends State<MyTextCont> {
 
         String textWidgets = "";
 
+        late String autokey;
+        late Map<String, dynamic> autodata;
+
         final keysfirebase = snapshot.data?.docs.toList();
         for (var key in keysfirebase!) {
+          autokey = key.id;
+          autodata = key.data() as Map<String, dynamic>;
           if (widget.selectedKey == key['title']) {
             textWidgets = key['title'];
+            break;
           }
         }
+        if (textWidgets.isEmpty && autokey == autokey) {
+          textWidgets = autodata['title'];
+        }
+
         print(textWidgets);
         return Container(
           width: 350,
