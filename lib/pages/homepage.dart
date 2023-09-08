@@ -241,7 +241,9 @@ class FirebaseSearch extends StatefulWidget {
 class FirebaseSearchWidget extends State<FirebaseSearch> {
   TextEditingController keyword = TextEditingController();
 
-  List allResults = [];
+  List allResultsKz = [];
+  List allResultsRu = [];
+  List allResultsEn = [];
   List resultList = [];
 
   @override
@@ -258,41 +260,86 @@ class FirebaseSearchWidget extends State<FirebaseSearch> {
   searchResultList() {
     var showRes = [];
     if (keyword.text != "") {
-      for (var keySnap in allResults) {
+      for (var keySnap in allResultsKz) {
+        var title = keySnap['title'].toString().toLowerCase();
+        if (title.contains(keyword.text.toLowerCase())) {
+          showRes.add(keySnap);
+        }
+      }
+      for (var keySnap in allResultsRu) {
+        var title = keySnap['title'].toString().toLowerCase();
+        if (title.contains(keyword.text.toLowerCase())) {
+          showRes.add(keySnap);
+        }
+      }
+      for (var keySnap in allResultsEn) {
         var title = keySnap['title'].toString().toLowerCase();
         if (title.contains(keyword.text.toLowerCase())) {
           showRes.add(keySnap);
         }
       }
     } else {
-      showRes = List.from(allResults);
+      if (Localizations.localeOf(context).languageCode == 'kk') {
+        showRes = List.from(allResultsKz);
+      } else if (Localizations.localeOf(context).languageCode == 'ru') {
+        showRes = List.from(allResultsRu);
+      } else if (Localizations.localeOf(context).languageCode == 'en') {
+        showRes = List.from(allResultsEn);
+      }
     }
-
     setState(() {
       resultList = showRes;
     });
   }
 
   getClientStream() async {
-    late QuerySnapshot<Map<String, dynamic>> datalingua;
+    late QuerySnapshot<Map<String, dynamic>> datalinguakz;
+    late QuerySnapshot<Map<String, dynamic>> datalinguaru;
+    late QuerySnapshot<Map<String, dynamic>> datalinguaen;
     if (Localizations.localeOf(context).languageCode == 'kk') {
-      datalingua = await FirebaseFirestore.instance
+      datalinguakz = await FirebaseFirestore.instance
           .collection('datakz')
           .orderBy('title')
           .get();
-    } else if (Localizations.localeOf(context).languageCode == 'ru') {
-      datalingua = await FirebaseFirestore.instance
+      datalinguaru = await FirebaseFirestore.instance
           .collection('dataru')
           .orderBy('title')
           .get();
+      datalinguaen = await FirebaseFirestore.instance
+          .collection('dataen')
+          .orderBy('title')
+          .get();
+    } else if (Localizations.localeOf(context).languageCode == 'ru') {
+      datalinguakz = await FirebaseFirestore.instance
+          .collection('datakz')
+          .orderBy('title')
+          .get();
+      datalinguaru = await FirebaseFirestore.instance
+          .collection('dataru')
+          .orderBy('title')
+          .get();
+      datalinguaen = await FirebaseFirestore.instance
+          .collection('dataen')
+          .orderBy('title')
+          .get();
     } else if (Localizations.localeOf(context).languageCode == 'en') {
-      datalingua = await FirebaseFirestore.instance
+      datalinguakz = await FirebaseFirestore.instance
+          .collection('datakz')
+          .orderBy('title')
+          .get();
+      datalinguaru = await FirebaseFirestore.instance
+          .collection('dataru')
+          .orderBy('title')
+          .get();
+      datalinguaen = await FirebaseFirestore.instance
           .collection('dataen')
           .orderBy('title')
           .get();
     }
     setState(() {
-      allResults = datalingua.docs;
+      allResultsKz = datalinguakz.docs;
+      allResultsRu = datalinguaru.docs;
+      allResultsEn = datalinguaen.docs;
     });
     searchResultList();
   }
@@ -385,6 +432,8 @@ class streamBuild extends StatelessWidget {
     late Stream<QuerySnapshot<Map<String, dynamic>>> datastream;
     if (Localizations.localeOf(context).languageCode == 'kk') {
       datastream = FirebaseFirestore.instance.collection('datakz').snapshots();
+      datastream = FirebaseFirestore.instance.collection('dataru').snapshots();
+      datastream = FirebaseFirestore.instance.collection('dataen').snapshots();
     } else if (Localizations.localeOf(context).languageCode == 'ru') {
       datastream = FirebaseFirestore.instance.collection('dataru').snapshots();
     } else if (Localizations.localeOf(context).languageCode == 'en') {
