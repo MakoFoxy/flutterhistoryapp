@@ -46,77 +46,6 @@ class EditFirebasePageState extends State<EditFirebasePage> {
     yCoordinateNum = double.parse(yCoordinate.text);
   }
 
-  // Future<void> fetchKeysFirebase() async {
-  //   late QuerySnapshot<Map<String, dynamic>> datakz;
-  //   late QuerySnapshot<Map<String, dynamic>> dataru;
-  //   late QuerySnapshot<Map<String, dynamic>> dataen;
-
-  //   if (Localizations.localeOf(context).languageCode == 'kk') {
-  //     datakz = await FirebaseFirestore.instance.collection('datakz').get();
-  //   } else if (Localizations.localeOf(context).languageCode == 'ru') {
-  //     dataru = await FirebaseFirestore.instance.collection('dataru').get();
-  //   } else if (Localizations.localeOf(context).languageCode == 'en') {
-  //     dataen = await FirebaseFirestore.instance.collection('dataen').get();
-  //   }
-
-  //   datafirebasekz = datakz.docs.toList();
-  //   datafirebaseru = dataru.docs.toList();
-  //   datafirebase_en = dataen.docs.toList();
-
-  //   for (int i = 0; i < datafirebasekz!.length; i++) {
-  //     if (widget.selectedKey == datafirebasekz![i]['title']) {
-  //       description = datafirebasekz![i]['description'];
-  //       title = datafirebasekz![i]['title'];
-  //       xCoordinate = datafirebasekz![i]['xCoordinate'];
-  //       yCoordinate = datafirebasekz![i]['yCoordinate'];
-
-  //       //idnum = datafirebase![i]['id'];
-  //       teTitleKz.text = title; // Инициализация контроллера
-  //       teDecsriptionKz.text = description; // Инициализация контроллера
-  //       //teId.text = idnum;
-  //       break;
-  //     }
-  //   }
-
-  //   for (int i = 0; i < datafirebaseru!.length; i++) {
-  //     if (widget.selectedKey == datafirebaseru![i]['title']) {
-  //       description = datafirebaseru![i]['description'];
-  //       title = datafirebaseru![i]['title'];
-  //       xCoordinate = datafirebaseru![i]['xCoordinate'];
-  //       yCoordinate = datafirebaseru![i]['yCoordinate'];
-
-  //       //idnum = datafirebase![i]['id'];
-  //       teTitleRu.text = title; // Инициализация контроллера
-  //       teDecsriptionRu.text = description; // Инициализация контроллера
-  //       //teId.text = idnum;
-  //       break;
-  //     }
-  //   }
-
-  //   for (int i = 0; i < datafirebase_en!.length; i++) {
-  //     if (widget.selectedKey == datafirebase_en![i]['title']) {
-  //       description = datafirebase_en![i]['description'];
-  //       title = datafirebase_en![i]['title'];
-  //       xCoordinate = datafirebase_en![i]['xCoordinate'];
-  //       yCoordinate = datafirebase_en![i]['yCoordinate'];
-
-  //       //idnum = datafirebase![i]['id'];
-  //       teTitleEn.text = title; // Инициализация контроллера
-  //       teDecsriptionEn.text = description; // Инициализация контроллера
-  //       //teId.text = idnum;
-  //       break;
-  //     }
-  //   }
-  //   //id = int.parse(teId.text);
-  //   print("teTitle ${teTitleKz.text}");
-  //   print("teDecsription ${teDecsriptionKz.text}");
-  //   print("teTitle ${teTitleRu.text}");
-  //   print("teDecsription ${teDecsriptionRu.text}");
-  //   print("teTitle ${teTitleEn.text}");
-  //   print("teDecsription ${teDecsriptionEn.text}");
-  //   print("selectedKey fo firebase ${widget.selectedKey}");
-  // }
-
   Future selectFile() async {
     final FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
@@ -471,3 +400,76 @@ class EditFirebasePageState extends State<EditFirebasePage> {
     );
   }
 }
+
+
+
+  // Future<void> fetchKeysFirebase() async {
+  //   late QuerySnapshot<Map<String, dynamic>> datakz;
+  //   late QuerySnapshot<Map<String, dynamic>> dataru;
+  //   late QuerySnapshot<Map<String, dynamic>> dataen;
+
+  //   if (Localizations.localeOf(context).languageCode == 'kk') {
+  //     datakz = await FirebaseFirestore.instance.collection('datakz').get();
+  //   } else if (Localizations.localeOf(context).languageCode == 'ru') {
+  //     dataru = await FirebaseFirestore.instance.collection('dataru').get();
+  //   } else if (Localizations.localeOf(context).languageCode == 'en') {
+  //     dataen = await FirebaseFirestore.instance.collection('dataen').get();
+  //   }
+
+  //   datafirebasekz = datakz.docs.toList();
+  //   datafirebaseru = dataru.docs.toList();
+  //   datafirebase_en = dataen.docs.toList();
+
+  //   for (int i = 0; i < datafirebasekz!.length; i++) {
+  //     if (widget.selectedKey == datafirebasekz![i]['title']) {
+  //       description = datafirebasekz![i]['description'];
+  //       title = datafirebasekz![i]['title'];
+  //       xCoordinate = datafirebasekz![i]['xCoordinate'];
+  //       yCoordinate = datafirebasekz![i]['yCoordinate'];
+
+  //       //idnum = datafirebase![i]['id'];
+  //       teTitleKz.text = title; // Инициализация контроллера
+  //       teDecsriptionKz.text = description; // Инициализация контроллера
+  //       //teId.text = idnum;
+  //       break;
+  //     }
+  //   }
+
+  //   for (int i = 0; i < datafirebaseru!.length; i++) {
+  //     if (widget.selectedKey == datafirebaseru![i]['title']) {
+  //       description = datafirebaseru![i]['description'];
+  //       title = datafirebaseru![i]['title'];
+  //       xCoordinate = datafirebaseru![i]['xCoordinate'];
+  //       yCoordinate = datafirebaseru![i]['yCoordinate'];
+
+  //       //idnum = datafirebase![i]['id'];
+  //       teTitleRu.text = title; // Инициализация контроллера
+  //       teDecsriptionRu.text = description; // Инициализация контроллера
+  //       //teId.text = idnum;
+  //       break;
+  //     }
+  //   }
+
+  //   for (int i = 0; i < datafirebase_en!.length; i++) {
+  //     if (widget.selectedKey == datafirebase_en![i]['title']) {
+  //       description = datafirebase_en![i]['description'];
+  //       title = datafirebase_en![i]['title'];
+  //       xCoordinate = datafirebase_en![i]['xCoordinate'];
+  //       yCoordinate = datafirebase_en![i]['yCoordinate'];
+
+  //       //idnum = datafirebase![i]['id'];
+  //       teTitleEn.text = title; // Инициализация контроллера
+  //       teDecsriptionEn.text = description; // Инициализация контроллера
+  //       //teId.text = idnum;
+  //       break;
+  //     }
+  //   }
+  //   //id = int.parse(teId.text);
+  //   print("teTitle ${teTitleKz.text}");
+  //   print("teDecsription ${teDecsriptionKz.text}");
+  //   print("teTitle ${teTitleRu.text}");
+  //   print("teDecsription ${teDecsriptionRu.text}");
+  //   print("teTitle ${teTitleEn.text}");
+  //   print("teDecsription ${teDecsriptionEn.text}");
+  //   print("selectedKey fo firebase ${widget.selectedKey}");
+  // }

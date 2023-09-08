@@ -361,14 +361,14 @@ class streamBuild extends StatelessWidget {
                         ),
                       );
                     }
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ObjectFirebasePage(
-                          selectedKey: doc['title'],
-                        ),
-                      ),
-                    );
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //     builder: (context) => ObjectFirebasePage(
+                    //       selectedKey: doc['title'],
+                    //     ),
+                    //   ),
+                    // );
                   },
                   style: ElevatedButton.styleFrom(
                     primary: Colors.amber.withOpacity(0.8),
@@ -397,14 +397,14 @@ class streamBuild extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 5),
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ObjectFirebasePage(
-                          selectedKey: doc['title'],
-                        ),
-                      ),
-                    );
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //     builder: (context) => ObjectFirebasePage(
+                    //       selectedKey: doc['title'],
+                    //     ),
+                    //   ),
+                    // );
                   },
                   style: ElevatedButton.styleFrom(
                     primary: Colors.amber.withOpacity(0.8),

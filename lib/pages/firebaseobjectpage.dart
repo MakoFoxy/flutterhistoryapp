@@ -11,8 +11,16 @@ import 'package:mausoleum/api/dropdawn_flag/dropdawn_flag.dart';
 
 class ObjectFirebasePage extends StatefulWidget {
   final String selectedKey; // Добавьте параметр для выбранного ключа
+  final String currentLanguagekz; // Добавьте текущий языковой параметр
+  final String currentLanguageru; // Добавьте текущий языковой параметр
+  final String currentLanguageen; // Добавьте текущий языковой параметр
+
+
   ObjectFirebasePage({
     required this.selectedKey,
+    required this.currentLanguagekz,
+    required this.currentLanguageru,
+    required this.currentLanguageen, // Добавьте текущий языковой параметр в конструктор
   });
 
   @override
@@ -24,6 +32,7 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
 
   @override
   Widget build(BuildContext context) {
+    print("widget.selectedKey ${widget.selectedKey}");
     return Scaffold(
       body: SafeArea(
         child: DefaultTextStyle(
@@ -65,11 +74,15 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           MyTextCont(selectedKey: widget.selectedKey),
-                          //MyPhotoCont(),
                         ],
                       ),
                       MyPhotoCont(selectedKey: widget.selectedKey),
-                      MyOverviews(selectedKey: widget.selectedKey),
+                      MyOverviews(
+                        selectedKey: widget.selectedKey,
+                        currentLanguagekz: widget.currentLanguagekz,
+                        currentLanguageru: widget.currentLanguageru,
+                        currentLanguageen: widget.currentLanguageen,
+                      ),
                     ],
                   ),
                 ),
@@ -181,10 +194,15 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
 
 class MyOverviews extends StatefulWidget {
   String selectedKey;
+  final String currentLanguagekz; // Добавьте текущий языковой параметр
+  final String currentLanguageru; // Добавьте текущий языковой параметр
+  final String currentLanguageen; // Добавьте текущий языковой параметр
 
   MyOverviews({
-    //required this.mapdata,
     required this.selectedKey,
+    required this.currentLanguagekz,
+    required this.currentLanguageru,
+    required this.currentLanguageen, // Добавьте текущий языковой параметр в конструктор
   });
 
   @override
@@ -195,15 +213,104 @@ class MyOverviewsState extends State<MyOverviews> {
   final whiteTextStyle =
       TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 20);
 
+  String discripWidgetsKz = "";
+  String discripWidgetsRu = "";
+  String discripWidgetsEn = "";
+  String discripWidgetsEmpt = "";
+
+  @override
+  void initState() {
+    super.initState();
+    fetchKeysFirebase(); // Загрузите ключи из Firebase
+  }
+
+  Future<void> fetchKeysFirebase() async {
+    List<QueryDocumentSnapshot<Map<String, dynamic>>>? datafirebasekz;
+    List<QueryDocumentSnapshot<Map<String, dynamic>>>? datafirebaseru;
+    List<QueryDocumentSnapshot<Map<String, dynamic>>>? datafirebaseen;
+    late QuerySnapshot<Map<String, dynamic>> datakz;
+    late QuerySnapshot<Map<String, dynamic>> dataru;
+    late QuerySnapshot<Map<String, dynamic>> dataen;
+    datakz = await FirebaseFirestore.instance.collection('datakz').get();
+    dataru = await FirebaseFirestore.instance.collection('dataru').get();
+    dataen = await FirebaseFirestore.instance.collection('dataen').get();
+
+    datafirebasekz = datakz.docs.toList();
+    datafirebaseru = dataru.docs.toList();
+    datafirebaseen = dataen.docs.toList();
+
+    late String autokey;
+    late Map<String, dynamic> autodata;
+
+    for (int i = 0; i < datafirebasekz.length; i++) {
+      autokey = datafirebasekz[i].id;
+      autodata = datafirebasekz[i].data() as Map<String, dynamic>;
+      if (widget.selectedKey == datafirebasekz[i]['title']) {
+        discripWidgetsKz = datafirebasekz[i]['description'];
+        break;
+      }
+    }
+    // if (discripWidgets.isEmpty && autokey == autokey) {
+    //   discripWidgets = autodata['description'];
+    // }
+
+    for (int i = 0; i < datafirebaseru.length; i++) {
+      autokey = datafirebaseru[i].id;
+      autodata = datafirebaseru[i].data() as Map<String, dynamic>;
+      if (widget.selectedKey == datafirebaseru[i]['title']) {
+        discripWidgetsRu = datafirebaseru[i]['description'];
+        break;
+      }
+    }
+
+    // if (discripWidgets.isEmpty && autokey == autokey) {
+    //   discripWidgets = autodata['description'];
+    // }
+
+    for (int i = 0; i < datafirebaseen.length; i++) {
+      autokey = datafirebaseen[i].id;
+      autodata = datafirebaseen[i].data() as Map<String, dynamic>;
+      if (widget.selectedKey == datafirebaseen[i]['title']) {
+        discripWidgetsEn = datafirebaseen[i]['description'];
+        break;
+      }
+    }
+
+    if (discripWidgetsKz.isEmpty &&
+        discripWidgetsRu.isEmpty &&
+        discripWidgetsEn.isEmpty &&
+        autokey == autokey) {
+      discripWidgetsEmpt = autodata['description'];
+    }
+
+    print("discripWidgetsKz $discripWidgetsKz");
+    print("discripWidgetsRu $discripWidgetsRu");
+    print("discripWidgetsEn $discripWidgetsEn");
+    print("discripWidgetsEmpt $discripWidgetsEmpt");
+  }
+
   Widget build(BuildContext context) {
     late Stream<QuerySnapshot<Map<String, dynamic>>> datastream;
-    if (Localizations.localeOf(context).languageCode == 'kk') {
+    if (discripWidgetsKz != null) {
+      Localizations.localeOf(context).languageCode == widget.currentLanguagekz;
       datastream = FirebaseFirestore.instance.collection('datakz').snapshots();
-    } else if (Localizations.localeOf(context).languageCode == 'ru') {
+    } else if (discripWidgetsRu != null) {
+      Localizations.localeOf(context).languageCode == widget.currentLanguageru;
       datastream = FirebaseFirestore.instance.collection('dataru').snapshots();
-    } else if (Localizations.localeOf(context).languageCode == 'en') {
+    } else if (discripWidgetsEn != null) {
+      Localizations.localeOf(context).languageCode == widget.currentLanguageen;
       datastream = FirebaseFirestore.instance.collection('dataen').snapshots();
     }
+
+    // datastream = FirebaseFirestore.instance.collection('datakz').snapshots();
+    // datastream = FirebaseFirestore.instance.collection('dataru').snapshots();
+    // datastream = FirebaseFirestore.instance.collection('dataen').snapshots();
+
+    print("discripWidgetsKz $discripWidgetsKz");
+    print("discripWidgetsRu $discripWidgetsRu");
+    print("discripWidgetsEn $discripWidgetsEn");
+    print("discripWidgets $discripWidgetsEmpt");
+
     return StreamBuilder<QuerySnapshot>(
       stream: datastream,
       builder: (context, snapshot) {
@@ -214,29 +321,34 @@ class MyOverviewsState extends State<MyOverviews> {
         if (snapshot.hasError) {
           return Text("Error: ${snapshot.error}");
         }
+        // fetchKeysFirebase();
 
-        String discripWidgets = "";
-        late String autokey;
-        late Map<String, dynamic> autodata;
+        // String discripWidgets = "";
+        // late String autokey;
+        // late Map<String, dynamic> autodata;
 
-        final keysfirebase = snapshot.data?.docs.toList();
+        // final keysfirebase = snapshot.data?.docs.toList();
 
-        for (var key in keysfirebase!) {
-          autokey = key.id;
-          autodata = key.data() as Map<String, dynamic>;
-          if (widget.selectedKey == key['title']) {
-            discripWidgets = key['description'];
-            break;
-          }
-        }
-        if (discripWidgets.isEmpty && autokey == autokey) {
-          discripWidgets = autodata['description'];
-        }
+        // for (var key in keysfirebase!) {
+        //   autokey = key.id;
+        //   autodata = key.data() as Map<String, dynamic>;
+        //   if (widget.selectedKey == key['title']) {
+        //     discripWidgets = key['description'];
+        //     print("key['title']2 ${key['title']}");
+        //     break;
+        //   }
+        // }
+        // print("widget.selectedKey2 ${widget.selectedKey}");
+
+        // if (discripWidgets.isEmpty && autokey == autokey) {
+        //   discripWidgets = autodata['description'];
+        // }
+        // print("discripWidgets $discripWidgets");
 
         return Container(
           color: Colors.amber,
           child: Text(
-            discripWidgets, // Убедиcь, что значение не null
+            discripWidgetsRu, // Убедиcь, что значение не null
             style: whiteTextStyle,
             textAlign: TextAlign.justify,
           ),
