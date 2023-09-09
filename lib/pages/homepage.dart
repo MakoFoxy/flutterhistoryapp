@@ -414,12 +414,7 @@ class FirebaseSearchWidget extends State<FirebaseSearch> {
             ),
             child: ListView(
               children: [
-                streamBuild(
-                  resultList: resultList,
-                  currentLanguagekz: currentLanguagekz,
-                  currentLanguageru: currentLanguageru,
-                  currentLanguageen: currentLanguageen,
-                ),
+                streamBuild(resultList: resultList),
               ],
             ),
           ),
@@ -431,15 +426,9 @@ class FirebaseSearchWidget extends State<FirebaseSearch> {
 
 class streamBuild extends StatelessWidget {
   List<dynamic> resultList = [];
-  String currentLanguagekz; // Добавьте текущий языковой параметр
-  String currentLanguageru; // Добавьте текущий языковой параметр
-  String currentLanguageen; // Добавьте текущий языковой параметр
 
   streamBuild({
     required this.resultList,
-    required this.currentLanguagekz,
-    required this.currentLanguageru,
-    required this.currentLanguageen,
   });
 
   @override
@@ -447,17 +436,20 @@ class streamBuild extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('resultList ${resultList.asMap()}');
     late Stream<QuerySnapshot<Map<String, dynamic>>> datastream;
-    if (Localizations.localeOf(context).languageCode == currentLanguagekz) {
-      datastream = FirebaseFirestore.instance.collection('datakz').snapshots();
-    } else if (Localizations.localeOf(context).languageCode ==
-        currentLanguageru) {
-      datastream = FirebaseFirestore.instance.collection('dataru').snapshots();
-    } else if (Localizations.localeOf(context).languageCode ==
-        currentLanguageen) {
-      datastream = FirebaseFirestore.instance.collection('dataen').snapshots();
-    }
+    // if (Localizations.localeOf(context).languageCode == 'kk') {
+    //   datastream = FirebaseFirestore.instance.collection('datakz').snapshots();
+    // } else if (Localizations.localeOf(context).languageCode == 'ru') {
+    //   datastream = FirebaseFirestore.instance.collection('dataru').snapshots();
+    // } else if (Localizations.localeOf(context).languageCode == 'en') {
+    //   datastream = FirebaseFirestore.instance.collection('dataen').snapshots();
+    // }
+    datastream = FirebaseFirestore.instance.collection('datakz').snapshots();
+
+    datastream = FirebaseFirestore.instance.collection('dataru').snapshots();
+
+    datastream = FirebaseFirestore.instance.collection('dataen').snapshots();
+
     return StreamBuilder<QuerySnapshot>(
       stream: datastream,
       builder: (context, snapshot) {
@@ -473,21 +465,18 @@ class streamBuild extends StatelessWidget {
         final keysfirebase = snapshot.data?.docs.toList();
 
         if (resultList != "") {
+          print('resultList from firebase ${resultList.asMap()}');
           return Column(
-            children: resultList.asMap().entries.map((entry) {
-              final index = entry.key;
-              final data = entry.value;
+            children: resultList.map((data) {
               final doc = data.data() as Map<String, dynamic>;
-              final tag =
-                  'title_${doc['title']}_$index'; // Уникальный тег с индексом
-
+              print("doc['title'] from firebase ${doc['title']}");
               return Container(
                   margin: const EdgeInsets.symmetric(
                     horizontal: 10,
                     vertical: 5,
                   ),
                   child: Hero(
-                    tag: tag,
+                    tag: 'title_${doc['title']}',
                     child: ElevatedButton(
                       onPressed: () {
                         Navigator.push(
@@ -495,9 +484,6 @@ class streamBuild extends StatelessWidget {
                           MaterialPageRoute(
                             builder: (context) => ObjectFirebasePage(
                               selectedKey: doc['title'],
-                              currentLanguagekz: currentLanguagekz,
-                              currentLanguageru: currentLanguageru,
-                              currentLanguageen: currentLanguageen,
                             ),
                           ),
                         );
@@ -533,9 +519,6 @@ class streamBuild extends StatelessWidget {
                         MaterialPageRoute(
                           builder: (context) => ObjectFirebasePage(
                             selectedKey: doc['title'],
-                            currentLanguagekz: currentLanguagekz,
-                            currentLanguageru: currentLanguageru,
-                            currentLanguageen: currentLanguageen,
                           ),
                         ),
                       );
@@ -658,7 +641,6 @@ class MenuTileWidget extends State<MenuTile> {
         ],
       );
 }
-
 // class FavoriteWidjet extends StatefulWidget {
 //   @override
 //   _FavoriteWidjetState createState() => _FavoriteWidjetState();
