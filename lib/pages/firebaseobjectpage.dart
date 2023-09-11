@@ -359,34 +359,28 @@ class MyOverviewsState extends State<MyOverviews> {
         });
 
         if (Localizations.localeOf(context).languageCode == currentLanguagekz) {
-          fetchKeysFirebase();
+          // fetchKeysFirebase();
           if (discripWidgetsKaz.isNotEmpty) {
             displayedText = discripWidgetsKaz;
           }
         } else if (Localizations.localeOf(context).languageCode ==
             currentLanguageru) {
-          fetchKeysFirebase();
+          // fetchKeysFirebase();
           if (discripWidgetsRus.isNotEmpty) {
             displayedText = discripWidgetsRus;
           }
         } else if (Localizations.localeOf(context).languageCode ==
             currentLanguageen) {
-          fetchKeysFirebase;
+          // fetchKeysFirebase;
           if (discripWidgetsEng.isNotEmpty) {
             displayedText = discripWidgetsEng;
           }
         } else {
           displayedText = discripWidgetsEmpty;
         }
-        // if (discripWidgetsKaz.isNotEmpty) {
-        //   displayedText = discripWidgetsKaz;
-        // } else if (discripWidgetsRus.isNotEmpty) {
-        //   displayedText = discripWidgetsRus;
-        // } else if (discripWidgetsEng.isNotEmpty) {
-        //   displayedText = discripWidgetsEng;
-        // } else {
-        //   displayedText = discripWidgetsEmpty;
-        // }
+        
+        discripWidgetsArr.clear;
+
         print("discripWidgetsKaz $discripWidgetsKaz");
         print("discripWidgetsRus $discripWidgetsRus");
         print("discripWidgetsEng $discripWidgetsEng");
@@ -608,6 +602,10 @@ class _MyTextContState extends State<MyTextCont> {
         titleWidgetsKz = datafirebasekz[i]['title'];
         titleWidgetsArr.add(titleWidgetsKz);
         break;
+      } else if (autokey == autokey && !titleWidgetsArr.contains(autokey)) {
+        titleWidgetsKz = datafirebasekz[i]['title'];
+        titleWidgetsArr.add(titleWidgetsKz);
+        break;
       }
     }
     print("widget.selectedKey from firebase ${widget.selectedKey}");
@@ -622,6 +620,10 @@ class _MyTextContState extends State<MyTextCont> {
         titleWidgetsRu = datafirebaseru[i]['title'];
         titleWidgetsArr.add(titleWidgetsRu);
         break;
+      } else if (autokey == autokey && !titleWidgetsArr.contains(autokey)) {
+        titleWidgetsRu = datafirebaseru[i]['title'];
+        titleWidgetsArr.add(titleWidgetsRu);
+        break;
       }
     }
 
@@ -632,6 +634,10 @@ class _MyTextContState extends State<MyTextCont> {
           "datafirebasekz[i]['title']EN from firebase ${datafirebaseen[i]['title']}");
       if (widget.selectedKey == datafirebaseen[i]['title'] &&
           !titleWidgetsArr.contains(titleWidgetsEn)) {
+        titleWidgetsEn = datafirebaseen[i]['title'];
+        titleWidgetsArr.add(titleWidgetsEn);
+        break;
+      } else if (autokey == autokey && !titleWidgetsArr.contains(autokey)) {
         titleWidgetsEn = datafirebaseen[i]['title'];
         titleWidgetsArr.add(titleWidgetsEn);
         break;
@@ -695,8 +701,11 @@ class _MyTextContState extends State<MyTextCont> {
         String titleWidgetsRus = "";
         String titleWidgetsEng = "";
         String titleWidgetsEmpty = "";
-
         String titledisplayedText = "";
+
+        String currentLanguagekz = 'kk';
+        String currentLanguageru = 'ru';
+        String currentLanguageen = 'en';
 
         titleWidgetsArr.forEach((element) {
           if (titleWidgetsKz == element) {
@@ -711,15 +720,36 @@ class _MyTextContState extends State<MyTextCont> {
           print("*******************<=>element $element");
         });
 
-        if (titleWidgetsKaz.isNotEmpty) {
-          titledisplayedText = titleWidgetsKaz;
-        } else if (titleWidgetsRus.isNotEmpty) {
-          titledisplayedText = titleWidgetsRus;
-        } else if (titleWidgetsEng.isNotEmpty) {
-          titledisplayedText = titleWidgetsEng;
+        if (Localizations.localeOf(context).languageCode == currentLanguagekz) {
+          fetchKeysFirebase();
+          if (titleWidgetsKaz.isNotEmpty) {
+            titledisplayedText = titleWidgetsKaz;
+          }
+        } else if (Localizations.localeOf(context).languageCode ==
+            currentLanguageru) {
+          fetchKeysFirebase();
+          if (titleWidgetsRus.isNotEmpty) {
+            titledisplayedText = titleWidgetsRus;
+          }
+        } else if (Localizations.localeOf(context).languageCode ==
+            currentLanguageen) {
+          fetchKeysFirebase;
+          if (titleWidgetsEng.isNotEmpty) {
+            titledisplayedText = titleWidgetsEng;
+          }
         } else {
           titledisplayedText = titleWidgetsEmpty;
         }
+
+        // if (titleWidgetsKaz.isNotEmpty) {
+        //   titledisplayedText = titleWidgetsKaz;
+        // } else if (titleWidgetsRus.isNotEmpty) {
+        //   titledisplayedText = titleWidgetsRus;
+        // } else if (titleWidgetsEng.isNotEmpty) {
+        //   titledisplayedText = titleWidgetsEng;
+        // } else {
+        //   titledisplayedText = titleWidgetsEmpty;
+        // }
 
         print("titleWidgetsKaz $titleWidgetsKaz");
         print("titleWidgetsRus $titleWidgetsRus");
