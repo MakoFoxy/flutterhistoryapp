@@ -211,13 +211,19 @@ class MyOverviewsState extends State<MyOverviews> {
   String discripWidgetsEmpt = "";
 
   @override
-  void initState() {
-    super.initState();
-    // Вызываем fetchKeysFirebase() только один раз при инициализации виджета
-    fetchKeysFirebase();
-  }
+  // void initState() {
+  //   super.initState();
+  //   // Вызываем fetchKeysFirebase() только один раз при инициализации виджета
+  //   fetchKeysFirebaseOver();
+  // }
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //   // Вызываем fetchKeysFirebaseOver при изменении зависимостей (например, при изменении языка)
+  //   fetchKeysFirebaseOver();
+  // }
 
-  Future<List<String>> fetchKeysFirebase() async {
+  Future<List<String>> fetchKeysFirebaseOver() async {
     List<String> arrlen = [];
     arrlen.add(widget.selectedKey);
     print("widget.selectedKey from firebase ${arrlen.length}");
@@ -315,7 +321,7 @@ class MyOverviewsState extends State<MyOverviews> {
   Widget build(BuildContext context) {
     return FutureBuilder<List<String>>(
       // Pass the Future that will return data after executing fetchKeysFirebase()
-      future: fetchKeysFirebase(),
+      future: fetchKeysFirebaseOver(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return CircularProgressIndicator(); // Show a loading indicator while waiting for data
@@ -378,8 +384,6 @@ class MyOverviewsState extends State<MyOverviews> {
         } else {
           displayedText = discripWidgetsEmpty;
         }
-        
-        discripWidgetsArr.clear;
 
         print("discripWidgetsKaz $discripWidgetsKaz");
         print("discripWidgetsRus $discripWidgetsRus");
@@ -563,14 +567,14 @@ class _MyTextContState extends State<MyTextCont> {
   String titleWidgetsEn = "";
   String titleWidgetsEmpt = "";
 
-  @override
-  void initState() {
-    super.initState();
-    // Вызываем fetchKeysFirebase() только один раз при инициализации виджета
-    fetchKeysFirebase();
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   // Вызываем fetchKeysFirebase() только один раз при инициализации виджета
+  //   fetchKeysFirebaseText();
+  // }
 
-  Future<List<String>> fetchKeysFirebase() async {
+  Future<List<String>> fetchKeysFirebaseText() async {
     List<String> arrlen = [];
     arrlen.add(widget.selectedKey);
     print("widget.selectedKey from firebase ${arrlen.length}");
@@ -678,7 +682,7 @@ class _MyTextContState extends State<MyTextCont> {
   Widget build(BuildContext context) {
     return FutureBuilder<List<String>>(
       // Pass the Future that will return data after executing fetchKeysFirebase()
-      future: fetchKeysFirebase(),
+      future: fetchKeysFirebaseText(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return CircularProgressIndicator(); // Show a loading indicator while waiting for data
@@ -721,19 +725,19 @@ class _MyTextContState extends State<MyTextCont> {
         });
 
         if (Localizations.localeOf(context).languageCode == currentLanguagekz) {
-          fetchKeysFirebase();
+          //fetchKeysFirebaseText();
           if (titleWidgetsKaz.isNotEmpty) {
             titledisplayedText = titleWidgetsKaz;
           }
         } else if (Localizations.localeOf(context).languageCode ==
             currentLanguageru) {
-          fetchKeysFirebase();
+          // fetchKeysFirebaseText();
           if (titleWidgetsRus.isNotEmpty) {
             titledisplayedText = titleWidgetsRus;
           }
         } else if (Localizations.localeOf(context).languageCode ==
             currentLanguageen) {
-          fetchKeysFirebase;
+          // fetchKeysFirebaseText;
           if (titleWidgetsEng.isNotEmpty) {
             titledisplayedText = titleWidgetsEng;
           }
@@ -797,14 +801,14 @@ class _MyPhotoContState extends State<MyPhotoCont> {
   String photoWidgetsEn = "";
   String photoWidgetsEmpt = "";
 
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   // Вызываем fetchKeysFirebase() только один раз при инициализации виджета
+  //   fetchKeysFirebasePhoto();
+  // }
   @override
-  void initState() {
-    super.initState();
-    // Вызываем fetchKeysFirebase() только один раз при инициализации виджета
-    fetchKeysFirebase();
-  }
-
-  Future<List<String>> fetchKeysFirebase() async {
+  Future<List<String>> fetchKeysFirebasePhoto() async {
     List<String> arrlen = [];
     arrlen.add(widget.selectedKey);
     print("widget.selectedKey from firebase ${arrlen.length}");
@@ -875,8 +879,8 @@ class _MyPhotoContState extends State<MyPhotoCont> {
       photoWidgetsEmpt = autodata['filephotopath'];
       photoWidgetsArr.add(photoWidgetsEmpt);
     }
-    // print("discripWidgetsEmpt from firebase $discripWidgetsEmpt");
 
+    // print("discripWidgetsEmpt from firebase $discripWidgetsEmpt");
     // print("discripWidgetsKz $discripWidgetsKz");
     // print("discripWidgetsRu $discripWidgetsRu");
     // print("discripWidgetsEn $discripWidgetsEn");
@@ -901,7 +905,7 @@ class _MyPhotoContState extends State<MyPhotoCont> {
   Widget build(BuildContext context) {
     return FutureBuilder<List<String>>(
       // Pass the Future that will return data after executing fetchKeysFirebase()
-      future: fetchKeysFirebase(),
+      future: fetchKeysFirebasePhoto(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return CircularProgressIndicator(); // Show a loading indicator while waiting for data
@@ -926,6 +930,9 @@ class _MyPhotoContState extends State<MyPhotoCont> {
         String photoWidgetsEmpty = "";
 
         String photoDisplayed = "";
+        String currentLanguagekz = 'kk';
+        String currentLanguageru = 'ru';
+        String currentLanguageen = 'en';
 
         photoWidgetsArr.forEach((element) {
           if (photoWidgetsKz == element) {
@@ -940,15 +947,36 @@ class _MyPhotoContState extends State<MyPhotoCont> {
           print("*******************<=>element $element");
         });
 
-        if (photoWidgetsKaz.isNotEmpty) {
-          photoDisplayed = photoWidgetsKaz;
-        } else if (photoWidgetsRus.isNotEmpty) {
-          photoDisplayed = photoWidgetsRus;
-        } else if (photoWidgetsEng.isNotEmpty) {
-          photoDisplayed = photoWidgetsEng;
+        if (Localizations.localeOf(context).languageCode == currentLanguagekz) {
+          // fetchKeysFirebase();
+          if (photoWidgetsKaz.isNotEmpty) {
+            photoDisplayed = photoWidgetsKaz;
+          }
+        } else if (Localizations.localeOf(context).languageCode ==
+            currentLanguageru) {
+          // fetchKeysFirebase();
+          if (photoWidgetsRus.isNotEmpty) {
+            photoDisplayed = photoWidgetsRus;
+          }
+        } else if (Localizations.localeOf(context).languageCode ==
+            currentLanguageen) {
+          // fetchKeysFirebase;
+          if (photoWidgetsEng.isNotEmpty) {
+            photoDisplayed = photoWidgetsEng;
+          }
         } else {
           photoDisplayed = photoWidgetsEmpty;
         }
+
+        //   if (photoWidgetsKaz.isNotEmpty) {
+        //   photoDisplayed = photoWidgetsKaz;
+        // } else if (photoWidgetsRus.isNotEmpty) {
+        //   photoDisplayed = photoWidgetsRus;
+        // } else if (photoWidgetsEng.isNotEmpty) {
+        //   photoDisplayed = photoWidgetsEng;
+        // } else {
+        //   photoDisplayed = photoWidgetsEmpty;
+        // }
 
         print("discripWidgetsKaz $photoWidgetsKaz");
         print("discripWidgetsRus $photoWidgetsRus");
