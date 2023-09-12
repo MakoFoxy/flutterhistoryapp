@@ -364,6 +364,8 @@ class MyOverviewsState extends State<MyOverviews> {
           print("*******************<=>element $element");
         });
 
+        discripWidgetsArr.clear();
+
         if (Localizations.localeOf(context).languageCode == currentLanguagekz) {
           // fetchKeysFirebase();
           if (discripWidgetsKaz.isNotEmpty) {
@@ -384,7 +386,7 @@ class MyOverviewsState extends State<MyOverviews> {
         } else {
           displayedText = discripWidgetsEmpty;
         }
-
+        print("discripWidgetsArr clear $discripWidgetsArr");
         print("discripWidgetsKaz $discripWidgetsKaz");
         print("discripWidgetsRus $discripWidgetsRus");
         print("discripWidgetsEng $discripWidgetsEng");
@@ -663,6 +665,7 @@ class _MyTextContState extends State<MyTextCont> {
     // print("discripWidgetsEn $discripWidgetsEn");
     // print("discripWidgetsEmpt $discripWidgetsEmpt");
     //print("********************\n${discripWidgetsKz.toString()}");
+
     print("titleWidgetsKz***************${titleWidgetsKz}");
     print("titleWidgetsEn***************${titleWidgetsEn}");
     print("titleWidgetsRu***************${titleWidgetsRu}");
@@ -723,6 +726,9 @@ class _MyTextContState extends State<MyTextCont> {
           }
           print("*******************<=>element $element");
         });
+
+        titleWidgetsArr.clear();
+        print("titleWidgetsArr.clear $titleWidgetsArr");
 
         if (Localizations.localeOf(context).languageCode == currentLanguagekz) {
           //fetchKeysFirebaseText();
@@ -946,6 +952,8 @@ class _MyPhotoContState extends State<MyPhotoCont> {
           }
           print("*******************<=>element $element");
         });
+
+        //photoWidgetsArr.clear();
 
         if (Localizations.localeOf(context).languageCode == currentLanguagekz) {
           // fetchKeysFirebase();

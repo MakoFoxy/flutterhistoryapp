@@ -437,18 +437,18 @@ class streamBuild extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     late Stream<QuerySnapshot<Map<String, dynamic>>> datastream;
-    // if (Localizations.localeOf(context).languageCode == 'kk') {
-    //   datastream = FirebaseFirestore.instance.collection('datakz').snapshots();
-    // } else if (Localizations.localeOf(context).languageCode == 'ru') {
-    //   datastream = FirebaseFirestore.instance.collection('dataru').snapshots();
-    // } else if (Localizations.localeOf(context).languageCode == 'en') {
-    //   datastream = FirebaseFirestore.instance.collection('dataen').snapshots();
-    // }
-    datastream = FirebaseFirestore.instance.collection('datakz').snapshots();
+    if (Localizations.localeOf(context).languageCode == 'kk') {
+      datastream = FirebaseFirestore.instance.collection('datakz').snapshots();
+    } else if (Localizations.localeOf(context).languageCode == 'ru') {
+      datastream = FirebaseFirestore.instance.collection('dataru').snapshots();
+    } else if (Localizations.localeOf(context).languageCode == 'en') {
+      datastream = FirebaseFirestore.instance.collection('dataen').snapshots();
+    }
+    // datastream = FirebaseFirestore.instance.collection('datakz').snapshots();
 
-    datastream = FirebaseFirestore.instance.collection('dataru').snapshots();
+    // datastream = FirebaseFirestore.instance.collection('dataru').snapshots();
 
-    datastream = FirebaseFirestore.instance.collection('dataen').snapshots();
+    // datastream = FirebaseFirestore.instance.collection('dataen').snapshots();
 
     return StreamBuilder<QuerySnapshot>(
       stream: datastream,

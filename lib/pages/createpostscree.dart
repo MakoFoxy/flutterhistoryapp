@@ -12,7 +12,7 @@ class CreateHistoryPost extends StatefulWidget {
 class _CreateHistoryPostState extends State<CreateHistoryPost> {
   PlatformFile? pickedFile;
   UploadTask? uploadTask;
-  late String image_url;
+  String image_url = "";
   Future selectFile() async {
     final FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
@@ -52,6 +52,8 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
     });
   }
 
+  TextEditingController id = TextEditingController();
+
   TextEditingController teTitleKz = TextEditingController();
 
   TextEditingController teDescriptionKz = TextEditingController();
@@ -83,6 +85,22 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
         child: SingleChildScrollView(
           child: Column(
             children: <Widget>[
+              Container(
+                margin: const EdgeInsets.only(
+                  top: 10,
+                  left: 15,
+                  right: 15,
+                ),
+                child: TextField(
+                  controller: id,
+                  decoration: const InputDecoration(
+                    hintText: 'id тіркеніз',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(30)),
+                    ),
+                  ),
+                ),
+              ),
               Container(
                 margin: const EdgeInsets.only(
                   top: 10,
@@ -163,7 +181,6 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
                   ),
                 ),
               ),
-              
               Container(
                 margin: const EdgeInsets.only(
                   top: 10,
@@ -278,7 +295,7 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
                     CollectionReference collRefEn =
                         FirebaseFirestore.instance.collection('dataen');
                     Map<String, dynamic> datakz = {
-                      //'id': dbTodo.letId,
+                      'id': id.text,
                       'title': teTitleKz.text,
                       'description': teDescriptionKz.text,
                       'xCoordinate': xCoordinateInt,
@@ -286,7 +303,7 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
                       'filephotopath': pickedFile!.path!,
                     };
                     Map<String, dynamic> dataru = {
-                      //'id': dbTodo.letId,
+                      'id': id.text,
                       'title': teTitleRu.text,
                       'description': teDescriptionRu.text,
                       'xCoordinate': xCoordinateInt,
@@ -294,7 +311,7 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
                       'filephotopath': pickedFile!.path!,
                     };
                     Map<String, dynamic> dataen = {
-                      //'id': dbTodo.letId,
+                      'id': id.text,
                       'title': teTitleEn.text,
                       'description': teDescriptionEn.text,
                       'xCoordinate': xCoordinateInt,
@@ -314,8 +331,14 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
                     print('parentKeyRu $parentKeyRu');
                     print('parentKeyEn $parentKeyEn');
 
+                    id.clear();
                     teTitleKz.clear();
+                    teTitleRu.clear();
+                    teTitleEn.clear();
                     teDescriptionKz.clear();
+                    teDescriptionRu.clear();
+                    teDescriptionEn.clear();
+
                     pickedFile = null;
 
                     Navigator.pop(context);
