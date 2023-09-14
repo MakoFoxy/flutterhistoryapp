@@ -56,7 +56,7 @@ class AppHomePage extends State<HomePage> {
                   actions: [
                     Padding(
                       padding: const EdgeInsets.only(right: 20),
-                      child: DropdawnFlag(selectedKey: "",
+                      child: DropdawnFlag(
                         changedLanguage: (value) {
                           setState(() {
                             context.setLocale(Locale((value)));
@@ -241,13 +241,8 @@ class FirebaseSearch extends StatefulWidget {
 class FirebaseSearchWidget extends State<FirebaseSearch> {
   TextEditingController keyword = TextEditingController();
 
-  List allResultsKz = [];
-  List allResultsRu = [];
-  List allResultsEn = [];
+  List allResults = [];
   List resultList = [];
-  String currentLanguagekz = 'kk';
-  String currentLanguageru = 'ru';
-  String currentLanguageen = 'en';
 
   @override
   void initState() {
@@ -263,90 +258,49 @@ class FirebaseSearchWidget extends State<FirebaseSearch> {
   searchResultList() {
     var showRes = [];
     if (keyword.text != "") {
-      for (var keySnap in allResultsKz) {
+      for (var keySnap in allResults) {
+        var id = keySnap['id'].toString().toLowerCase();
         var title = keySnap['title'].toString().toLowerCase();
-        if (title.contains(keyword.text.toLowerCase())) {
+        if (id.contains(keyword.text.toLowerCase()) ||
+            title.contains(keyword.text.toLowerCase())) {
           showRes.add(keySnap);
         }
       }
-      for (var keySnap in allResultsRu) {
-        var title = keySnap['title'].toString().toLowerCase();
-        if (title.contains(keyword.text.toLowerCase())) {
-          showRes.add(keySnap);
-        }
-      }
-      for (var keySnap in allResultsEn) {
-        var title = keySnap['title'].toString().toLowerCase();
-        if (title.contains(keyword.text.toLowerCase())) {
-          showRes.add(keySnap);
-        }
-      }
+
+      print('showRes $showRes');
     } else {
-      if (Localizations.localeOf(context).languageCode == currentLanguagekz) {
-        showRes = List.from(allResultsKz);
-      } else if (Localizations.localeOf(context).languageCode ==
-          currentLanguageru) {
-        showRes = List.from(allResultsRu);
-      } else if (Localizations.localeOf(context).languageCode ==
-          currentLanguageen) {
-        showRes = List.from(allResultsEn);
-      }
+      showRes = List.from(allResults);
     }
+
+    showRes.forEach((element) {
+      print("showReselement $element");
+    });
+
     setState(() {
       resultList = showRes;
     });
   }
 
   getClientStream() async {
-    late QuerySnapshot<Map<String, dynamic>> datalinguakz;
-    late QuerySnapshot<Map<String, dynamic>> datalinguaru;
-    late QuerySnapshot<Map<String, dynamic>> datalinguaen;
-    if (Localizations.localeOf(context).languageCode == currentLanguagekz) {
-      datalinguakz = await FirebaseFirestore.instance
+    late QuerySnapshot<Map<String, dynamic>> datalingua;
+    if (Localizations.localeOf(context).languageCode == 'kk') {
+      datalingua = await FirebaseFirestore.instance
           .collection('datakz')
-          .orderBy('title')
+          .orderBy('id')
           .get();
-      datalinguaru = await FirebaseFirestore.instance
+    } else if (Localizations.localeOf(context).languageCode == 'ru') {
+      datalingua = await FirebaseFirestore.instance
           .collection('dataru')
-          .orderBy('title')
+          .orderBy('id')
           .get();
-      datalinguaen = await FirebaseFirestore.instance
+    } else if (Localizations.localeOf(context).languageCode == 'en') {
+      datalingua = await FirebaseFirestore.instance
           .collection('dataen')
-          .orderBy('title')
-          .get();
-    } else if (Localizations.localeOf(context).languageCode ==
-        currentLanguageru) {
-      datalinguakz = await FirebaseFirestore.instance
-          .collection('datakz')
-          .orderBy('title')
-          .get();
-      datalinguaru = await FirebaseFirestore.instance
-          .collection('dataru')
-          .orderBy('title')
-          .get();
-      datalinguaen = await FirebaseFirestore.instance
-          .collection('dataen')
-          .orderBy('title')
-          .get();
-    } else if (Localizations.localeOf(context).languageCode ==
-        currentLanguageen) {
-      datalinguakz = await FirebaseFirestore.instance
-          .collection('datakz')
-          .orderBy('title')
-          .get();
-      datalinguaru = await FirebaseFirestore.instance
-          .collection('dataru')
-          .orderBy('title')
-          .get();
-      datalinguaen = await FirebaseFirestore.instance
-          .collection('dataen')
-          .orderBy('title')
+          .orderBy('id')
           .get();
     }
     setState(() {
-      allResultsKz = datalinguakz.docs;
-      allResultsRu = datalinguaru.docs;
-      allResultsEn = datalinguaen.docs;
+      allResults = datalingua.docs;
     });
     searchResultList();
   }
@@ -437,18 +391,13 @@ class streamBuild extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     late Stream<QuerySnapshot<Map<String, dynamic>>> datastream;
-    // if (Localizations.localeOf(context).languageCode == 'kk') {
-    //   datastream = FirebaseFirestore.instance.collection('datakz').snapshots();
-    // } else if (Localizations.localeOf(context).languageCode == 'ru') {
-    //   datastream = FirebaseFirestore.instance.collection('dataru').snapshots();
-    // } else if (Localizations.localeOf(context).languageCode == 'en') {
-    //   datastream = FirebaseFirestore.instance.collection('dataen').snapshots();
-    // }
-    datastream = FirebaseFirestore.instance.collection('datakz').snapshots();
-
-    datastream = FirebaseFirestore.instance.collection('dataru').snapshots();
-
-    datastream = FirebaseFirestore.instance.collection('dataen').snapshots();
+    if (Localizations.localeOf(context).languageCode == 'kk') {
+      datastream = FirebaseFirestore.instance.collection('datakz').snapshots();
+    } else if (Localizations.localeOf(context).languageCode == 'ru') {
+      datastream = FirebaseFirestore.instance.collection('dataru').snapshots();
+    } else if (Localizations.localeOf(context).languageCode == 'en') {
+      datastream = FirebaseFirestore.instance.collection('dataen').snapshots();
+    }
 
     return StreamBuilder<QuerySnapshot>(
       stream: datastream,
@@ -469,21 +418,21 @@ class streamBuild extends StatelessWidget {
           return Column(
             children: resultList.map((data) {
               final doc = data.data() as Map<String, dynamic>;
-              print("doc['title'] from firebase ${doc['title']}");
+              print("doc['id'] from firebase ${doc['id']}");
               return Container(
                   margin: const EdgeInsets.symmetric(
                     horizontal: 10,
                     vertical: 5,
                   ),
                   child: Hero(
-                    tag: 'title_${doc['title']}',
+                    tag: 'id_${doc['id']}',
                     child: ElevatedButton(
                       onPressed: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => ObjectFirebasePage(
-                              selectedKey: doc['title'],
+                              selectedKey: doc['id'],
                             ),
                           ),
                         );
@@ -511,14 +460,14 @@ class streamBuild extends StatelessWidget {
                   vertical: 5,
                 ),
                 child: Hero(
-                  tag: 'title_${doc['title']}',
+                  tag: 'id_${doc['id']}',
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => ObjectFirebasePage(
-                            selectedKey: doc['title'],
+                            selectedKey: doc['id'],
                           ),
                         ),
                       );

@@ -4,9 +4,12 @@ import 'package:mausoleum/pages/homepage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mausoleum/pages/firebaseobjectpage.dart';
 import 'package:mausoleum/pages/qrscanner.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:mausoleum/api/dropdawn_flag/dropdawn_flag.dart';
+import 'package:mausoleum/api/yandexmap/map_controls_page.dart';
 
 class takeSearchFirebasePage extends StatefulWidget {
-  final String mykeyword;
+ final String mykeyword;
 
   takeSearchFirebasePage({required this.mykeyword});
 
@@ -20,10 +23,6 @@ class _ApptakeSearchPage extends State<takeSearchFirebasePage> {
   String imageUrl = 'lib/assets/images/backgroundImages.jpg';
   @override
   Widget build(BuildContext context) {
-    String mykeyword = widget.mykeyword;    
-
-    print('keywordnowright $keyword');
-
     return Scaffold(
       body: SafeArea(
         child: DefaultTextStyle.merge(
@@ -35,7 +34,8 @@ class _ApptakeSearchPage extends State<takeSearchFirebasePage> {
                 Container(
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage(imageUrl),
+                      image:
+                          AssetImage(imageUrl),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -45,17 +45,42 @@ class _ApptakeSearchPage extends State<takeSearchFirebasePage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                   ),
                 ),
+                AppBar(
+                  elevation: 0,
+                  backgroundColor: Color.fromARGB(255, 83, 112, 85),
+                  title: Text(
+                    'mytitlepage'.tr(),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Color.fromARGB(255, 184, 182, 156),
+                    ),
+                  ),
+                  actions: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: 20),
+                      child: DropdawnFlag(
+                        changedLanguage: (value) {
+                          setState(() {
+                            context.setLocale(Locale((value)));
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
                 Container(
-                  height: MediaQuery.of(context).size.height - 89,
+                  height: MediaQuery.of(context).size.height - 145,
                   padding: const EdgeInsets.only(left: 0, right: 0),
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage(imageUrl),
+                      image:
+                          AssetImage(imageUrl),
                       fit: BoxFit.cover,
                     ),
                   ),
-                  child: MyTakePage(
-                    keyword: mykeyword,
+                 child: MyTakePage(
+                    mykeyword: widget.mykeyword,
                     backgroundImage: DecorationImage(
                       image: AssetImage(imageUrl),
                       fit: BoxFit.cover,
@@ -63,7 +88,6 @@ class _ApptakeSearchPage extends State<takeSearchFirebasePage> {
                   ),
                 ),
                 Container(
-                  //height: 118,
                   padding: const EdgeInsets.all(0),
                   child: MenuTile(),
                 ),
@@ -77,10 +101,10 @@ class _ApptakeSearchPage extends State<takeSearchFirebasePage> {
 }
 
 class MyTakePage extends StatefulWidget {
-  String keyword;
+   String mykeyword;
   final DecorationImage backgroundImage;
 
-  MyTakePage({required this.backgroundImage, required this.keyword, Key? key})
+  MyTakePage({required this.backgroundImage, required this.mykeyword, Key? key})
       : super(key: key);
   @override
   MyTakePageState createState() => MyTakePageState();
@@ -109,7 +133,7 @@ class MyTakePageState extends State<MyTakePage> {
               padding: const EdgeInsets.symmetric(horizontal: 5),
               child: FutureBuilder(
                 builder: (context, snapshot) {
-                  return FirebaseSearch(keyword: widget.keyword);
+                  return FirebaseSearch(keyword: widget.mykeyword);
                 },
                 future: Future.delayed(const Duration(seconds: 1)),
               ),
@@ -154,21 +178,59 @@ class MyTakePageState extends State<MyTakePage> {
             bottom: 0,
             child: FloatingActionButton(
               onPressed: () async {
-                var collRef = FirebaseFirestore.instance.collection('data');
-                QuerySnapshot querySnapshot = await collRef.get();
-                List<QueryDocumentSnapshot> docs = querySnapshot.docs;
+                var collRefkz = FirebaseFirestore.instance.collection('datakz');
+                var collRefru = FirebaseFirestore.instance.collection('dataru');
+                var collRefen = FirebaseFirestore.instance.collection('dataen');
+
+                QuerySnapshot querySnapshotkz = await collRefkz.get();
+                QuerySnapshot querySnapshotru = await collRefru.get();
+                QuerySnapshot querySnapshoten = await collRefen.get();
+
+                List<QueryDocumentSnapshot> docskz = querySnapshotkz.docs;
+                List<QueryDocumentSnapshot> docsru = querySnapshotru.docs;
+                List<QueryDocumentSnapshot> docsen = querySnapshoten.docs;
+
                 List<String> autokey = [];
-                for (QueryDocumentSnapshot doc in docs) {
+                for (QueryDocumentSnapshot doc in docskz) {
                   autokey.add(doc.id);
                 }
-                // for(int i = 0; i < autokey.length; i++) {
-                //   collRef.doc(autokey[i]).delete();
-                // }
+                for (QueryDocumentSnapshot doc in docsru) {
+                  autokey.add(doc.id);
+                }
+                for (QueryDocumentSnapshot doc in docsen) {
+                  autokey.add(doc.id);
+                }
+
                 autokey.forEach((element) {
-                  collRef.doc(element).delete();
+                  collRefkz.doc(element).delete();
+                });
+                autokey.forEach((element) {
+                  collRefru.doc(element).delete();
+                });
+                autokey.forEach((element) {
+                  collRefen.doc(element).delete();
                 });
               },
               child: const Icon(Icons.delete),
+            ),
+          ),          
+          Positioned(
+            right: 80,
+            bottom: 0,
+            child: FloatingActionButton(
+              onPressed: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MapControlsPage(
+                      title: "Қожа Ахмет Ясауи кесенесі",
+                      selectedX: 43.29785383147346,
+                      selectedY: 68.27119119202341,
+                    ),
+                  ),
+                );
+              },
+              child: const Icon(Icons.map),
             ),
           ),
         ],
@@ -210,8 +272,10 @@ class FirebaseSearchWidget extends State<FirebaseSearch> {
     var showRes = [];
     if (controlkey.text != "" || widget.keyword != "") {
       for (var keySnap in allResults) {
+        var id = keySnap['id'].toString().toLowerCase();
         var title = keySnap['title'].toString().toLowerCase();
-        if (title.contains(keyword.text.toLowerCase())) {
+        if (id.contains(keyword.text.toLowerCase()) ||
+            title.contains(keyword.text.toLowerCase())) {
           showRes.add(keySnap);
         }
       }
@@ -219,19 +283,35 @@ class FirebaseSearchWidget extends State<FirebaseSearch> {
       showRes = List.from(allResults);
     }
 
+    showRes.forEach((element) {
+      print("showReselement $element");
+    });
+
     setState(() {
       resultList = showRes;
     });
   }
 
   getClientStream() async {
-    var data = await FirebaseFirestore.instance
-        .collection('data')
-        .orderBy('title')
-        .get();
-
+    late QuerySnapshot<Map<String, dynamic>> datalingua;
+    if (Localizations.localeOf(context).languageCode == 'kk') {
+      datalingua = await FirebaseFirestore.instance
+          .collection('datakz')
+          .orderBy('id')
+          .get();
+    } else if (Localizations.localeOf(context).languageCode == 'ru') {
+      datalingua = await FirebaseFirestore.instance
+          .collection('dataru')
+          .orderBy('id')
+          .get();
+    } else if (Localizations.localeOf(context).languageCode == 'en') {
+      datalingua = await FirebaseFirestore.instance
+          .collection('dataen')
+          .orderBy('id')
+          .get();
+    }
     setState(() {
-      allResults = data.docs;
+      allResults = datalingua.docs;
     });
     searchResultList();
   }
@@ -292,7 +372,7 @@ class FirebaseSearchWidget extends State<FirebaseSearch> {
                     keyword.text = '';
                   },
                 ),
-                hintText: 'Іздеу...',
+                hintText: 'searchword'.tr(),
                 border: InputBorder.none,
               ),
             ),
@@ -302,9 +382,8 @@ class FirebaseSearchWidget extends State<FirebaseSearch> {
         SingleChildScrollView(
           child: ConstrainedBox(
             constraints: BoxConstraints(
-              maxHeight: MediaQuery.of(context)
-                  .size
-                  .height, // appBarHeight - это высота вашего AppBar
+              maxHeight: MediaQuery.of(context).size.height -
+                  228, // appBarHeight - это высота вашего AppBar
             ),
             child: ListView(
               children: [
@@ -330,62 +409,71 @@ class streamBuild extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    late Stream<QuerySnapshot<Map<String, dynamic>>> datastream;
+    if (Localizations.localeOf(context).languageCode == 'kk') {
+      datastream = FirebaseFirestore.instance.collection('datakz').snapshots();
+    } else if (Localizations.localeOf(context).languageCode == 'ru') {
+      datastream = FirebaseFirestore.instance.collection('dataru').snapshots();
+    } else if (Localizations.localeOf(context).languageCode == 'en') {
+      datastream = FirebaseFirestore.instance.collection('dataen').snapshots();
+    }
     return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection('data').snapshots(),
+      stream: datastream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return CircularProgressIndicator();
         }
         if (snapshot.hasError) {
-          return Text('Произошла ошибка');
+          return Text('Error');
         }
         if (!snapshot.hasData || snapshot.data == null) {
-          return Text('Нет данных');
+          return Text('No Data');
         }
         final keysfirebase = snapshot.data?.docs.toList();
 
         if (resultList != "") {
+          print('resultList from firebase ${resultList.asMap()}');
           return Column(
             children: resultList.map((data) {
               final doc = data.data() as Map<String, dynamic>;
+              print("doc['id'] from firebase ${doc['id']}");
               return Container(
-                margin: const EdgeInsets.only(left: 50, right: 50),
-                padding: const EdgeInsets.symmetric(vertical: 5),
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (doc == '') {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => HomePage(),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 5,
+                  ),
+                  child: Hero(
+                    tag: 'id_${doc['id']}',
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (doc == '') {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => HomePage(),
+                            ),
+                          );
+                        }
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ObjectFirebasePage(
+                              selectedKey: doc['id'],
+                            ),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
                         ),
-                      );
-                    }
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (context) => ObjectFirebasePage(
-                    //       selectedKey: doc['title'],
-                    //     ),
-                    //   ),
-                    // );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.amber.withOpacity(0.8),
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 10,
-                      horizontal: 30,
+                      ),
+                      child: Text(
+                        doc['title'],
+                        style: colorTextStyle,
+                      ),
                     ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                  ),
-                  child: Text(
-                    doc['title'],
-                    style: colorTextStyle,
-                  ),
-                ),
-              );
+                  ));
             }).toList(),
           );
         } else {
@@ -393,35 +481,34 @@ class streamBuild extends StatelessWidget {
             children: keysfirebase!.map((data) {
               final doc = data.data() as Map<String, dynamic>;
               return Container(
-                margin: const EdgeInsets.only(left: 50, right: 50),
-                padding: const EdgeInsets.symmetric(vertical: 5),
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (context) => ObjectFirebasePage(
-                    //       selectedKey: doc['title'],
-                    //     ),
-                    //   ),
-                    // );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.amber.withOpacity(0.8),
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 10,
-                      horizontal: 30,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 5,
                   ),
-                  child: Text(
-                    doc['title'],
-                    style: colorTextStyle,
-                  ),
-                ),
-              );
+                  child: Hero(
+                    tag: 'id_${doc['id']}',
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ObjectFirebasePage(
+                              selectedKey: doc['id'],
+                            ),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                      ),
+                      child: Text(
+                        doc['title'],
+                        style: colorTextStyle,
+                      ),
+                    ),
+                  ));
             }).toList(),
           );
         }
@@ -441,17 +528,12 @@ class MenuTileWidget extends State<MenuTile> {
     return Container(
       child: Column(
         children: <Widget>[
-          // Container(
-          //   color: Colors.amber[500],
-          //   margin: const EdgeInsets.all(0),
-          //   child: _buildRating(),
-          // ),
           SizedBox(height: 0),
           Card(
             elevation: 5,
             margin: const EdgeInsets.all(0),
             child: Container(
-              color: Colors.amber,
+              color: Color.fromARGB(255, 67, 83, 68),
               padding: const EdgeInsets.all(10),
               child: _buildAction(),
             ),
@@ -459,35 +541,18 @@ class MenuTileWidget extends State<MenuTile> {
         ],
       ),
       decoration: BoxDecoration(
-        color: Color.fromARGB(255, 231, 177, 15),
+        color: Color.fromARGB(255, 67, 83, 68),
         border: Border.all(),
       ),
     );
   }
 
-  Widget _buildRating() => ListTile(
-        title: Text(
-          'Добавить в избранное',
-          style: TextStyle(
-            fontWeight: FontWeight.w500,
-            fontSize: 16.0,
-          ),
-        ),
-        // subtitle: Text('Выбирите небходимый раздел'),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            FavoriteWidjet(),
-          ],
-        ),
-      );
-
   Widget _buildAction() => Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          _buildButton("Меню", Icons.menu, Colors.transparent),
-          _buildButton("Карта", Icons.map, Colors.transparent),
-          _buildButton("Избранное", Icons.favorite, Colors.transparent),
+          _buildButton("myhomepage".tr(), Icons.home, Colors.black),
+          _buildButton("myQR".tr(), Icons.qr_code, Colors.black),
+          _buildButton("mymap".tr(), Icons.map, Colors.black),
         ],
       );
 
@@ -501,7 +566,7 @@ class MenuTileWidget extends State<MenuTile> {
         children: <Widget>[
           Icon(
             icon,
-            color: Colors.brown,
+            color: Colors.deepOrange,
           ),
           Container(
             child: Text(
@@ -514,54 +579,4 @@ class MenuTileWidget extends State<MenuTile> {
           ),
         ],
       );
-}
-
-class FavoriteWidjet extends StatefulWidget {
-  @override
-  _FavoriteWidjetState createState() => _FavoriteWidjetState();
-}
-
-class _FavoriteWidjetState extends State<FavoriteWidjet> {
-  bool _choiceFavor = false;
-  int _favorCount = 123;
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: <Widget>[
-        Container(
-          child: IconButton(
-            icon: (_choiceFavor
-                ? Icon(Icons.favorite)
-                : Icon(Icons.favorite_border)),
-            onPressed: _toggleFavorite,
-            color: Colors.brown[500],
-          ),
-        ),
-        SizedBox(
-          width: 40,
-          child: Container(
-              child: Text(
-            '$_favorCount',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 20, // Увеличиваем размер шрифта на 24
-              color: Colors.brown[500],
-            ),
-          )),
-        ),
-      ],
-    );
-  }
-
-  void _toggleFavorite() {
-    setState(() {
-      if (_choiceFavor == true) {
-        _choiceFavor = false;
-        _favorCount = _favorCount - 1;
-      } else {
-        _choiceFavor = true;
-        _favorCount = _favorCount + 1;
-      }
-    });
-  }
 }

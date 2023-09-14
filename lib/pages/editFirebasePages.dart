@@ -29,7 +29,7 @@ class EditFirebasePageState extends State<EditFirebasePage> {
 
   TextEditingController xCoordinate = TextEditingController();
   TextEditingController yCoordinate = TextEditingController();
-
+  final id = TextEditingController();
   final teTitleKz = TextEditingController();
   final teDecsriptionKz = TextEditingController();
   final teTitleRu = TextEditingController();
@@ -92,6 +92,22 @@ class EditFirebasePageState extends State<EditFirebasePage> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(children: [
+            Container(
+              margin: const EdgeInsets.only(
+                top: 10,
+                left: 15,
+                right: 15,
+              ),
+              child: TextField(
+                controller: id,
+                decoration: const InputDecoration(
+                  hintText: 'id',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(30)),
+                  ),
+                ),
+              ),
+            ),
             Container(
               margin: const EdgeInsets.only(
                 top: 15,
@@ -314,6 +330,7 @@ class EditFirebasePageState extends State<EditFirebasePage> {
                         print('data $autodata');
 
                         await collRefKz.doc(autokeyKz).update({
+                          'id': id.text,
                           'title': teTitleKz.text,
                           'description': teDecsriptionKz.text,
                           'filephotopath': teFilePhoto!.path!,
@@ -341,6 +358,7 @@ class EditFirebasePageState extends State<EditFirebasePage> {
                         print('data $autodata');
 
                         await collRefRu.doc(autokeyRu).update({
+                          'id': id.text,
                           'title': teTitleRu.text,
                           'description': teDecsriptionRu.text,
                           'filephotopath': teFilePhoto!.path!,
@@ -368,6 +386,7 @@ class EditFirebasePageState extends State<EditFirebasePage> {
                         print('data $autodata');
 
                         await collRefEn.doc(autokeyEn).update({
+                          'id': id.text,
                           'title': teTitleEn.text,
                           'description': teDecsriptionEn.text,
                           'filephotopath': teFilePhoto!.path!,

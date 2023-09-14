@@ -1,17 +1,14 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DropdawnFlag extends StatefulWidget {
   const DropdawnFlag({
-    Key? key,
+    super.key,
     required this.changedLanguage,
-    required this.selectedKey,
-  }) : super(key: key);
+  });
 
   final ValueChanged<String> changedLanguage;
-  final String selectedKey;
 
   @override
   State<DropdawnFlag> createState() => DropdawnFlagState();
@@ -21,29 +18,15 @@ class DropdawnFlagState extends State<DropdawnFlag> {
   String dropdownValue = "";
 
   @override
-  void initState() {
-    super.initState();
-    // Используем widget.selectedKey для установки начального значения dropdownValue
-    determineLanguageCode(widget.selectedKey).then((languageCode) {
-      setState(() {
-        dropdownValue = languageCode;
-      });
-    });
+  void didUpdateWidget(covariant DropdawnFlag oldWidget) {
+    dropdownValue = context.locale.languageCode;
+    super.didUpdateWidget(oldWidget);
   }
 
-  // Функция, вызываемая при обновлении виджета
   @override
-  void didUpdateWidget(covariant DropdawnFlag oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    // Проверяем, изменился ли выбранный ключ
-    if (oldWidget.selectedKey != widget.selectedKey) {
-      // Если да, обновляем dropdownValue с использованием нового ключа
-      determineLanguageCode(widget.selectedKey).then((languageCode) {
-        setState(() {
-          dropdownValue = languageCode;
-        });
-      });
-    }
+  void didChangeDependencies() {
+    dropdownValue = context.locale.languageCode;
+    super.didChangeDependencies();
   }
 
   @override
@@ -71,27 +54,25 @@ class DropdawnFlagState extends State<DropdawnFlag> {
         ),
         underline: const SizedBox(),
         items: List.generate(context.supportedLocales.length, (index) {
-          final languageCode = context.supportedLocales[index].languageCode;
           return DropdownMenuItem<String>(
-            onTap: () async {
-              final newLocale =
-                  await determineLocale(widget.selectedKey, languageCode);
+            onTap: () {
               setState(() {
-                dropdownValue = languageCode;
-                context.setLocale(newLocale);
-                widget.changedLanguage(languageCode);
+                dropdownValue = context.supportedLocales[index].languageCode;
+                widget.changedLanguage(dropdownValue);
               });
             },
-            value: languageCode,
+            value: context.supportedLocales[index].languageCode,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text(languageCode),
+                Text(
+                  context.supportedLocales[index].languageCode,
+                ),
                 SizedBox(
                   width: 12,
                 ),
                 Image.asset(
-                  'lib/assets/images/$languageCode.png',
+                  'lib/assets/images/${context.supportedLocales[index].languageCode}.png',
                   width: 30,
                 ),
               ],
@@ -102,91 +83,24 @@ class DropdawnFlagState extends State<DropdawnFlag> {
       ),
     );
   }
-
-  // Функция для определения кода языка на основе ключа
-  Future<String> determineLanguageCode(String selectedKey) async {
-    // Получаем данные из Firestore на основе выбранного ключа и возвращаем соответствующий код языка
-    List<QueryDocumentSnapshot<Map<String, dynamic>>>? datafirebasekz;
-    List<QueryDocumentSnapshot<Map<String, dynamic>>>? datafirebaseru;
-    List<QueryDocumentSnapshot<Map<String, dynamic>>>? datafirebaseen;
-    late QuerySnapshot<Map<String, dynamic>> datakz;
-    late QuerySnapshot<Map<String, dynamic>> dataru;
-    late QuerySnapshot<Map<String, dynamic>> dataen;
-    dataru = await FirebaseFirestore.instance.collection('dataru').get();
-    datakz = await FirebaseFirestore.instance.collection('datakz').get();
-    dataen = await FirebaseFirestore.instance.collection('dataen').get();
-
-    datafirebasekz = datakz.docs.toList();
-    datafirebaseru = dataru.docs.toList();
-    datafirebaseen = dataen.docs.toList();
-
-    late String languages = "";
-
-    for (int i = 0; i < datafirebasekz.length; i++) {
-      if (widget.selectedKey == datafirebasekz[i]['title']) {
-        languages = "kk";
-        break;
-      }
-    }
-    for (int i = 0; i < datafirebaseru.length; i++) {
-      if (widget.selectedKey == datafirebaseru[i]['title']) {
-        languages = "ru";
-        break;
-      }
-    }
-    for (int i = 0; i < datafirebaseen.length; i++) {
-      if (widget.selectedKey == datafirebaseen[i]['title']) {
-        languages = "en";
-        break;
-      }
-    }
-    return languages;
-  }
-
-  // Функция для определения локали на основе ключа и кода языка
-  Future<Locale> determineLocale(
-      String selectedKey, String languageCode) async {
-    // Получаем данные из Firestore на основе выбранного ключа и кода языка, а затем возвращаем соответствующую локаль
-    var datafirebasekz;
-    var datafirebaseru;
-    var datafirebaseen;
-    final dataru = await FirebaseFirestore.instance.collection('dataru').get();
-    final datakz = await FirebaseFirestore.instance.collection('datakz').get();
-    final dataen = await FirebaseFirestore.instance.collection('dataen').get();
-    datafirebasekz = datakz.docs.toList();
-    datafirebaseru = dataru.docs.toList();
-    datafirebaseen = dataen.docs.toList();
-
-    for (int i = 0; i < datafirebasekz.length; i++) {
-      if (widget.selectedKey == datafirebasekz[i]['title']) {
-        return Locale(languageCode, 'KK');
-      }
-    }
-    for (int i = 0; i < datafirebaseru.length; i++) {
-      if (widget.selectedKey == datafirebaseru[i]['title']) {
-        return Locale(languageCode, 'RU');
-      }
-    }
-    for (int i = 0; i < datafirebaseen.length; i++) {
-      if (widget.selectedKey == datafirebaseen[i]['title']) {
-        return Locale(languageCode, 'EN');
-      }
-    }
-    return Locale(languageCode);
-  }
 }
+
+
 
 // import 'package:dropdown_button2/dropdown_button2.dart';
 // import 'package:easy_localization/easy_localization.dart';
 // import 'package:flutter/material.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
 
 // class DropdawnFlag extends StatefulWidget {
 //   const DropdawnFlag({
-//     super.key,
+//     Key? key,
 //     required this.changedLanguage,
-//   });
+//     required this.selectedKey,
+//   }) : super(key: key);
 
 //   final ValueChanged<String> changedLanguage;
+//   final String selectedKey;
 
 //   @override
 //   State<DropdawnFlag> createState() => DropdawnFlagState();
@@ -196,17 +110,35 @@ class DropdawnFlagState extends State<DropdawnFlag> {
 //   String dropdownValue = "";
 
 //   @override
-//   void didUpdateWidget(covariant DropdawnFlag oldWidget) {
-//     dropdownValue = context.locale.languageCode;
-//     super.didUpdateWidget(oldWidget);
+//   void initState() {
+//     super.initState();
+//     // Используем widget.selectedKey для установки начального значения dropdownValue
+//     determineLanguageCode(widget.selectedKey).then((languageCode) {
+//       setState(() {
+//         dropdownValue = languageCode;
+//       });
+//     });
 //   }
-
+ 
+//   // Функция, вызываемая при обновлении виджета
 //   @override
+//   void didUpdateWidget(covariant DropdawnFlag oldWidget) {
+//     super.didUpdateWidget(oldWidget);
+//     // Проверяем, изменился ли выбранный ключ
+//     if (oldWidget.selectedKey != widget.selectedKey) {
+//       // Если да, обновляем dropdownValue с использованием нового ключа
+//       determineLanguageCode(widget.selectedKey).then((languageCode) {
+//         setState(() {
+//           dropdownValue = languageCode;
+//         });
+//       });
+//     }
+//   }
+//  @override
 //   void didChangeDependencies() {
 //     dropdownValue = context.locale.languageCode;
 //     super.didChangeDependencies();
 //   }
-
 //   @override
 //   Widget build(BuildContext context) {
 //     return DropdownButtonHideUnderline(
@@ -232,25 +164,27 @@ class DropdawnFlagState extends State<DropdawnFlag> {
 //         ),
 //         underline: const SizedBox(),
 //         items: List.generate(context.supportedLocales.length, (index) {
+//           final languageCode = context.supportedLocales[index].languageCode;
 //           return DropdownMenuItem<String>(
-//             onTap: () {
+//             onTap: () async {
+//               final newLocale =
+//                   await determineLocale(widget.selectedKey, languageCode);
 //               setState(() {
-//                 dropdownValue = context.supportedLocales[index].languageCode;
-//                 widget.changedLanguage(dropdownValue);
+//                 dropdownValue = languageCode;
+//                 context.setLocale(newLocale);
+//                 widget.changedLanguage(languageCode);
 //               });
 //             },
-//             value: context.supportedLocales[index].languageCode,
+//             value: languageCode,
 //             child: Row(
 //               mainAxisAlignment: MainAxisAlignment.start,
 //               children: [
-//                 Text(
-//                   context.supportedLocales[index].languageCode,
-//                 ),
+//                 Text(languageCode),
 //                 SizedBox(
 //                   width: 12,
 //                 ),
 //                 Image.asset(
-//                   'lib/assets/images/${context.supportedLocales[index].languageCode}.png',
+//                   'lib/assets/images/$languageCode.png',
 //                   width: 30,
 //                 ),
 //               ],
@@ -260,5 +194,77 @@ class DropdawnFlagState extends State<DropdawnFlag> {
 //         onChanged: (value) {},
 //       ),
 //     );
+//   }
+
+//   // Функция для определения кода языка на основе ключа
+//   Future<String> determineLanguageCode(String selectedKey) async {
+//     // Получаем данные из Firestore на основе выбранного ключа и возвращаем соответствующий код языка
+//     List<QueryDocumentSnapshot<Map<String, dynamic>>>? datafirebasekz;
+//     List<QueryDocumentSnapshot<Map<String, dynamic>>>? datafirebaseru;
+//     List<QueryDocumentSnapshot<Map<String, dynamic>>>? datafirebaseen;
+//     late QuerySnapshot<Map<String, dynamic>> datakz;
+//     late QuerySnapshot<Map<String, dynamic>> dataru;
+//     late QuerySnapshot<Map<String, dynamic>> dataen;
+//     dataru = await FirebaseFirestore.instance.collection('dataru').get();
+//     datakz = await FirebaseFirestore.instance.collection('datakz').get();
+//     dataen = await FirebaseFirestore.instance.collection('dataen').get();
+
+//     datafirebasekz = datakz.docs.toList();
+//     datafirebaseru = dataru.docs.toList();
+//     datafirebaseen = dataen.docs.toList();
+
+//     late String languages = "";
+
+//     for (int i = 0; i < datafirebasekz.length; i++) {
+//       if (widget.selectedKey == datafirebasekz[i]['title']) {
+//         languages = "kk";
+//         break;
+//       }
+//     }
+//     for (int i = 0; i < datafirebaseru.length; i++) {
+//       if (widget.selectedKey == datafirebaseru[i]['title']) {
+//         languages = "ru";
+//         break;
+//       }
+//     }
+//     for (int i = 0; i < datafirebaseen.length; i++) {
+//       if (widget.selectedKey == datafirebaseen[i]['title']) {
+//         languages = "en";
+//         break;
+//       }
+//     }
+//     return languages;
+//   }
+
+//   // Функция для определения локали на основе ключа и кода языка
+//   Future<Locale> determineLocale(
+//       String selectedKey, String languageCode) async {
+//     // Получаем данные из Firestore на основе выбранного ключа и кода языка, а затем возвращаем соответствующую локаль
+//     var datafirebasekz;
+//     var datafirebaseru;
+//     var datafirebaseen;
+//     final dataru = await FirebaseFirestore.instance.collection('dataru').get();
+//     final datakz = await FirebaseFirestore.instance.collection('datakz').get();
+//     final dataen = await FirebaseFirestore.instance.collection('dataen').get();
+//     datafirebasekz = datakz.docs.toList();
+//     datafirebaseru = dataru.docs.toList();
+//     datafirebaseen = dataen.docs.toList();
+
+//     for (int i = 0; i < datafirebasekz.length; i++) {
+//       if (widget.selectedKey == datafirebasekz[i]['title']) {
+//         return Locale(languageCode, 'KK');
+//       }
+//     }
+//     for (int i = 0; i < datafirebaseru.length; i++) {
+//       if (widget.selectedKey == datafirebaseru[i]['title']) {
+//         return Locale(languageCode, 'RU');
+//       }
+//     }
+//     for (int i = 0; i < datafirebaseen.length; i++) {
+//       if (widget.selectedKey == datafirebaseen[i]['title']) {
+//         return Locale(languageCode, 'EN');
+//       }
+//     }
+//     return Locale(languageCode);
 //   }
 // }
