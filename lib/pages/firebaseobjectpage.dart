@@ -8,6 +8,7 @@ import 'package:mausoleum/pages/qrscanner.dart';
 import 'package:mausoleum/api/yandexmap/map_controls_page.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:mausoleum/api/dropdawn_flag/dropdawn_flag.dart';
+import 'package:path/path.dart';
 
 class ObjectFirebasePage extends StatefulWidget {
   final String selectedKey; // Добавьте параметр для выбранного ключа
@@ -20,9 +21,15 @@ class ObjectFirebasePage extends StatefulWidget {
 }
 
 class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
+  String currentSelectedKey = ''; // Инициализируйте переменную пустым значением
+
   final whiteTextStyle = TextStyle(color: Colors.white, fontSize: 24);
   @override
   Widget build(BuildContext context) {
+    late String currentKz = 'kk';
+    late String currentRu = 'ru';
+    late String currentEn = 'en';
+
     return Scaffold(
       body: SafeArea(
         child: DefaultTextStyle(
@@ -46,8 +53,11 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
                     Padding(
                       padding: const EdgeInsets.only(right: 20),
                       child: DropdawnFlag(
+                        selectedKey: widget.selectedKey,
                         changedLanguage: (value) {
                           setState(() {
+                            currentSelectedKey =
+                                value; // Обновляем текущий выбранный ключ
                             context.setLocale(Locale((value)));
                           });
                         },
@@ -209,11 +219,36 @@ class MyOverviewsState extends State<MyOverviews> {
   String discripWidgetsRu = "";
   String discripWidgetsEn = "";
   String discripWidgetsEmpt = "";
+  bool dataLoaded = false; // Добавили флаг для отслеживания загрузки данных
 
-  @override
   // void initState() {
   //   super.initState();
-  //   // Вызываем fetchKeysFirebase() только один раз при инициализации виджета
+  //   // Вызываем fetchKeysFirebaseOver() только при первой загрузке виджета
+  //   fetchKeysFirebaseOver().then((_) {
+  //     // После завершения загрузки данных устанавливаем флаг dataLoaded в true
+  //     setState(() {
+  //       dataLoaded = true;
+  //     });
+  //   });
+  //   fetchData(); // Вызываем асинхронную функцию при инициализации
+  // }
+  @override
+  void initState() {
+    super.initState();
+    fetchData(); // Вызываем асинхронную функцию при инициализации
+  }
+
+  Future<void> fetchData() async {
+    discripWidgetsArr = await fetchKeysFirebaseOver();
+    setState(() {
+      dataLoaded = true;
+    });
+  }
+
+  // @override
+  //  void initState() {
+  //   super.initState();
+  //   // Вызываем fetchKeysFirebaseOver() только при первой загрузке виджета
   //   fetchKeysFirebaseOver();
   // }
   // @override
@@ -222,7 +257,6 @@ class MyOverviewsState extends State<MyOverviews> {
   //   // Вызываем fetchKeysFirebaseOver при изменении зависимостей (например, при изменении языка)
   //   fetchKeysFirebaseOver();
   // }
-
   Future<List<String>> fetchKeysFirebaseOver() async {
     List<String> arrlen = [];
     arrlen.add(widget.selectedKey);
@@ -242,10 +276,13 @@ class MyOverviewsState extends State<MyOverviews> {
     datafirebaseru = dataru.docs.toList();
     datafirebaseen = dataen.docs.toList();
 
-    late String autokey;
+    late String autokeykz;
+    late String autokeyru;
+    late String autokeyen;
+
     late Map<String, dynamic> autodata;
     for (int i = 0; i < datafirebasekz.length; i++) {
-      autokey = datafirebasekz[i].id;
+      autokeykz = datafirebasekz[i].id;
       autodata = datafirebasekz[i].data() as Map<String, dynamic>;
       print(
           "datafirebasekz[i]['title']KZ from firebase ${datafirebasekz[i]['title']}");
@@ -254,54 +291,98 @@ class MyOverviewsState extends State<MyOverviews> {
         discripWidgetsKz = datafirebasekz[i]['description'];
         discripWidgetsArr.add(discripWidgetsKz);
         break;
-      } else if (autokey == autokey && !discripWidgetsArr.contains(autokey)) {
-        discripWidgetsKz = datafirebasekz[i]['description'];
-        discripWidgetsArr.add(discripWidgetsKz);
+      }
+      // else if (autokeykz == autokeykz &&
+      //     !discripWidgetsArr.contains(autokeykz) &&
+      //     const Locale('kk').languageCode == 'kk' &&
+      //     widget.selectedKey == datafirebasekz[i]['title']) {
+      //   discripWidgetsKz = datafirebasekz[i]['description'];
+      //   discripWidgetsArr.add(discripWidgetsKz);
+      //   break;
+      // }
+      // else if (autokeykz == autokeykz &&
+      //     !discripWidgetsArr.contains(autokeykz) &&
+      //     const Locale('kk').languageCode == 'kk') {
+      //   discripWidgetsKz = datafirebasekz[i]['description'];
+      //   discripWidgetsArr.add(discripWidgetsKz);
+      //   break;
+      // }
+    }
+    print("autokeykz $autokeykz");
+
+    for (int i = 0; i < datafirebaseru.length; i++) {
+      autokeyru = datafirebaseru[i].id;
+      autodata = datafirebaseru[i].data() as Map<String, dynamic>;
+      print(
+          "datafirebaseru[i]['title']RU from firebase ${datafirebaseru[i]['title']}");
+      if (widget.selectedKey == datafirebaseru[i]['title'] &&
+          !discripWidgetsArr.contains(discripWidgetsRu)) {
+        discripWidgetsRu = datafirebaseru[i]['description'];
+        print(
+            "datafirebaseru[i]['description'] $datafirebaseru[i]['description']");
+        print("discripWidgetsRu $discripWidgetsRu");
+        discripWidgetsArr.add(discripWidgetsRu);
         break;
       }
+      // else if (autokeyru == autokeyru &&
+      //     !discripWidgetsArr.contains(autokeyru) &&
+      //     const Locale('ru').languageCode == 'ru' &&
+      //     widget.selectedKey == datafirebaseru[i]['title']) {
+      //   discripWidgetsRu = datafirebaseru[i]['description'];
+      //   discripWidgetsArr.add(discripWidgetsRu);
+      //   break;
+      // }
+      // else if (autokeyru == autokeyru &&
+      //     !discripWidgetsArr.contains(autokeyru) &&
+      //     const Locale('ru').languageCode == 'ru') {
+      //   discripWidgetsRu = datafirebasekz[i]['description'];
+      //   discripWidgetsArr.add(discripWidgetsRu);
+      //   break;
+      // }
     }
-    {
-      for (int i = 0; i < datafirebaseru.length; i++) {
-        autokey = datafirebaseru[i].id;
-        autodata = datafirebaseru[i].data() as Map<String, dynamic>;
-        print(
-            "datafirebaseru[i]['title']RU from firebase ${datafirebaseru[i]['title']}");
-        if (widget.selectedKey == datafirebaseru[i]['title'] &&
-            !discripWidgetsArr.contains(discripWidgetsRu)) {
-          discripWidgetsRu = datafirebaseru[i]['description'];
-          discripWidgetsArr.add(discripWidgetsRu);
-          break;
-        } else if (autokey == autokey && !discripWidgetsArr.contains(autokey)) {
-          discripWidgetsRu = datafirebaseru[i]['description'];
-          discripWidgetsArr.add(discripWidgetsRu);
-          break;
-        }
-      }
-    }
+    print("autokeyru $autokeyru");
+
     print("widget.selectedKey from firebase ${widget.selectedKey}");
 
     for (int i = 0; i < datafirebaseen.length; i++) {
-      autokey = datafirebaseen[i].id;
+      autokeyen = datafirebaseen[i].id;
       autodata = datafirebaseen[i].data() as Map<String, dynamic>;
       print(
           "datafirebasekz[i]['title']EN from firebase ${datafirebaseen[i]['title']}");
+      print("111widget.selectedKey111 ${widget.selectedKey}}");
       if (widget.selectedKey == datafirebaseen[i]['title'] &&
           !discripWidgetsArr.contains(discripWidgetsEn)) {
         discripWidgetsEn = datafirebaseen[i]['description'];
-        discripWidgetsArr.add(discripWidgetsEn);
-        break;
-      } else if (autokey == autokey && !discripWidgetsArr.contains(autokey)) {
-        discripWidgetsEn = datafirebaseen[i]['description'];
+        print("111discripWidgetsEn111 $discripWidgetsEn");
         discripWidgetsArr.add(discripWidgetsEn);
         break;
       }
+
+      // else if (autokeyen == autokeyen &&
+      //     !discripWidgetsArr.contains(autokeyen) &&
+      //     const Locale('en').languageCode == 'en' &&
+      //     widget.selectedKey == datafirebaseen[i]['title']) {
+      //   discripWidgetsEn = datafirebaseen[i]['description'];
+      //   discripWidgetsArr.add(discripWidgetsEn);
+      //   break;
+      // } else if (autokeyen == autokeyen &&
+      //     !discripWidgetsArr.contains(autokeyen) &&
+      //     const Locale('en').languageCode == 'en') {
+      //   discripWidgetsEn = datafirebasekz[i]['description'];
+      //   discripWidgetsArr.add(discripWidgetsEn);
+      //   break;
+      // }
+      print("widget.selectedKeyEN ${widget.selectedKey}");
     }
     //print("discripWidgetsEn from firebase $discripWidgetsEn");
+    print("autokeyen $autokeyen");
 
     if (discripWidgetsKz.isEmpty &&
         discripWidgetsRu.isEmpty &&
         discripWidgetsEn.isEmpty &&
-        autokey == autokey) {
+        autokeykz == autokeykz &&
+        autokeyru == autokeyru &&
+        autokeyen == autokeyen) {
       discripWidgetsEmpt = autodata['description'];
       discripWidgetsArr.add(discripWidgetsEmpt);
     }
@@ -319,90 +400,198 @@ class MyOverviewsState extends State<MyOverviews> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<String>>(
-      // Pass the Future that will return data after executing fetchKeysFirebase()
-      future: fetchKeysFirebaseOver(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator(); // Show a loading indicator while waiting for data
-        }
+    if (!dataLoaded) {
+      // Если данные ещё не загружены, отображаем индикатор загрузки
+      return CircularProgressIndicator();
+    }
 
-        if (snapshot.hasError) {
-          return Text("Error: ${snapshot.error}");
-        }
+    // If data is loaded successfully, display it
+    print("*******************<=>discripWidgetsArr $discripWidgetsArr");
 
-        // If data is loaded successfully, display it
-        final List<String> discripWidgetsArr = snapshot.data ?? [];
-        print("*******************<=>discripWidgetsArr $discripWidgetsArr");
+    print(
+        "*******************<=>discripWidgetsArr.length ${discripWidgetsArr.length}");
 
-        print(
-            "*******************<=>discripWidgetsArr.length ${discripWidgetsArr.length}");
+    print("*******************<=>widget.selectedKey ${widget.selectedKey}");
 
-        print("*******************<=>widget.selectedKey ${widget.selectedKey}");
+    String discripWidgetsKaz = "";
+    String discripWidgetsRus = "";
+    String discripWidgetsEng = "";
+    String discripWidgetsEmpty = "";
 
-        String currentLanguagekz = 'kk';
-        String currentLanguageru = 'ru';
-        String currentLanguageen = 'en';
+    late List<String> uniquediscripWidgetsArr = [];
 
-        String discripWidgetsKaz = "";
-        String discripWidgetsRus = "";
-        String discripWidgetsEng = "";
-        String discripWidgetsEmpty = "";
+    discripWidgetsArr.forEach((element) {
+      if (!discripWidgetsArr.contains(discripWidgetsKz) ||
+          !discripWidgetsArr.contains(discripWidgetsRu) ||
+          !discripWidgetsArr.contains(discripWidgetsEn)) {
+        uniquediscripWidgetsArr.add(element);
+      }
+    });
 
-        String displayedText = "";
+    // uniquediscripWidgetsArr.forEach((element) {
+    //   if (discripWidgetsKz == element) {
+    //     discripWidgetsKaz = discripWidgetsKaz + element;
+    //   } else if (discripWidgetsRu == element) {
+    //     discripWidgetsRus = discripWidgetsRus + element;
+    //   } else if (discripWidgetsEn == element) {
+    //     discripWidgetsEng = discripWidgetsEng + element;
+    //   } else {
+    //     discripWidgetsEmpty = discripWidgetsEmpty + element;
+    //   }
+    //   print("*******************<=>element $element");
+    // });
 
-        discripWidgetsArr.forEach((element) {
-          if (discripWidgetsKz == element) {
-            discripWidgetsKaz = discripWidgetsKaz + element;
-          } else if (discripWidgetsRu == element) {
-            discripWidgetsRus = discripWidgetsRus + element;
-          } else if (discripWidgetsEn == element) {
-            discripWidgetsEng = discripWidgetsEng + element;
-          } else {
-            discripWidgetsEmpty = discripWidgetsEmpty + element;
-          }
-          print("*******************<=>element $element");
-        });
+    //discripWidgetsArr.clear();
 
-        discripWidgetsArr.clear();
+    // String currentLanguagekz = 'kk';
+    // String currentLanguageru = 'ru';
+    // String currentLanguageen = 'en';
+    String displayedText = "";
+    String currentLanguageCode = Localizations.localeOf(context).languageCode;
 
-        if (Localizations.localeOf(context).languageCode == currentLanguagekz) {
-          // fetchKeysFirebase();
-          if (discripWidgetsKaz.isNotEmpty) {
-            displayedText = discripWidgetsKaz;
-          }
-        } else if (Localizations.localeOf(context).languageCode ==
-            currentLanguageru) {
-          // fetchKeysFirebase();
-          if (discripWidgetsRus.isNotEmpty) {
-            displayedText = discripWidgetsRus;
-          }
-        } else if (Localizations.localeOf(context).languageCode ==
-            currentLanguageen) {
-          // fetchKeysFirebase;
-          if (discripWidgetsEng.isNotEmpty) {
-            displayedText = discripWidgetsEng;
-          }
-        } else {
-          displayedText = discripWidgetsEmpty;
-        }
-        print("discripWidgetsArr clear $discripWidgetsArr");
-        print("discripWidgetsKaz $discripWidgetsKaz");
-        print("discripWidgetsRus $discripWidgetsRus");
-        print("discripWidgetsEng $discripWidgetsEng");
-        print("discripWidgetsEmpty $discripWidgetsEmpty");
+    for (String description in uniquediscripWidgetsArr) {
+      if (description.isNotEmpty &&
+          (currentLanguageCode == 'kk' && discripWidgetsKz.isNotEmpty ||
+              currentLanguageCode == 'ru' && discripWidgetsRu.isNotEmpty ||
+              currentLanguageCode == 'en' && discripWidgetsEn.isNotEmpty)) {
+        displayedText = description;
+        break;
+      }
+    }
+    // if (discripWidgetsKaz.isNotEmpty &&
+    //     Localizations.localeOf(context).languageCode == 'kk') {
+    //   displayedText = discripWidgetsKaz;
+    // } else if (discripWidgetsRus.isNotEmpty &&
+    //     Localizations.localeOf(context).languageCode == 'ru') {
+    //   displayedText = discripWidgetsRus;
+    // } else if (discripWidgetsEng.isNotEmpty &&
+    //     Localizations.localeOf(context).languageCode == 'en') {
+    //   displayedText = discripWidgetsEng;
+    // } else {
+    //   displayedText = discripWidgetsEmpty;
+    // }
 
-        return Container(
-          color: Colors.amber,
-          child: Text(
-            displayedText, // Make sure the value is not null
-            style: whiteTextStyle,
-            textAlign: TextAlign.justify,
-          ),
-        );
-      },
+    // if (discripWidgetsKaz.isNotEmpty) {
+    //   displayedText = discripWidgetsKaz;
+    // } else if (discripWidgetsRus.isNotEmpty) {
+    //   displayedText = discripWidgetsRus;
+    // } else if (discripWidgetsEng.isNotEmpty) {
+    //   displayedText = discripWidgetsEng;
+    // } else {
+    //   displayedText = discripWidgetsEmpty;
+    // }
+    print("displayedText  $displayedText");
+    print("discripWidgetsArr clear $discripWidgetsArr");
+    print("discripWidgetsKaz $discripWidgetsKaz");
+    print("discripWidgetsRus $discripWidgetsRus");
+    print("discripWidgetsEng $discripWidgetsEng");
+    print("discripWidgetsEmpty $discripWidgetsEmpty");
+
+    return Container(
+      color: Colors.amber,
+      child: Text(
+        displayedText, // Make sure the value is not null
+        style: whiteTextStyle,
+        textAlign: TextAlign.justify,
+      ),
     );
   }
+
+  // return FutureBuilder<List<String>>(
+  //   // Pass the Future that will return data after executing fetchKeysFirebase()
+  //   future: fetchKeysFirebaseOver(),
+  //   builder: (context, snapshot) {
+  //     if (snapshot.connectionState == ConnectionState.waiting) {
+  //       return CircularProgressIndicator(); // Show a loading indicator while waiting for data
+  //     }
+
+  //     if (snapshot.hasError) {
+  //       return Text("Error: ${snapshot.error}");
+  //     }
+
+  //     // If data is loaded successfully, display it
+  //     final List<String> discripWidgetsArr = snapshot.data ?? [];
+  //     print("*******************<=>discripWidgetsArr $discripWidgetsArr");
+
+  //     print(
+  //         "*******************<=>discripWidgetsArr.length ${discripWidgetsArr.length}");
+
+  //     print("*******************<=>widget.selectedKey ${widget.selectedKey}");
+
+  //     String discripWidgetsKaz = "";
+  //     String discripWidgetsRus = "";
+  //     String discripWidgetsEng = "";
+  //     String discripWidgetsEmpty = "";
+
+  //     late List<String> uniquediscripWidgetsArr = [];
+
+  //     discripWidgetsArr.forEach((element) {
+  //       if (!discripWidgetsArr.contains(discripWidgetsKaz) ||
+  //           !discripWidgetsArr.contains(discripWidgetsRus) ||
+  //           !discripWidgetsArr.contains(discripWidgetsEng)) {
+  //         uniquediscripWidgetsArr.add(element);
+  //       }
+  //     });
+
+  //     uniquediscripWidgetsArr.forEach((element) {
+  //       if (discripWidgetsKz == element) {
+  //         discripWidgetsKaz = discripWidgetsKaz + element;
+  //       } else if (discripWidgetsRu == element) {
+  //         discripWidgetsRus = discripWidgetsRus + element;
+  //       } else if (discripWidgetsEn == element) {
+  //         discripWidgetsEng = discripWidgetsEng + element;
+  //       } else {
+  //         discripWidgetsEmpty = discripWidgetsEmpty + element;
+  //       }
+  //       print("*******************<=>element $element");
+  //     });
+
+  //     discripWidgetsArr.clear();
+
+  //     // String currentLanguagekz = 'kk';
+  //     // String currentLanguageru = 'ru';
+  //     // String currentLanguageen = 'en';
+  //     String displayedText = "";
+
+  //     if (discripWidgetsKaz.isNotEmpty &&
+  //         Localizations.localeOf(context).languageCode == 'kk') {
+  //       displayedText = discripWidgetsKaz;
+  //     } else if (discripWidgetsRus.isNotEmpty &&
+  //         Localizations.localeOf(context).languageCode == 'ru') {
+  //       displayedText = discripWidgetsRus;
+  //     } else if (discripWidgetsEng.isNotEmpty &&
+  //         Localizations.localeOf(context).languageCode == 'en') {
+  //       displayedText = discripWidgetsEng;
+  //     } else {
+  //       displayedText = discripWidgetsEmpty;
+  //     }
+
+  //     // if (discripWidgetsKaz.isNotEmpty) {
+  //     //   displayedText = discripWidgetsKaz;
+  //     // } else if (discripWidgetsRus.isNotEmpty) {
+  //     //   displayedText = discripWidgetsRus;
+  //     // } else if (discripWidgetsEng.isNotEmpty) {
+  //     //   displayedText = discripWidgetsEng;
+  //     // } else {
+  //     //   displayedText = discripWidgetsEmpty;
+  //     // }
+  //     print("displayedText  $displayedText");
+  //     print("discripWidgetsArr clear $discripWidgetsArr");
+  //     print("discripWidgetsKaz $discripWidgetsKaz");
+  //     print("discripWidgetsRus $discripWidgetsRus");
+  //     print("discripWidgetsEng $discripWidgetsEng");
+  //     print("discripWidgetsEmpty $discripWidgetsEmpty");
+
+  //     return Container(
+  //       color: Colors.amber,
+  //       child: Text(
+  //         displayedText, // Make sure the value is not null
+  //         style: whiteTextStyle,
+  //         textAlign: TextAlign.justify,
+  //       ),
+  //     );
+  //   },
+  // );
 }
 
 class MyCoordinate extends StatefulWidget {
@@ -637,7 +826,7 @@ class _MyTextContState extends State<MyTextCont> {
       autokey = datafirebaseen[i].id;
       autodata = datafirebaseen[i].data() as Map<String, dynamic>;
       print(
-          "datafirebasekz[i]['title']EN from firebase ${datafirebaseen[i]['title']}");
+          "datafirebaseen[i]['title']EN from firebase ${datafirebaseen[i]['title']}");
       if (widget.selectedKey == datafirebaseen[i]['title'] &&
           !titleWidgetsArr.contains(titleWidgetsEn)) {
         titleWidgetsEn = datafirebaseen[i]['title'];
@@ -697,10 +886,10 @@ class _MyTextContState extends State<MyTextCont> {
 
         // If data is loaded successfully, display it
         final List<String> titleWidgetsArr = snapshot.data ?? [];
-        print("*******************<=>discripWidgetsArr $titleWidgetsArr");
+        print("*******************<=>titleWidgetsArr $titleWidgetsArr");
 
         print(
-            "*******************<=>discripWidgetsArr.length ${titleWidgetsArr.length}");
+            "*******************<=>titleWidgetsArr.length ${titleWidgetsArr.length}");
 
         print("*******************<=>widget.selectedKey ${widget.selectedKey}");
 
@@ -708,11 +897,6 @@ class _MyTextContState extends State<MyTextCont> {
         String titleWidgetsRus = "";
         String titleWidgetsEng = "";
         String titleWidgetsEmpty = "";
-        String titledisplayedText = "";
-
-        String currentLanguagekz = 'kk';
-        String currentLanguageru = 'ru';
-        String currentLanguageen = 'en';
 
         titleWidgetsArr.forEach((element) {
           if (titleWidgetsKz == element) {
@@ -729,6 +913,11 @@ class _MyTextContState extends State<MyTextCont> {
 
         titleWidgetsArr.clear();
         print("titleWidgetsArr.clear $titleWidgetsArr");
+
+        String currentLanguagekz = 'kk';
+        String currentLanguageru = 'ru';
+        String currentLanguageen = 'en';
+        String titledisplayedText = "";
 
         if (Localizations.localeOf(context).languageCode == currentLanguagekz) {
           //fetchKeysFirebaseText();
@@ -986,10 +1175,10 @@ class _MyPhotoContState extends State<MyPhotoCont> {
         //   photoDisplayed = photoWidgetsEmpty;
         // }
 
-        print("discripWidgetsKaz $photoWidgetsKaz");
-        print("discripWidgetsRus $photoWidgetsRus");
-        print("discripWidgetsEng $photoWidgetsEng");
-        print("discripWidgetsEmpty $photoWidgetsEmpty");
+        print("photoWidgetsKaz $photoWidgetsKaz");
+        print("photoWidgetsRus $photoWidgetsRus");
+        print("photoWidgetsEng $photoWidgetsEng");
+        print("photoWidgetsEmpty $photoWidgetsEmpty");
 
         print(photoDisplayed);
         return Container(

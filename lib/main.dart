@@ -5,6 +5,7 @@ import 'package:flutter/rendering.dart' show debugPaintSizeEnabled;
 import 'package:mausoleum/pages/homepage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mausoleum/api/firebase-api.dart';
+import 'package:mausoleum/pages/widget_tree.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -50,7 +51,7 @@ class MyApp extends StatelessWidget {
           Theme.of(context).textTheme,
         ),
       ),
-      home: HomePage(),
+      home: WidgetTree(),
     );
   }
 }

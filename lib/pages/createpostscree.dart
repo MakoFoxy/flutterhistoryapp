@@ -12,7 +12,8 @@ class CreateHistoryPost extends StatefulWidget {
 class _CreateHistoryPostState extends State<CreateHistoryPost> {
   PlatformFile? pickedFile;
   UploadTask? uploadTask;
-  String image_url = "";
+  String myimageUrl = "";
+
   Future selectFile() async {
     final FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
@@ -39,12 +40,12 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
     setState(() {
       uploadTask = ref.putFile(fileupload);
     });
-    print('Download uploadTask $uploadTask');
+    print('Upload uploadTask $uploadTask');
     final snapshot = await uploadTask!.whenComplete(() {});
-    print('Download snapshot $snapshot');
+    print('Upload snapshot $snapshot');
 
     final urlDownload = await snapshot.ref.getDownloadURL();
-    image_url = urlDownload;
+    myimageUrl = urlDownload;
     print('Download Link $urlDownload');
 
     setState(() {
@@ -85,22 +86,22 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
         child: SingleChildScrollView(
           child: Column(
             children: <Widget>[
-              Container(
-                margin: const EdgeInsets.only(
-                  top: 10,
-                  left: 15,
-                  right: 15,
-                ),
-                child: TextField(
-                  controller: id,
-                  decoration: const InputDecoration(
-                    hintText: 'id тіркеніз',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(30)),
-                    ),
-                  ),
-                ),
-              ),
+              // Container(
+              //   margin: const EdgeInsets.only(
+              //     top: 10,
+              //     left: 15,
+              //     right: 15,
+              //   ),
+              //   child: TextField(
+              //     controller: id,
+              //     decoration: const InputDecoration(
+              //       hintText: 'id тіркеніз',
+              //       border: OutlineInputBorder(
+              //         borderRadius: BorderRadius.all(Radius.circular(30)),
+              //       ),
+              //     ),
+              //   ),
+              // ),
               Container(
                 margin: const EdgeInsets.only(
                   top: 10,
@@ -295,28 +296,28 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
                     CollectionReference collRefEn =
                         FirebaseFirestore.instance.collection('dataen');
                     Map<String, dynamic> datakz = {
-                      'id': id.text,
+                     // 'id': id.text,
                       'title': teTitleKz.text,
                       'description': teDescriptionKz.text,
                       'xCoordinate': xCoordinateInt,
                       'yCoordinate': yCoordinateInt,
-                      'filephotopath': pickedFile!.path!,
+                      'filephotopath': myimageUrl,
                     };
                     Map<String, dynamic> dataru = {
-                      'id': id.text,
+                    //  'id': id.text,
                       'title': teTitleRu.text,
                       'description': teDescriptionRu.text,
                       'xCoordinate': xCoordinateInt,
                       'yCoordinate': yCoordinateInt,
-                      'filephotopath': pickedFile!.path!,
+                      'filephotopath': myimageUrl,
                     };
                     Map<String, dynamic> dataen = {
-                      'id': id.text,
+                     // 'id': id.text,
                       'title': teTitleEn.text,
                       'description': teDescriptionEn.text,
                       'xCoordinate': xCoordinateInt,
                       'yCoordinate': yCoordinateInt,
-                      'filephotopath': pickedFile!.path!,
+                      'filephotopath': myimageUrl,
                     };
 
                     DocumentReference docRefKz = await collRefKz.add(datakz);
