@@ -217,7 +217,7 @@ class HomePageState extends State<MyHomePage> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => MapControlsPage(
-                      title: "Қожа Ахмет Ясауи кесенесі",
+                      id: "1",
                       selectedX: 43.29785383147346,
                       selectedY: 68.27119119202341,
                     ),

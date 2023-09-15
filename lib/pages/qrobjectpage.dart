@@ -294,7 +294,7 @@ class MyCoordinateState extends State<MyCoordinate> {
             MaterialPageRoute(
               builder: (BuildContext context) => MapControlsPage(
                 //editMydb: editMydb,
-                title: widget.selectedKey,
+                id: widget.selectedKey,
                 selectedX: xCoordinateWidget,
                 selectedY: yCoordinateWidget,
               ),

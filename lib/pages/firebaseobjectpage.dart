@@ -162,7 +162,7 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
                   Map<String, dynamic> autodata = doc.data();
                   String autokey = doc.id; // Получение ключа документа
                   // Проверка, соответствует ли поле title значению, которое вы ищете
-                  if (autodata['title'] == targetTitle) {
+                  if (autodata['id'] == targetTitle) {
                     await collRef.doc(autokey).delete();
                     print("Document deleted: $autokey");
                   }
@@ -423,7 +423,7 @@ class MyCoordinateState extends State<MyCoordinate> {
         for (var key in keysfirebase!) {
           autokey = key.id;
           autodata = key.data() as Map<String, dynamic>;
-          if (widget.selectedKey == key['title']) {
+          if (widget.selectedKey == key['id']) {
             xCoordinateWidgets = key['xCoordinate'];
             yCoordinateWidgets = key['yCoordinate'];
             break;
@@ -443,7 +443,7 @@ class MyCoordinateState extends State<MyCoordinate> {
                 MaterialPageRoute(
                   builder: (BuildContext context) => MapControlsPage(
                     //editMydb: editMydb,
-                    title: widget.selectedKey,
+                    id: widget.selectedKey,
                     selectedX: xCoordinateWidgets,
                     selectedY: yCoordinateWidgets,
                   ),
@@ -698,16 +698,6 @@ class _MyTextContState extends State<MyTextCont> {
           titledisplayedText = titleWidgetsEmpty;
         }
 
-        // if (titleWidgetsKaz.isNotEmpty) {
-        //   titledisplayedText = titleWidgetsKaz;
-        // } else if (titleWidgetsRus.isNotEmpty) {
-        //   titledisplayedText = titleWidgetsRus;
-        // } else if (titleWidgetsEng.isNotEmpty) {
-        //   titledisplayedText = titleWidgetsEng;
-        // } else {
-        //   titledisplayedText = titleWidgetsEmpty;
-        // }
-
         print("titleWidgetsKaz $titleWidgetsKaz");
         print("titleWidgetsRus $titleWidgetsRus");
         print("titleWidgetsEng $titleWidgetsEng");
@@ -910,16 +900,6 @@ class _MyPhotoContState extends State<MyPhotoCont> {
         } else {
           photoDisplayed = photoWidgetsEmpty;
         }
-
-        //   if (photoWidgetsKaz.isNotEmpty) {
-        //   photoDisplayed = photoWidgetsKaz;
-        // } else if (photoWidgetsRus.isNotEmpty) {
-        //   photoDisplayed = photoWidgetsRus;
-        // } else if (photoWidgetsEng.isNotEmpty) {
-        //   photoDisplayed = photoWidgetsEng;
-        // } else {
-        //   photoDisplayed = photoWidgetsEmpty;
-        // }
 
         print("photoWidgetsKaz $photoWidgetsKaz");
         print("photoWidgetsRus $photoWidgetsRus");

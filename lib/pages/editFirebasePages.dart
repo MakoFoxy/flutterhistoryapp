@@ -27,23 +27,64 @@ class EditFirebasePageState extends State<EditFirebasePage> {
   List<QueryDocumentSnapshot<Map<String, dynamic>>>? datafirebaseru;
   List<QueryDocumentSnapshot<Map<String, dynamic>>>? datafirebase_en;
 
-  TextEditingController xCoordinate = TextEditingController();
-  TextEditingController yCoordinate = TextEditingController();
-  final id = TextEditingController();
-  final teTitleKz = TextEditingController();
-  final teDecsriptionKz = TextEditingController();
-  final teTitleRu = TextEditingController();
-  final teDecsriptionRu = TextEditingController();
-  final teTitleEn = TextEditingController();
-  final teDecsriptionEn = TextEditingController();
-  final teId = TextEditingController();
+  TextEditingController xCoordinateController = TextEditingController();
+  TextEditingController yCoordinateController = TextEditingController();
+  TextEditingController id = TextEditingController();
 
-  late double xCoordinateNum;
-  late double yCoordinateNum;
+  TextEditingController teTitleKz = TextEditingController();
+  TextEditingController teDecsriptionKz = TextEditingController();
+  TextEditingController teTitleRu = TextEditingController();
+  TextEditingController teDecsriptionRu = TextEditingController();
+  TextEditingController teTitleEn = TextEditingController();
+  TextEditingController teDecsriptionEn = TextEditingController();
 
-  position(xCoordinate, yCoordinate) {
-    xCoordinateNum = double.parse(xCoordinate.text);
-    yCoordinateNum = double.parse(yCoordinate.text);
+
+  updateFirebase(String selectedKey) async {
+    final datakz = await FirebaseFirestore.instance.collection('datakz').get();
+    final dataru = await FirebaseFirestore.instance.collection('dataru').get();
+    final dataen = await FirebaseFirestore.instance.collection('dataen').get();
+
+    for (final doc in datakz.docs) {
+      if (doc['id'] == selectedKey) {
+        await doc.reference.update({
+          'id': id.text,
+          'title': teTitleKz.text,
+          'description': teDecsriptionKz.text,
+          'filephotopath': teFilePhoto?.path ?? '',
+          'xCoordinate': double.parse(xCoordinateController.text),
+          'yCoordinate': double.parse(yCoordinateController.text),
+        });
+        break;
+      }
+    }
+
+    for (final doc in dataru.docs) {
+      if (doc['id'] == selectedKey) {
+        await doc.reference.update({
+          'id': id.text,
+          'title': teTitleRu.text,
+          'description': teDecsriptionRu.text,
+          'filephotopath': teFilePhoto?.path ?? '',
+          'xCoordinate': double.parse(xCoordinateController.text),
+          'yCoordinate': double.parse(yCoordinateController.text),
+        });
+        break;
+      }
+    }
+
+    for (final doc in dataen.docs) {
+      if (doc['id'] == selectedKey) {
+        await doc.reference.update({
+          'id': id.text,
+          'title': teTitleEn.text,
+          'description': teDecsriptionEn.text,
+          'filephotopath': teFilePhoto?.path ?? '',
+          'xCoordinate': double.parse(xCoordinateController.text),
+          'yCoordinate': double.parse(yCoordinateController.text),
+        });
+        break;
+      }
+    }
   }
 
   Future selectFile() async {
@@ -211,7 +252,7 @@ class EditFirebasePageState extends State<EditFirebasePage> {
                 right: 15,
               ),
               child: TextField(
-                controller: xCoordinate,
+                controller: xCoordinateController,
                 decoration: const InputDecoration(
                   hintText: 'xCoordinate',
                   border: OutlineInputBorder(
@@ -227,7 +268,7 @@ class EditFirebasePageState extends State<EditFirebasePage> {
                 right: 15,
               ),
               child: TextField(
-                controller: yCoordinate,
+                controller: yCoordinateController,
                 decoration: const InputDecoration(
                   hintText: 'yCoordinate',
                   border: OutlineInputBorder(
@@ -272,7 +313,7 @@ class EditFirebasePageState extends State<EditFirebasePage> {
                   vertical: 10), // или любые другие отступы
               child: ElevatedButton(
                 onPressed: selectFile,
-                child: Text('Фотофайлды таңдаңыз'),
+                child: Text('Photo select'),
               ),
             ),
             Container(
@@ -280,7 +321,7 @@ class EditFirebasePageState extends State<EditFirebasePage> {
                   vertical: 10), // или любые другие отступы
               child: ElevatedButton(
                 onPressed: uploadFile,
-                child: Text('Фотофайлды жүктеу'),
+                child: Text('Photo upload'),
               ),
             ),
             Container(
@@ -293,114 +334,7 @@ class EditFirebasePageState extends State<EditFirebasePage> {
               margin: const EdgeInsets.all(15),
               child: ElevatedButton(
                 onPressed: () async {
-                  position(xCoordinate, yCoordinate);
-                  CollectionReference<Map<String, dynamic>> collRefKz;
-                  CollectionReference<Map<String, dynamic>> collRefRu;
-                  CollectionReference<Map<String, dynamic>> collRefEn;
-                  collRefKz = FirebaseFirestore.instance.collection('datakz');
-                  collRefRu = FirebaseFirestore.instance.collection('dataru');
-                  collRefEn = FirebaseFirestore.instance.collection('dataen');
-
-                  String targetTitle =
-                      widget.selectedKey; // Значение, которое вы ищете
-
-                  try {
-                    QuerySnapshot querySnapshotKz = await collRefKz.get();
-                    QuerySnapshot querySnapshotRu = await collRefRu.get();
-                    QuerySnapshot querySnapshotEn = await collRefEn.get();
-
-                    List<QueryDocumentSnapshot> docsKz = querySnapshotKz.docs;
-                    List<QueryDocumentSnapshot> docsRu = querySnapshotRu.docs;
-                    List<QueryDocumentSnapshot> docsEn = querySnapshotEn.docs;
-
-                    for (QueryDocumentSnapshot docKz in docsKz) {
-                      Map<String, dynamic> autodata =
-                          docKz.data() as Map<String, dynamic>;
-                      String autokeyKz = docKz.id; // Получение ключа документа
-
-                      // Проверка, соответствует ли поле title значению, которое вы ищете
-                      if (autokeyKz == autokeyKz) {
-                        print("ElevButton teTitle $targetTitle");
-                        print(
-                            "ElevButton teDecsription ${teDecsriptionKz.text}");
-                        print(
-                            "ElevButton selectedKey for firebase ${widget.selectedKey}");
-
-                        print('autokey $autokeyKz');
-                        print('data $autodata');
-
-                        await collRefKz.doc(autokeyKz).update({
-                          'id': id.text,
-                          'title': teTitleKz.text,
-                          'description': teDecsriptionKz.text,
-                          'filephotopath': teFilePhoto!.path!,
-                          'xCoordinate': xCoordinateNum,
-                          'yCoordinate': yCoordinateNum,
-                        });
-                        print("Document updated: $autokeyKz");
-                        break; // Прерываем цикл после обновления первого соответствующего документа
-                      }
-                    }
-                    for (QueryDocumentSnapshot docRu in docsRu) {
-                      Map<String, dynamic> autodata =
-                          docRu.data() as Map<String, dynamic>;
-                      String autokeyRu = docRu.id; // Получение ключа документа
-
-                      // Проверка, соответствует ли поле title значению, которое вы ищете
-                      if (autokeyRu == autokeyRu) {
-                        print("ElevButton teTitle $targetTitle");
-                        print(
-                            "ElevButton teDecsription ${teDecsriptionKz.text}");
-                        print(
-                            "ElevButton selectedKey for firebase ${widget.selectedKey}");
-
-                        print('autokey $autokeyRu');
-                        print('data $autodata');
-
-                        await collRefRu.doc(autokeyRu).update({
-                          'id': id.text,
-                          'title': teTitleRu.text,
-                          'description': teDecsriptionRu.text,
-                          'filephotopath': teFilePhoto!.path!,
-                          'xCoordinate': xCoordinateNum,
-                          'yCoordinate': yCoordinateNum,
-                        });
-                        print("Document updated: $autokeyRu");
-                        break; // Прерываем цикл после обновления первого соответствующего документа
-                      }
-                    }
-                    for (QueryDocumentSnapshot docEn in docsEn) {
-                      Map<String, dynamic> autodata =
-                          docEn.data() as Map<String, dynamic>;
-                      String autokeyEn = docEn.id; // Получение ключа документа
-
-                      // Проверка, соответствует ли поле title значению, которое вы ищете
-                      if (autokeyEn == autokeyEn) {
-                        print("ElevButton teTitle $targetTitle");
-                        print(
-                            "ElevButton teDecsription ${teDecsriptionEn.text}");
-                        print(
-                            "ElevButton selectedKey for firebase ${widget.selectedKey}");
-
-                        print('autokey $autokeyEn');
-                        print('data $autodata');
-
-                        await collRefEn.doc(autokeyEn).update({
-                          'id': id.text,
-                          'title': teTitleEn.text,
-                          'description': teDecsriptionEn.text,
-                          'filephotopath': teFilePhoto!.path!,
-                          'xCoordinate': xCoordinateNum,
-                          'yCoordinate': yCoordinateNum,
-                        });
-                        print("Document updated: $autokeyEn");
-                        break; // Прерываем цикл после обновления первого соответствующего документа
-                      }
-                    }
-                  } catch (e) {
-                    print("Error updating document: $e");
-                  }
-
+                  await updateFirebase(widget.selectedKey);
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -419,76 +353,3 @@ class EditFirebasePageState extends State<EditFirebasePage> {
     );
   }
 }
-
-
-
-  // Future<void> fetchKeysFirebase() async {
-  //   late QuerySnapshot<Map<String, dynamic>> datakz;
-  //   late QuerySnapshot<Map<String, dynamic>> dataru;
-  //   late QuerySnapshot<Map<String, dynamic>> dataen;
-
-  //   if (Localizations.localeOf(context).languageCode == 'kk') {
-  //     datakz = await FirebaseFirestore.instance.collection('datakz').get();
-  //   } else if (Localizations.localeOf(context).languageCode == 'ru') {
-  //     dataru = await FirebaseFirestore.instance.collection('dataru').get();
-  //   } else if (Localizations.localeOf(context).languageCode == 'en') {
-  //     dataen = await FirebaseFirestore.instance.collection('dataen').get();
-  //   }
-
-  //   datafirebasekz = datakz.docs.toList();
-  //   datafirebaseru = dataru.docs.toList();
-  //   datafirebase_en = dataen.docs.toList();
-
-  //   for (int i = 0; i < datafirebasekz!.length; i++) {
-  //     if (widget.selectedKey == datafirebasekz![i]['title']) {
-  //       description = datafirebasekz![i]['description'];
-  //       title = datafirebasekz![i]['title'];
-  //       xCoordinate = datafirebasekz![i]['xCoordinate'];
-  //       yCoordinate = datafirebasekz![i]['yCoordinate'];
-
-  //       //idnum = datafirebase![i]['id'];
-  //       teTitleKz.text = title; // Инициализация контроллера
-  //       teDecsriptionKz.text = description; // Инициализация контроллера
-  //       //teId.text = idnum;
-  //       break;
-  //     }
-  //   }
-
-  //   for (int i = 0; i < datafirebaseru!.length; i++) {
-  //     if (widget.selectedKey == datafirebaseru![i]['title']) {
-  //       description = datafirebaseru![i]['description'];
-  //       title = datafirebaseru![i]['title'];
-  //       xCoordinate = datafirebaseru![i]['xCoordinate'];
-  //       yCoordinate = datafirebaseru![i]['yCoordinate'];
-
-  //       //idnum = datafirebase![i]['id'];
-  //       teTitleRu.text = title; // Инициализация контроллера
-  //       teDecsriptionRu.text = description; // Инициализация контроллера
-  //       //teId.text = idnum;
-  //       break;
-  //     }
-  //   }
-
-  //   for (int i = 0; i < datafirebase_en!.length; i++) {
-  //     if (widget.selectedKey == datafirebase_en![i]['title']) {
-  //       description = datafirebase_en![i]['description'];
-  //       title = datafirebase_en![i]['title'];
-  //       xCoordinate = datafirebase_en![i]['xCoordinate'];
-  //       yCoordinate = datafirebase_en![i]['yCoordinate'];
-
-  //       //idnum = datafirebase![i]['id'];
-  //       teTitleEn.text = title; // Инициализация контроллера
-  //       teDecsriptionEn.text = description; // Инициализация контроллера
-  //       //teId.text = idnum;
-  //       break;
-  //     }
-  //   }
-  //   //id = int.parse(teId.text);
-  //   print("teTitle ${teTitleKz.text}");
-  //   print("teDecsription ${teDecsriptionKz.text}");
-  //   print("teTitle ${teTitleRu.text}");
-  //   print("teDecsription ${teDecsriptionRu.text}");
-  //   print("teTitle ${teTitleEn.text}");
-  //   print("teDecsription ${teDecsriptionEn.text}");
-  //   print("selectedKey fo firebase ${widget.selectedKey}");
-  // }

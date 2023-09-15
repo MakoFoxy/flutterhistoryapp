@@ -223,7 +223,7 @@ class MyTakePageState extends State<MyTakePage> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => MapControlsPage(
-                      title: "Қожа Ахмет Ясауи кесенесі",
+                      id: "Қожа Ахмет Ясауи кесенесі",
                       selectedX: 43.29785383147346,
                       selectedY: 68.27119119202341,
                     ),
@@ -250,6 +250,8 @@ class FirebaseSearch extends StatefulWidget {
 }
 
 class FirebaseSearchWidget extends State<FirebaseSearch> {
+     // with AutomaticKeepAliveClientMixin {} // Добавьте AutomaticKeepAliveClientMixin
+
   TextEditingController controlkey = TextEditingController();
 
   List allResults = [];

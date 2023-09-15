@@ -8,11 +8,11 @@ class MapControlsPage extends MapPage {
   late double selectedX;
   late double selectedY;
   MapControlsPage({
-    required String title,
+    required String id,
     required this.selectedX,
     required this.selectedY,
     Key? key,
-  }) : super(title, key: key);
+  }) : super(id, key: key);
 
   @override
   Widget build(BuildContext context) {
