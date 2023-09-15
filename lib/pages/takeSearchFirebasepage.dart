@@ -9,7 +9,7 @@ import 'package:mausoleum/api/dropdawn_flag/dropdawn_flag.dart';
 import 'package:mausoleum/api/yandexmap/map_controls_page.dart';
 
 class takeSearchFirebasePage extends StatefulWidget {
- final String mykeyword;
+  final String mykeyword;
 
   takeSearchFirebasePage({required this.mykeyword});
 
@@ -18,80 +18,99 @@ class takeSearchFirebasePage extends StatefulWidget {
 }
 
 class _ApptakeSearchPage extends State<takeSearchFirebasePage> {
+  int _backPressCount = 0;
   final whiteTexstStyle = TextStyle(color: Colors.white, fontSize: 24);
 
   String imageUrl = 'lib/assets/images/backgroundImages.jpg';
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: DefaultTextStyle.merge(
-          style: whiteTexstStyle,
-          child: Container(
-            color: Colors.white,
-            child: ListView(
-              children: <Widget>[
-                Container(
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image:
-                          AssetImage(imageUrl),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                  ),
-                ),
-                AppBar(
-                  elevation: 0,
-                  backgroundColor: Color.fromARGB(255, 83, 112, 85),
-                  title: Text(
-                    'mytitlepage'.tr(),
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: Color.fromARGB(255, 184, 182, 156),
-                    ),
-                  ),
-                  actions: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: 20),
-                      child: DropdawnFlag(
-                        changedLanguage: (value) {
-                          setState(() {
-                            context.setLocale(Locale((value)));
-                          });
-                        },
+    return WillPopScope(
+      onWillPop: () async {
+        if (_backPressCount == 0) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => HomePage(),
+            ),
+          );
+          return false;
+        } else {
+          // Переход на домашнюю страницу и сброс счетчика
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => HomePage(),
+            ),
+          );
+          return false; // Запрещаем закрытие приложения
+        }
+      },
+      child: Scaffold(
+        body: SafeArea(
+          child: DefaultTextStyle.merge(
+            style: whiteTexstStyle,
+            child: Container(
+              color: Colors.white,
+              child: ListView(
+                children: <Widget>[
+                  Container(
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage(imageUrl),
+                        fit: BoxFit.cover,
                       ),
                     ),
-                  ],
-                ),
-                Container(
-                  height: MediaQuery.of(context).size.height - 145,
-                  padding: const EdgeInsets.only(left: 0, right: 0),
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image:
-                          AssetImage(imageUrl),
-                      fit: BoxFit.cover,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                     ),
                   ),
-                 child: MyTakePage(
-                    mykeyword: widget.mykeyword,
-                    backgroundImage: DecorationImage(
-                      image: AssetImage(imageUrl),
-                      fit: BoxFit.cover,
+                  AppBar(
+                    elevation: 0,
+                    backgroundColor: Color.fromARGB(255, 83, 112, 85),
+                    title: Text(
+                      'mytitlepage'.tr(),
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: Color.fromARGB(255, 184, 182, 156),
+                      ),
+                    ),
+                    actions: [
+                      Padding(
+                        padding: const EdgeInsets.only(right: 20),
+                        child: DropdawnFlag(
+                          changedLanguage: (value) {
+                            setState(() {
+                              context.setLocale(Locale((value)));
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    height: MediaQuery.of(context).size.height - 145,
+                    padding: const EdgeInsets.only(left: 0, right: 0),
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage(imageUrl),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    child: MyTakePage(
+                      mykeyword: widget.mykeyword,
+                      backgroundImage: DecorationImage(
+                        image: AssetImage(imageUrl),
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
-                ),
-                Container(
-                  padding: const EdgeInsets.all(0),
-                  child: MenuTile(),
-                ),
-              ],
+                  Container(
+                    padding: const EdgeInsets.all(0),
+                    child: MenuTile(),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -101,7 +120,7 @@ class _ApptakeSearchPage extends State<takeSearchFirebasePage> {
 }
 
 class MyTakePage extends StatefulWidget {
-   String mykeyword;
+  String mykeyword;
   final DecorationImage backgroundImage;
 
   MyTakePage({required this.backgroundImage, required this.mykeyword, Key? key})
@@ -213,7 +232,7 @@ class MyTakePageState extends State<MyTakePage> {
               },
               child: const Icon(Icons.delete),
             ),
-          ),          
+          ),
           Positioned(
             right: 80,
             bottom: 0,
@@ -249,9 +268,8 @@ class FirebaseSearch extends StatefulWidget {
   FirebaseSearchWidget createState() => FirebaseSearchWidget();
 }
 
-class FirebaseSearchWidget extends State<FirebaseSearch> {
-     // with AutomaticKeepAliveClientMixin {} // Добавьте AutomaticKeepAliveClientMixin
-
+class FirebaseSearchWidget extends State<FirebaseSearch>
+    with AutomaticKeepAliveClientMixin {
   TextEditingController controlkey = TextEditingController();
 
   List allResults = [];
@@ -333,6 +351,7 @@ class FirebaseSearchWidget extends State<FirebaseSearch> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return ListView(
       children: [
         Container(
@@ -397,6 +416,9 @@ class FirebaseSearchWidget extends State<FirebaseSearch> {
       ],
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 class streamBuild extends StatelessWidget {

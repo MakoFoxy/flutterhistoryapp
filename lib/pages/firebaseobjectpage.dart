@@ -22,163 +22,188 @@ class ObjectFirebasePage extends StatefulWidget {
 
 class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
   String currentSelectedKey = ''; // Инициализируйте переменную пустым значением
+  int _backPressCount = 0;
 
   final whiteTextStyle = TextStyle(color: Colors.white, fontSize: 24);
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: DefaultTextStyle(
-          style: whiteTextStyle,
-          child: Container(
-            color: Colors.amber,
-            child: ListView(
-              children: <Widget>[
-                AppBar(
-                  elevation: 0,
-                  backgroundColor: Color.fromARGB(255, 83, 112, 85),
-                  title: Text(
-                    'mytitlepage'.tr(),
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: Color.fromARGB(255, 184, 182, 156),
-                    ),
-                  ),
-                  actions: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: 20),
-                      child: DropdawnFlag(
-                        changedLanguage: (value) {
-                          setState(() {
-                            currentSelectedKey =
-                                value; // Обновляем текущий выбранный ключ
-                            context.setLocale(Locale((value)));
-                          });
-                        },
+    return WillPopScope(
+      onWillPop: () async {
+        if (_backPressCount == 0) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => HomePage(),
+            ),
+          );
+          return false;
+        } else {
+          // Переход на домашнюю страницу и сброс счетчика
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => HomePage(),
+            ),
+          );
+          return false; // Запрещаем закрытие приложения
+        }
+      },
+      child: Scaffold(
+        body: SafeArea(
+          child: DefaultTextStyle(
+            style: whiteTextStyle,
+            child: Container(
+              color: Colors.amber,
+              child: ListView(
+                children: <Widget>[
+                  AppBar(
+                    elevation: 0,
+                    backgroundColor: Color.fromARGB(255, 83, 112, 85),
+                    title: Text(
+                      'mytitlepage'.tr(),
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: Color.fromARGB(255, 184, 182, 156),
                       ),
                     ),
-                  ],
-                ),
-                mySearch(),
-                Container(
-                  height: MediaQuery.of(context).size.height - 163,
-                  child: ListView(
-                    children: <Widget>[
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          MyTextCont(selectedKey: widget.selectedKey),
-                          //MyPhotoCont(),
-                        ],
+                    actions: [
+                      Padding(
+                        padding: const EdgeInsets.only(right: 20),
+                        child: DropdawnFlag(
+                          changedLanguage: (value) {
+                            setState(() {
+                              currentSelectedKey =
+                                  value; // Обновляем текущий выбранный ключ
+                              context.setLocale(Locale((value)));
+                            });
+                          },
+                        ),
                       ),
-                      MyPhotoCont(selectedKey: widget.selectedKey),
-                      MyOverviews(selectedKey: widget.selectedKey),
                     ],
                   ),
-                ),
-                Container(
-                  child: MyCoordinate(
-                    selectedKey: widget.selectedKey,
+                  mySearch(),
+                  Container(
+                    height: MediaQuery.of(context).size.height - 163,
+                    child: ListView(
+                      children: <Widget>[
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            MyTextCont(selectedKey: widget.selectedKey),
+                            //MyPhotoCont(),
+                          ],
+                        ),
+                        MyPhotoCont(selectedKey: widget.selectedKey),
+                        MyOverviews(selectedKey: widget.selectedKey),
+                      ],
+                    ),
                   ),
-                ),
-                Container(
-                  child: MenuTile(),
-                ),
-              ],
+                  Container(
+                    child: MyCoordinate(
+                      selectedKey: widget.selectedKey,
+                    ),
+                  ),
+                  Container(
+                    child: MenuTile(),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
-      ),
-      floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 50.0, bottom: 0.0),
-            child: FloatingActionButton(
+        floatingActionButton: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 50.0, bottom: 0.0),
+              child: FloatingActionButton(
+                onPressed: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (BuildContext context) => EditFirebasePage(
+                        //editMydb: editMydb,
+                        selectedKey: widget.selectedKey,
+                      ),
+                    ),
+                  );
+                },
+                mini:
+                    true, // Установите mini: true для уменьшения размера кнопки
+                shape: RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(15), // Настройте форму кнопки
+                ),
+                child: const Icon(Icons.create),
+              ),
+            ),
+            FloatingActionButton(
               onPressed: () async {
                 await Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (BuildContext context) => EditFirebasePage(
-                      //editMydb: editMydb,
-                      selectedKey: widget.selectedKey,
+                    builder: (context) => QrScanner(),
+                  ),
+                );
+              },
+              child: const Icon(Icons.qr_code_scanner),
+              mini: true, // Установите mini: true для уменьшения размера кнопки
+              shape: RoundedRectangleBorder(
+                borderRadius:
+                    BorderRadius.circular(15), // Настройте форму кнопки
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 50.0, bottom: 0.0),
+              child: FloatingActionButton(
+                onPressed: () async {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => HomePage(),
                     ),
-                  ),
-                );
-              },
-              mini: true, // Установите mini: true для уменьшения размера кнопки
-              shape: RoundedRectangleBorder(
-                borderRadius:
-                    BorderRadius.circular(15), // Настройте форму кнопки
-              ),
-              child: const Icon(Icons.create),
-            ),
-          ),
-          FloatingActionButton(
-            onPressed: () async {
-              await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => QrScanner(),
-                ),
-              );
-            },
-            child: const Icon(Icons.qr_code_scanner),
-            mini: true, // Установите mini: true для уменьшения размера кнопки
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15), // Настройте форму кнопки
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(right: 50.0, bottom: 0.0),
-            child: FloatingActionButton(
-              onPressed: () async {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => HomePage(),
-                  ),
-                );
+                  );
 
-                late CollectionReference<Map<String, dynamic>> collRef;
-                if (Localizations.localeOf(context).languageCode == 'kk') {
-                  collRef = FirebaseFirestore.instance.collection('datakz');
-                } else if (Localizations.localeOf(context).languageCode ==
-                    'ru') {
-                  collRef = FirebaseFirestore.instance.collection('dataru');
-                } else if (Localizations.localeOf(context).languageCode ==
-                    'en') {
-                  collRef = FirebaseFirestore.instance.collection('dataen');
-                }
-                String targetTitle =
-                    widget.selectedKey; // Значение, которое вы ищете
-
-                QuerySnapshot<Map<String, dynamic>> querySnapshot =
-                    await collRef.get();
-                List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
-                    querySnapshot.docs;
-                for (QueryDocumentSnapshot<Map<String, dynamic>> doc in docs) {
-                  Map<String, dynamic> autodata = doc.data();
-                  String autokey = doc.id; // Получение ключа документа
-                  // Проверка, соответствует ли поле title значению, которое вы ищете
-                  if (autodata['id'] == targetTitle) {
-                    await collRef.doc(autokey).delete();
-                    print("Document deleted: $autokey");
+                  late CollectionReference<Map<String, dynamic>> collRef;
+                  if (Localizations.localeOf(context).languageCode == 'kk') {
+                    collRef = FirebaseFirestore.instance.collection('datakz');
+                  } else if (Localizations.localeOf(context).languageCode ==
+                      'ru') {
+                    collRef = FirebaseFirestore.instance.collection('dataru');
+                  } else if (Localizations.localeOf(context).languageCode ==
+                      'en') {
+                    collRef = FirebaseFirestore.instance.collection('dataen');
                   }
-                }
-              },
-              mini: true, // Установите mini: true для уменьшения размера кнопки
-              shape: RoundedRectangleBorder(
-                borderRadius:
-                    BorderRadius.circular(15), // Настройте форму кнопки
+                  String targetTitle =
+                      widget.selectedKey; // Значение, которое вы ищете
+
+                  QuerySnapshot<Map<String, dynamic>> querySnapshot =
+                      await collRef.get();
+                  List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
+                      querySnapshot.docs;
+                  for (QueryDocumentSnapshot<Map<String, dynamic>> doc
+                      in docs) {
+                    Map<String, dynamic> autodata = doc.data();
+                    String autokey = doc.id; // Получение ключа документа
+                    // Проверка, соответствует ли поле title значению, которое вы ищете
+                    if (autodata['id'] == targetTitle) {
+                      await collRef.doc(autokey).delete();
+                      print("Document deleted: $autokey");
+                    }
+                  }
+                },
+                mini:
+                    true, // Установите mini: true для уменьшения размера кнопки
+                shape: RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(15), // Настройте форму кнопки
+                ),
+                child: const Icon(Icons.delete),
               ),
-              child: const Icon(Icons.delete),
             ),
-          ),
-        ],
+          ],
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }

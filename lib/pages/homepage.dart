@@ -15,81 +15,104 @@ class HomePage extends StatefulWidget {
 }
 
 class AppHomePage extends State<HomePage> {
+  int _backPressCount = 0;
+
   @override
   final whiteTexstStyle = TextStyle(color: Colors.white, fontSize: 24);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: DefaultTextStyle.merge(
-          style: whiteTexstStyle,
-          child: Container(
-            color: Colors.white,
-            child: ListView(
-              children: <Widget>[
-                Container(
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image:
-                          AssetImage('lib/assets/images/backgroundImages.jpg'),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                  ),
-                ),
-                AppBar(
-                  elevation: 0,
-                  backgroundColor: Color.fromARGB(255, 83, 112, 85),
-                  title: Text(
-                    'mytitlepage'.tr(),
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: Color.fromARGB(255, 184, 182, 156),
-                    ),
-                  ),
-                  actions: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: 20),
-                      child: DropdawnFlag(
-                        changedLanguage: (value) {
-                          setState(() {
-                            context.setLocale(Locale((value)));
-                          });
-                        },
+    return WillPopScope(
+      onWillPop: () async {
+        if (_backPressCount == 0) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Вы на главной странице'),
+            ),
+          );
+          _backPressCount++;
+          return false;
+        } else {
+          // Переход на домашнюю страницу и сброс счетчика
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => HomePage(),
+            ),
+          );
+          return false; // Запрещаем закрытие приложения
+        }
+      },
+      child: Scaffold(
+        body: SafeArea(
+          child: DefaultTextStyle.merge(
+            style: whiteTexstStyle,
+            child: Container(
+              color: Colors.white,
+              child: ListView(
+                children: <Widget>[
+                  Container(
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage(
+                            'lib/assets/images/backgroundImages.jpg'),
+                        fit: BoxFit.cover,
                       ),
                     ),
-                  ],
-                ),
-                Container(
-                  height: MediaQuery.of(context).size.height - 145,
-                  padding: const EdgeInsets.only(left: 0, right: 0),
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image:
-                          AssetImage('lib/assets/images/backgroundImages.jpg'),
-                      fit: BoxFit.cover,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                     ),
                   ),
-                  child: MyHomePage(
-                    //resulterList: resulterList, // Передаем resulterList сюда
-                    backgroundImage: DecorationImage(
-                      image:
-                          AssetImage('lib/assets/images/backgroundImages.jpg'),
-                      fit: BoxFit.cover,
+                  AppBar(
+                    elevation: 0,
+                    backgroundColor: Color.fromARGB(255, 83, 112, 85),
+                    title: Text(
+                      'mytitlepage'.tr(),
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: Color.fromARGB(255, 184, 182, 156),
+                      ),
+                    ),
+                    actions: [
+                      Padding(
+                        padding: const EdgeInsets.only(right: 20),
+                        child: DropdawnFlag(
+                          changedLanguage: (value) {
+                            setState(() {
+                              context.setLocale(Locale((value)));
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    height: MediaQuery.of(context).size.height - 145,
+                    padding: const EdgeInsets.only(left: 0, right: 0),
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage(
+                            'lib/assets/images/backgroundImages.jpg'),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    child: MyHomePage(
+                      //resulterList: resulterList, // Передаем resulterList сюда
+                      backgroundImage: DecorationImage(
+                        image: AssetImage(
+                            'lib/assets/images/backgroundImages.jpg'),
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
-                ),
-                Container(
-                  padding: const EdgeInsets.all(0),
-                  child: MenuTile(),
-                ),
-              ],
+                  Container(
+                    padding: const EdgeInsets.all(0),
+                    child: MenuTile(),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
