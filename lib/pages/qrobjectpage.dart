@@ -121,20 +121,29 @@ class QRobjectpageState extends State<QRobjectpage> {
               child: FloatingActionButton(
                 onPressed: () async {
                   late String keyforedit;
-                  var collRef = FirebaseFirestore.instance.collection('data');
+                  late CollectionReference<Map<String, dynamic>> collRef;
+                  if (Localizations.localeOf(context).languageCode == 'kk') {
+                    collRef = FirebaseFirestore.instance.collection('datakz');
+                  } else if (Localizations.localeOf(context).languageCode ==
+                      'ru') {
+                    collRef = FirebaseFirestore.instance.collection('dataru');
+                  } else if (Localizations.localeOf(context).languageCode ==
+                      'en') {
+                    collRef = FirebaseFirestore.instance.collection('dataen');
+                  }
                   String targetTitle =
                       widget.selectedKey; // Значение, которое вы ищете
-
-                  QuerySnapshot querySnapshot = await collRef.get();
-                  List<QueryDocumentSnapshot> docs = querySnapshot.docs;
-
-                  for (QueryDocumentSnapshot doc in docs) {
-                    Map<String, dynamic> autodata =
-                        doc.data() as Map<String, dynamic>;
+                  QuerySnapshot<Map<String, dynamic>> querySnapshot =
+                      await collRef.get();
+                  List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
+                      querySnapshot.docs;
+                  for (QueryDocumentSnapshot<Map<String, dynamic>> doc
+                      in docs) {
+                    Map<String, dynamic> autodata = doc.data();
                     String autokey = doc.id; // Получение ключа документа
                     // Проверка, соответствует ли поле title значению, которое вы ищете
                     if (autokey == targetTitle) {
-                      keyforedit = autodata['title'];
+                      keyforedit = autodata['id'];
                     }
                   }
                   await Navigator.push(
@@ -183,20 +192,32 @@ class QRobjectpageState extends State<QRobjectpage> {
                       builder: (context) => HomePage(),
                     ),
                   );
-                  var collRef = FirebaseFirestore.instance.collection('data');
+
+                  late CollectionReference<Map<String, dynamic>> collRef;
+                  if (Localizations.localeOf(context).languageCode == 'kk') {
+                    collRef = FirebaseFirestore.instance.collection('datakz');
+                  } else if (Localizations.localeOf(context).languageCode ==
+                      'ru') {
+                    collRef = FirebaseFirestore.instance.collection('dataru');
+                  } else if (Localizations.localeOf(context).languageCode ==
+                      'en') {
+                    collRef = FirebaseFirestore.instance.collection('dataen');
+                  }
                   String targetTitle =
                       widget.selectedKey; // Значение, которое вы ищете
 
-                  QuerySnapshot querySnapshot = await collRef.get();
-                  List<QueryDocumentSnapshot> docs = querySnapshot.docs;
-
-                  for (QueryDocumentSnapshot doc in docs) {
+                  QuerySnapshot<Map<String, dynamic>> querySnapshot =
+                      await collRef.get();
+                  List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
+                      querySnapshot.docs;
+                  for (QueryDocumentSnapshot<Map<String, dynamic>> doc
+                      in docs) {
+                    Map<String, dynamic> autodata = doc.data();
                     String autokey = doc.id; // Получение ключа документа
                     // Проверка, соответствует ли поле title значению, которое вы ищете
                     if (autokey == targetTitle) {
                       await collRef.doc(autokey).delete();
                       print("Document deleted: $autokey");
-                      break; // Прерываем цикл после обновления первого соответствующего документа
                     }
                   }
                 },
@@ -412,7 +433,6 @@ class MyOverviewsState extends State<MyOverviews> {
   }
 }
 
-
 class MyCoordinate extends StatefulWidget {
   String selectedKey;
 
@@ -527,20 +547,23 @@ class _MySearchState extends State<mySearch> {
             prefixIcon: IconButton(
               icon: const Icon(Icons.search),
               onPressed: () {
+                // setState(() {
+                //   keywordAsyncFunction(keyword.text);
+                // });
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) {
                       if (keyword.text != '') {
-                        String mykeyword = keyword.text;
-                        return takeSearchFirebasePage(mykeyword: mykeyword);
+                        return takeSearchFirebasePage(
+                            // resList: resList,
+                            mykeyword: keyword.text);
                       } else {
                         return HomePage();
                       }
                     },
                   ),
                 );
-                print('keyword.text ${keyword.text}');
               },
             ),
             suffixIcon: IconButton(
@@ -608,8 +631,12 @@ class _MyTextContState extends State<MyTextCont> {
       autodata = datafirebasekz[i].data() as Map<String, dynamic>;
       print(
           "datafirebasekz[i]['title']KZ from firebase ${datafirebasekz[i]['title']}");
+      print('QRwidget.selectedKey start ${widget.selectedKey}');
+      print('autokey start $autokey');
       if (widget.selectedKey == autokey &&
           !titleWidgetsArr.contains(titleWidgetsKz)) {
+        print('QRwidget.selectedKey finish ${widget.selectedKey}');
+        print('autokey finish $autokey');
         titleWidgetsKz = datafirebasekz[i]['title'];
         titleWidgetsArr.add(titleWidgetsKz);
         break;
@@ -940,15 +967,18 @@ class _MyPhotoContState extends State<MyPhotoCont> {
             margin:
                 const EdgeInsets.only(left: 0, right: 0, top: 0, bottom: 10),
             elevation: 5,
-            child: Container(
+            child: Container(             
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30),
+                borderRadius: BorderRadius.circular(0),
+                image: DecorationImage(
+                  image: AssetImage('lib/assets/images/mavzoley_yasavi.jpg'),
+                  fit: BoxFit.cover,
+                ),
               ),
-              //child: Text('No image'),
-              child: Image.file(
-                File(photoDisplayed),
-                fit: BoxFit.cover,
-              ),
+              // child: Image.file(
+              //   File(photoDisplayed),
+              //   fit: BoxFit.cover,
+              // ),
             ),
           ),
         );
@@ -956,7 +986,6 @@ class _MyPhotoContState extends State<MyPhotoCont> {
     );
   }
 }
-
 
 class MenuTile extends StatefulWidget {
   @override
