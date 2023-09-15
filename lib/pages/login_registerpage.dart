@@ -93,7 +93,7 @@ class _LoginPageState extends State<LoginPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               _entryField('email', _controllerEmail),
-              _entryField('passwprd', _controllerPossword),
+              _entryField('password', _controllerPossword),
               _errorMessage(),
               _submitButton(),
               _loginOrRegisterButton(),
