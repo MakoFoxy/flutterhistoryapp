@@ -316,10 +316,10 @@ class MyOverviewsState extends State<MyOverviews> {
       discripWidgetsArr.add(discripWidgetsEmpt);
     }
 
-    print("discripWidgetsKz***************${discripWidgetsKz}");
-    print("discripWidgetsEn***************${discripWidgetsEn}");
-    print("discripWidgetsRu***************${discripWidgetsRu}");
-    print("discripWidgetsEmpt***************${discripWidgetsEmpt}");
+    print("discripWidgetsKz***${discripWidgetsKz}");
+    print("discripWidgetsEn***${discripWidgetsEn}");
+    print("discripWidgetsRu***${discripWidgetsRu}");
+    print("discripWidgetsEmpt***${discripWidgetsEmpt}");
     //print("********************\n${discripWidgetsEn.toString()}");
     print("discripWidgetsArr $discripWidgetsArr");
     print("discripWidgetsArr.length ${discripWidgetsArr.length}");
@@ -364,7 +364,7 @@ class MyOverviewsState extends State<MyOverviews> {
           } else {
             discripWidgetsEmpty = discripWidgetsEmpty + element;
           }
-          print("*******************<=>element $element");
+          print("***<=>element $element");
         });
 
         discripWidgetsArr.clear();

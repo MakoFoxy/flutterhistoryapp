@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:mausoleum/pages/homepage.dart';
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mausoleum/pages/editFirebasePages.dart';
 import 'package:mausoleum/pages/takeSearchFirebasepage.dart';
 import 'package:mausoleum/pages/qrscanner.dart';
-import 'dart:io';
 import 'package:mausoleum/api/yandexmap/map_controls_page.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:mausoleum/api/dropdawn_flag/dropdawn_flag.dart';
 
 class QRobjectpage extends StatefulWidget {
   final String selectedKey; // Добавьте параметр для выбранного ключа
@@ -22,160 +24,210 @@ class QRobjectpage extends StatefulWidget {
 }
 
 class QRobjectpageState extends State<QRobjectpage> {
+  String currentSelectedKey = ''; // Инициализируйте переменную пустым значением
+  int _backPressCount = 0;
   final whiteTextStyle = TextStyle(color: Colors.white, fontSize: 24);
 
-  // void initState() {
-  //   widget.closeScreen();
-  //   super.initState();
-  //   // mapdata = mapOver.mapdatas;
-  // }
   @override
   Widget build(BuildContext context) {
-    // widget.closeScreen();
-    return Scaffold(
-      body: SafeArea(
-        child: DefaultTextStyle(
-          style: whiteTextStyle,
-          child: Container(
-            color: Colors.amber,
-            child: ListView(
-              children: <Widget>[
-                mySearch(),
-                Container(
-                  height: MediaQuery.of(context).size.height - 163,
-                  child: ListView(
-                    children: <Widget>[
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          MyTextCont(selectedKey: widget.selectedKey),
-                          //MyPhotoCont(),
-                        ],
+    return WillPopScope(
+      onWillPop: () async {
+        if (_backPressCount == 0) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => HomePage(),
+            ),
+          );
+          return false;
+        } else {
+          // Переход на домашнюю страницу и сброс счетчика
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => HomePage(),
+            ),
+          );
+          return false; // Запрещаем закрытие приложения
+        }
+      },
+      child: Scaffold(
+        body: SafeArea(
+          child: DefaultTextStyle(
+            style: whiteTextStyle,
+            child: Container(
+              color: Colors.amber,
+              child: ListView(
+                children: <Widget>[
+                  AppBar(
+                    elevation: 0,
+                    backgroundColor: Color.fromARGB(255, 83, 112, 85),
+                    title: Text(
+                      'mytitlepage'.tr(),
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: Color.fromARGB(255, 184, 182, 156),
                       ),
-                      MyPhotoCont(selectedKey: widget.selectedKey),
-                      MyOverviews(selectedKey: widget.selectedKey),
+                    ),
+                    actions: [
+                      Padding(
+                        padding: const EdgeInsets.only(right: 20),
+                        child: DropdawnFlag(
+                          changedLanguage: (value) {
+                            setState(() {
+                              currentSelectedKey =
+                                  value; // Обновляем текущий выбранный ключ
+                              context.setLocale(Locale((value)));
+                            });
+                          },
+                        ),
+                      ),
                     ],
                   ),
-                ),
-                Container(
-                  child: MyCoordinate(
-                    selectedKey: widget.selectedKey,
+                  mySearch(),
+                  Container(
+                    height: MediaQuery.of(context).size.height - 163,
+                    child: ListView(
+                      children: <Widget>[
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            MyTextCont(selectedKey: widget.selectedKey),
+                            //MyPhotoCont(),
+                          ],
+                        ),
+                        MyPhotoCont(selectedKey: widget.selectedKey),
+                        MyOverviews(selectedKey: widget.selectedKey),
+                      ],
+                    ),
                   ),
-                ),
-                Container(
-                  child: MenuTile(),
-                ),
-              ],
+                  Container(
+                    child: MyCoordinate(
+                      selectedKey: widget.selectedKey,
+                    ),
+                  ),
+                  Container(
+                    child: MenuTile(),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
-      ),
-      floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 50.0, bottom: 0.0),
-            child: FloatingActionButton(
-              onPressed: () async {
-                late String keyforedit;
-                var collRef = FirebaseFirestore.instance.collection('data');
-                String targetTitle =
-                    widget.selectedKey; // Значение, которое вы ищете
+        floatingActionButton: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 50.0, bottom: 0.0),
+              child: FloatingActionButton(
+                onPressed: () async {
+                  late String keyforedit;
+                  var collRef = FirebaseFirestore.instance.collection('data');
+                  String targetTitle =
+                      widget.selectedKey; // Значение, которое вы ищете
 
-                QuerySnapshot querySnapshot = await collRef.get();
-                List<QueryDocumentSnapshot> docs = querySnapshot.docs;
+                  QuerySnapshot querySnapshot = await collRef.get();
+                  List<QueryDocumentSnapshot> docs = querySnapshot.docs;
 
-                for (QueryDocumentSnapshot doc in docs) {
-                  Map<String, dynamic> autodata =
-                      doc.data() as Map<String, dynamic>;
-                  String autokey = doc.id; // Получение ключа документа
-                  // Проверка, соответствует ли поле title значению, которое вы ищете
-                  if (autokey == targetTitle) {
-                    keyforedit = autodata['title'];
+                  for (QueryDocumentSnapshot doc in docs) {
+                    Map<String, dynamic> autodata =
+                        doc.data() as Map<String, dynamic>;
+                    String autokey = doc.id; // Получение ключа документа
+                    // Проверка, соответствует ли поле title значению, которое вы ищете
+                    if (autokey == targetTitle) {
+                      keyforedit = autodata['title'];
+                    }
                   }
-                }
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (BuildContext context) => EditFirebasePage(
+                        //editMydb: editMydb,
+                        selectedKey: keyforedit,
+                      ),
+                    ),
+                  );
+                  await widget.closeScreen();
+                },
+                mini:
+                    true, // Установите mini: true для уменьшения размера кнопки
+                shape: RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(15), // Настройте форму кнопки
+                ),
+                child: const Icon(Icons.create),
+              ),
+            ),
+            FloatingActionButton(
+              onPressed: () async {
                 await Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (BuildContext context) => EditFirebasePage(
-                      //editMydb: editMydb,
-                      selectedKey: keyforedit,
+                    builder: (context) => QrScanner(),
+                  ),
+                );
+              },
+              child: const Icon(Icons.qr_code_scanner),
+              mini: true, // Установите mini: true для уменьшения размера кнопки
+              shape: RoundedRectangleBorder(
+                borderRadius:
+                    BorderRadius.circular(15), // Настройте форму кнопки
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 50.0, bottom: 0.0),
+              child: FloatingActionButton(
+                onPressed: () async {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => HomePage(),
                     ),
-                  ),
-                );
-                await widget.closeScreen();
-              },
-              mini: true, // Установите mini: true для уменьшения размера кнопки
-              shape: RoundedRectangleBorder(
-                borderRadius:
-                    BorderRadius.circular(15), // Настройте форму кнопки
-              ),
-              child: const Icon(Icons.create),
-            ),
-          ),
-          FloatingActionButton(
-            onPressed: () async {
-              await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => QrScanner(),
-                ),
-              );
-            },
-            child: const Icon(Icons.qr_code_scanner),
-            mini: true, // Установите mini: true для уменьшения размера кнопки
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15), // Настройте форму кнопки
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(right: 50.0, bottom: 0.0),
-            child: FloatingActionButton(
-              onPressed: () async {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => HomePage(),
-                  ),
-                );
-                var collRef = FirebaseFirestore.instance.collection('data');
-                String targetTitle =
-                    widget.selectedKey; // Значение, которое вы ищете
+                  );
+                  var collRef = FirebaseFirestore.instance.collection('data');
+                  String targetTitle =
+                      widget.selectedKey; // Значение, которое вы ищете
 
-                QuerySnapshot querySnapshot = await collRef.get();
-                List<QueryDocumentSnapshot> docs = querySnapshot.docs;
+                  QuerySnapshot querySnapshot = await collRef.get();
+                  List<QueryDocumentSnapshot> docs = querySnapshot.docs;
 
-                for (QueryDocumentSnapshot doc in docs) {
-                  String autokey = doc.id; // Получение ключа документа
-                  // Проверка, соответствует ли поле title значению, которое вы ищете
-                  if (autokey == targetTitle) {
-                    await collRef.doc(autokey).delete();
-                    print("Document deleted: $autokey");
-                    break; // Прерываем цикл после обновления первого соответствующего документа
+                  for (QueryDocumentSnapshot doc in docs) {
+                    String autokey = doc.id; // Получение ключа документа
+                    // Проверка, соответствует ли поле title значению, которое вы ищете
+                    if (autokey == targetTitle) {
+                      await collRef.doc(autokey).delete();
+                      print("Document deleted: $autokey");
+                      break; // Прерываем цикл после обновления первого соответствующего документа
+                    }
                   }
-                }
-              },
-              mini: true, // Установите mini: true для уменьшения размера кнопки
-              shape: RoundedRectangleBorder(
-                borderRadius:
-                    BorderRadius.circular(15), // Настройте форму кнопки
+                },
+                mini:
+                    true, // Установите mini: true для уменьшения размера кнопки
+                shape: RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(15), // Настройте форму кнопки
+                ),
+                child: const Icon(Icons.delete),
               ),
-              child: const Icon(Icons.delete),
             ),
-          ),
-        ],
+          ],
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }
 
 class MyOverviews extends StatefulWidget {
   String selectedKey;
+  // final String currentLanguagekz; // Добавьте текущий языковой параметр
+  // final String currentLanguageru; // Добавьте текущий языковой параметр
+  // final String currentLanguageen; // Добавьте текущий языковой параметр
 
   MyOverviews({
-    //required this.mapdata,
     required this.selectedKey,
+    // required this.currentLanguagekz,
+    // required this.currentLanguageru,
+    // required this.currentLanguageen, // Добавьте текущий языковой параметр в конструктор
   });
 
   @override
@@ -186,50 +238,180 @@ class MyOverviewsState extends State<MyOverviews> {
   final whiteTextStyle =
       TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 20);
 
-  void initState() {
-    super.initState();
-    qrKeysFirebase(); // Загрузите ключи из Firebase
-  }
+  late List<String> discripWidgetsArr = [];
+  String id = "";
+  String discripWidgetsKz = "";
+  String discripWidgetsRu = "";
+  String discripWidgetsEn = "";
+  String discripWidgetsEmpt = "";
 
-  var collRef = FirebaseFirestore.instance.collection('data');
+  @override
+  Future<List<String>> fetchKeysFirebaseOver() async {
+    List<String> arrlen = [];
+    arrlen.add(widget.selectedKey);
+    print("widget.selectedKey from firebase ${arrlen.length}");
 
-  String discriptWidgets = "";
-  Future<void> qrKeysFirebase() async {
-    String targetQR = widget.selectedKey; // Значение, которое вы ищете
-    try {
-      QuerySnapshot querySnapshot = await collRef.get();
-      List<QueryDocumentSnapshot> docs = querySnapshot.docs;
-      String newDescription = "";
+    List<QueryDocumentSnapshot<Map<String, dynamic>>>? datafirebasekz;
+    List<QueryDocumentSnapshot<Map<String, dynamic>>>? datafirebaseru;
+    List<QueryDocumentSnapshot<Map<String, dynamic>>>? datafirebaseen;
+    late QuerySnapshot<Map<String, dynamic>> datakz;
+    late QuerySnapshot<Map<String, dynamic>> dataru;
+    late QuerySnapshot<Map<String, dynamic>> dataen;
+    dataru = await FirebaseFirestore.instance.collection('dataru').get();
+    datakz = await FirebaseFirestore.instance.collection('datakz').get();
+    dataen = await FirebaseFirestore.instance.collection('dataen').get();
 
-      for (QueryDocumentSnapshot doc in docs) {
-        Map<String, dynamic> autodata = doc.data() as Map<String, dynamic>;
-        String autokey = doc.id; // Получение ключа документа
+    datafirebasekz = datakz.docs.toList();
+    datafirebaseru = dataru.docs.toList();
+    datafirebaseen = dataen.docs.toList();
 
-        // Проверка, соответствует ли поле title значению, которое вы ищете
-        if (autokey == targetQR) {
-          newDescription = autodata['description'];
-        }
+    late String autokey;
+
+    late Map<String, dynamic> autodata;
+    for (int i = 0; i < datafirebasekz.length; i++) {
+      autokey = datafirebasekz[i].id;
+      autodata = datafirebasekz[i].data() as Map<String, dynamic>;
+      print(
+          "datafirebasekz[i]['title']KZ from firebase ${datafirebasekz[i]['title']}");
+      if (widget.selectedKey == autokey &&
+          !discripWidgetsArr.contains(discripWidgetsKz)) {
+        discripWidgetsKz = datafirebasekz[i]['description'];
+        discripWidgetsArr.add(discripWidgetsKz);
+        break;
       }
-      setState(() {
-        discriptWidgets = newDescription;
-      });
-    } catch (e) {
-      print("Error qr object page: $e");
     }
+
+    print("widget.selectedKey from firebase ${widget.selectedKey}");
+
+    for (int i = 0; i < datafirebaseru.length; i++) {
+      autokey = datafirebaseru[i].id;
+      autodata = datafirebaseru[i].data() as Map<String, dynamic>;
+      print(
+          "datafirebaseru[i]['title']RU from firebase ${datafirebaseru[i]['title']}");
+      if (widget.selectedKey == autokey &&
+          !discripWidgetsArr.contains(discripWidgetsRu)) {
+        discripWidgetsRu = datafirebaseru[i]['description'];
+        print("discripWidgetsRu $discripWidgetsRu");
+        discripWidgetsArr.add(discripWidgetsRu);
+        break;
+      }
+    }
+    print("autokeyru $autokey");
+
+    print("widget.selectedKey from firebase ${widget.selectedKey}");
+
+    for (int i = 0; i < datafirebaseen.length; i++) {
+      autokey = datafirebaseen[i].id;
+      autodata = datafirebaseen[i].data() as Map<String, dynamic>;
+      print(
+          "datafirebasekz[i]['title']EN from firebase ${datafirebaseen[i]['title']}");
+      if (widget.selectedKey == autokey &&
+          !discripWidgetsArr.contains(discripWidgetsEn)) {
+        discripWidgetsEn = datafirebaseen[i]['description'];
+        print("discripWidgetsEn $discripWidgetsEn");
+        discripWidgetsArr.add(discripWidgetsEn);
+        break;
+      }
+      print("widget.selectedKeyEN ${widget.selectedKey}");
+    }
+    //print("discripWidgetsEn from firebase $discripWidgetsEn");
+    print("autokeyen $autokey");
+
+    if (discripWidgetsKz.isEmpty &&
+        discripWidgetsRu.isEmpty &&
+        discripWidgetsEn.isEmpty &&
+        autokey == autokey) {
+      discripWidgetsEmpt = autodata['description'];
+      discripWidgetsArr.add(discripWidgetsEmpt);
+    }
+
+    print("discripWidgetsKz***************${discripWidgetsKz}");
+    print("discripWidgetsEn***************${discripWidgetsEn}");
+    print("discripWidgetsRu***************${discripWidgetsRu}");
+    print("discripWidgetsEmpt***************${discripWidgetsEmpt}");
+    //print("********************\n${discripWidgetsEn.toString()}");
+    print("discripWidgetsArr $discripWidgetsArr");
+    print("discripWidgetsArr.length ${discripWidgetsArr.length}");
+
+    return discripWidgetsArr;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.amber,
-      child: Text(
-        discriptWidgets ?? '',
-        style: whiteTextStyle,
-        textAlign: TextAlign.justify,
-      ),
+    return FutureBuilder<List<String>>(
+      future: fetchKeysFirebaseOver(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator(); // Show a loading indicator while waiting for data
+        }
+
+        if (snapshot.hasError) {
+          return Text("Error: ${snapshot.error}");
+        }
+
+        final List<String> discripWidgetsArr = snapshot.data ?? [];
+        print("***<=>discripWidgetsArr $discripWidgetsArr");
+
+        print("****<=>discripWidgetsArr.length ${discripWidgetsArr.length}");
+
+        print("******<=>widget.selectedKey ${widget.selectedKey}");
+
+        String discripWidgetsKaz = "";
+        String discripWidgetsRus = "";
+        String discripWidgetsEng = "";
+        String discripWidgetsEmpty = "";
+
+        print("discripWidgetsArr ${discripWidgetsArr.length}");
+
+        discripWidgetsArr.forEach((element) {
+          if (discripWidgetsKz == element) {
+            discripWidgetsKaz = discripWidgetsKaz + element;
+          } else if (discripWidgetsRu == element) {
+            discripWidgetsRus = discripWidgetsRus + element;
+          } else if (discripWidgetsEn == element) {
+            discripWidgetsEng = discripWidgetsEng + element;
+          } else {
+            discripWidgetsEmpty = discripWidgetsEmpty + element;
+          }
+          print("***<=>element $element");
+        });
+
+        discripWidgetsArr.clear();
+        String displayedText = "";
+
+        if (discripWidgetsKaz.isNotEmpty &&
+            Localizations.localeOf(context).languageCode == 'kk') {
+          displayedText = discripWidgetsKaz;
+        } else if (discripWidgetsRus.isNotEmpty &&
+            Localizations.localeOf(context).languageCode == 'ru') {
+          displayedText = discripWidgetsRus;
+        } else if (discripWidgetsEng.isNotEmpty &&
+            Localizations.localeOf(context).languageCode == 'en') {
+          displayedText = discripWidgetsEng;
+        } else {
+          displayedText = discripWidgetsEmpty;
+        }
+
+        print("displayedText  $displayedText");
+        print("discripWidgetsArr clear $discripWidgetsArr");
+        print("discripWidgetsKaz $discripWidgetsKaz");
+        print("discripWidgetsRus $discripWidgetsRus");
+        print("discripWidgetsEng $discripWidgetsEng");
+        print("discripWidgetsEmpty $discripWidgetsEmpty");
+
+        return Container(
+          color: Colors.amber,
+          child: Text(
+            displayedText, // Make sure the value is not null
+            style: whiteTextStyle,
+            textAlign: TextAlign.justify,
+          ),
+        );
+      },
     );
   }
 }
+
 
 class MyCoordinate extends StatefulWidget {
   String selectedKey;
@@ -247,66 +429,70 @@ class MyCoordinateState extends State<MyCoordinate> {
   final whiteTextStyle =
       TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 20);
 
-  void initState() {
-    super.initState();
-    qrKeysFirebase(); // Загрузите ключи из Firebase
-  }
-
-  var collRef = FirebaseFirestore.instance.collection('data');
-
-  late double xCoordinateWidget;
-  late double yCoordinateWidget;
-
-  Future<void> qrKeysFirebase() async {
-    String targetQR = widget.selectedKey; // Значение, которое вы ищете
-    try {
-      QuerySnapshot querySnapshot = await collRef.get();
-      List<QueryDocumentSnapshot> docs = querySnapshot.docs;
-      late double xCoordinate;
-      late double yCoordinate;
-
-      for (QueryDocumentSnapshot doc in docs) {
-        Map<String, dynamic> autodata = doc.data() as Map<String, dynamic>;
-        String autokey = doc.id; // Получение ключа документа
-
-        // Проверка, соответствует ли поле title значению, которое вы ищете
-        if (autokey == targetQR) {
-          xCoordinate = autodata['xCoordinate'];
-          yCoordinate = autodata['yCoordinate'];
-        }
-      }
-      setState(() {
-        xCoordinateWidget = xCoordinate;
-        yCoordinateWidget = yCoordinate;
-      });
-    } catch (e) {
-      print("Error qr object page: $e");
-    }
-  }
-
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.only(left: 50.0, bottom: 0.0),
-      child: FloatingActionButton(
-        onPressed: () async {
-          await Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (BuildContext context) => MapControlsPage(
-                //editMydb: editMydb,
-                id: widget.selectedKey,
-                selectedX: xCoordinateWidget,
-                selectedY: yCoordinateWidget,
-              ),
+    late Stream<QuerySnapshot<Map<String, dynamic>>> datastream;
+    if (Localizations.localeOf(context).languageCode == 'kk') {
+      datastream = FirebaseFirestore.instance.collection('datakz').snapshots();
+    } else if (Localizations.localeOf(context).languageCode == 'ru') {
+      datastream = FirebaseFirestore.instance.collection('dataru').snapshots();
+    } else if (Localizations.localeOf(context).languageCode == 'en') {
+      datastream = FirebaseFirestore.instance.collection('dataen').snapshots();
+    }
+    return StreamBuilder<QuerySnapshot>(
+      stream: datastream,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator(); // Показываем индикатор загрузки во время ожидания данных
+        }
+
+        if (snapshot.hasError) {
+          return Text("Error: ${snapshot.error}");
+        }
+
+        late double xCoordinateWidgets;
+        late double yCoordinateWidgets;
+        late String autokey;
+        late Map<String, dynamic> autodata;
+        final keysfirebase = snapshot.data?.docs.toList();
+
+        for (var key in keysfirebase!) {
+          autokey = key.id;
+          autodata = key.data() as Map<String, dynamic>;
+          if (widget.selectedKey == autokey) {
+            xCoordinateWidgets = key['xCoordinate'];
+            yCoordinateWidgets = key['yCoordinate'];
+            break;
+          }
+        }
+        if (autokey == autokey) {
+          xCoordinateWidgets = autodata['xCoordinate'];
+          yCoordinateWidgets = autodata['yCoordinate'];
+        }
+
+        return Container(
+          padding: const EdgeInsets.only(left: 50.0, bottom: 0.0),
+          child: FloatingActionButton(
+            onPressed: () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext context) => MapControlsPage(
+                    //editMydb: editMydb,
+                    id: widget.selectedKey,
+                    selectedX: xCoordinateWidgets,
+                    selectedY: yCoordinateWidgets,
+                  ),
+                ),
+              );
+            },
+            mini: true, // Установите mini: true для уменьшения размера кнопки
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15), // Настройте форму кнопки
             ),
-          );
-        },
-        mini: true, // Установите mini: true для уменьшения размера кнопки
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15), // Настройте форму кнопки
-        ),
-        child: const Icon(Icons.map),
-      ),
+            child: const Icon(Icons.map),
+          ),
+        );
+      },
     );
   }
 }
@@ -363,7 +549,7 @@ class _MySearchState extends State<mySearch> {
                 keyword.text = '';
               },
             ),
-            hintText: 'Іздеу...',
+            hintText: 'searchword'.tr(),
             border: InputBorder.none,
           ),
         ),
@@ -378,60 +564,196 @@ class MyTextCont extends StatefulWidget {
   MyTextCont({required this.selectedKey});
 
   @override
-  State<MyTextCont> createState() => MyTextContState();
+  State<MyTextCont> createState() => _MyTextContState();
 }
 
-class MyTextContState extends State<MyTextCont> {
-  void initState() {
-    super.initState();
-    qrKeysFirebase(); // Загрузите ключи из Firebase
-  }
+class _MyTextContState extends State<MyTextCont> {
+  List<String> titleWidgetsArr = [];
+  String titleWidgetsKz = "";
+  String titleWidgetsRu = "";
+  String titleWidgetsEn = "";
+  String titleWidgetsEmpt = "";
 
-  var collRef = FirebaseFirestore.instance.collection('data');
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   // Вызываем fetchKeysFirebase() только один раз при инициализации виджета
+  //   fetchKeysFirebaseText();
+  // }
 
-  String textWidgets = "";
-  Future<void> qrKeysFirebase() async {
-    String targetQR = widget.selectedKey; // Значение, которое вы ищете
-    try {
-      QuerySnapshot querySnapshot = await collRef.get();
-      List<QueryDocumentSnapshot> docs = querySnapshot.docs;
-      String newDescription = "";
+  Future<List<String>> fetchKeysFirebaseText() async {
+    List<String> arrlen = [];
+    arrlen.add(widget.selectedKey);
+    print("widget.selectedKey from firebase ${arrlen.length}");
 
-      for (QueryDocumentSnapshot doc in docs) {
-        Map<String, dynamic> autodata = doc.data() as Map<String, dynamic>;
-        String autokey = doc.id; // Получение ключа документа
+    List<QueryDocumentSnapshot<Map<String, dynamic>>>? datafirebasekz;
+    List<QueryDocumentSnapshot<Map<String, dynamic>>>? datafirebaseru;
+    List<QueryDocumentSnapshot<Map<String, dynamic>>>? datafirebaseen;
+    late QuerySnapshot<Map<String, dynamic>> datakz;
+    late QuerySnapshot<Map<String, dynamic>> dataru;
+    late QuerySnapshot<Map<String, dynamic>> dataen;
+    dataru = await FirebaseFirestore.instance.collection('dataru').get();
+    datakz = await FirebaseFirestore.instance.collection('datakz').get();
+    dataen = await FirebaseFirestore.instance.collection('dataen').get();
 
-        // Проверка, соответствует ли поле title значению, которое вы ищете
-        if (autokey == targetQR) {
-          newDescription = autodata['title'];
-        }
+    datafirebasekz = datakz.docs.toList();
+    datafirebaseru = dataru.docs.toList();
+    datafirebaseen = dataen.docs.toList();
+
+    late String autokey;
+    late Map<String, dynamic> autodata;
+
+    for (int i = 0; i < datafirebasekz.length; i++) {
+      autokey = datafirebasekz[i].id;
+      autodata = datafirebasekz[i].data() as Map<String, dynamic>;
+      print(
+          "datafirebasekz[i]['title']KZ from firebase ${datafirebasekz[i]['title']}");
+      if (widget.selectedKey == autokey &&
+          !titleWidgetsArr.contains(titleWidgetsKz)) {
+        titleWidgetsKz = datafirebasekz[i]['title'];
+        titleWidgetsArr.add(titleWidgetsKz);
+        break;
       }
-      setState(() {
-        textWidgets = newDescription;
-      });
-    } catch (e) {
-      print("Error qr object page: $e");
     }
+    print("widget.selectedKey from firebase ${widget.selectedKey}");
+
+    for (int i = 0; i < datafirebaseru.length; i++) {
+      autokey = datafirebaseru[i].id;
+      autodata = datafirebaseru[i].data() as Map<String, dynamic>;
+      print(
+          "datafirebaseru[i]['title']RU from firebase ${datafirebaseru[i]['title']}");
+      if (widget.selectedKey == autokey &&
+          !titleWidgetsArr.contains(titleWidgetsRu)) {
+        titleWidgetsRu = datafirebaseru[i]['title'];
+        titleWidgetsArr.add(titleWidgetsRu);
+        break;
+      }
+    }
+
+    for (int i = 0; i < datafirebaseen.length; i++) {
+      autokey = datafirebaseen[i].id;
+      autodata = datafirebaseen[i].data() as Map<String, dynamic>;
+      print(
+          "datafirebaseen[i]['title']EN from firebase ${datafirebaseen[i]['title']}");
+      if (widget.selectedKey == autokey &&
+          !titleWidgetsArr.contains(titleWidgetsEn)) {
+        titleWidgetsEn = datafirebaseen[i]['title'];
+        titleWidgetsArr.add(titleWidgetsEn);
+        break;
+      }
+    }
+
+    if (titleWidgetsKz.isEmpty &&
+        titleWidgetsRu.isEmpty &&
+        titleWidgetsEn.isEmpty &&
+        autokey == autokey) {
+      titleWidgetsEmpt = autodata['title'];
+      titleWidgetsArr.add(titleWidgetsEmpt);
+    }
+
+    print("QRtitleWidgetsKz***${titleWidgetsKz}");
+    print("QRtitleWidgetsEn***${titleWidgetsEn}");
+    print("QRtitleWidgetsRu***${titleWidgetsRu}");
+    print("QRtitleWidgetsEmpt**${titleWidgetsEmpt}");
+    print("QRtitleWidgetsArr $titleWidgetsArr");
+    print("QRtitleWidgetsArr.length ${titleWidgetsArr.length}");
+
+    return titleWidgetsArr;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 350,
-      alignment: Alignment.center,
-      color: Colors.amber,
-      child: Container(
-        margin: const EdgeInsets.only(left: 0, right: 0, top: 10, bottom: 10),
-        color: Colors.amber,
-        child: Text(
-          textWidgets,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 20,
-            color: Colors.black,
+    return FutureBuilder<List<String>>(
+      // Pass the Future that will return data after executing fetchKeysFirebase()
+      future: fetchKeysFirebaseText(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator(); // Show a loading indicator while waiting for data
+        }
+
+        if (snapshot.hasError) {
+          return Text("Error: ${snapshot.error}");
+        }
+
+        // If data is loaded successfully, display it
+        final List<String> titleWidgetsArr = snapshot.data ?? [];
+        print("<=>titleWidgetsArr $titleWidgetsArr");
+
+        print("<=>titleWidgetsArr.length ${titleWidgetsArr.length}");
+
+        print("<=>widget.selectedKey ${widget.selectedKey}");
+
+        String titleWidgetsKaz = "";
+        String titleWidgetsRus = "";
+        String titleWidgetsEng = "";
+        String titleWidgetsEmpty = "";
+
+        titleWidgetsArr.forEach((element) {
+          if (titleWidgetsKz == element) {
+            titleWidgetsKaz = titleWidgetsKaz + element;
+          } else if (titleWidgetsRu == element) {
+            titleWidgetsRus = titleWidgetsRus + element;
+          } else if (titleWidgetsEn == element) {
+            titleWidgetsEng = titleWidgetsEng + element;
+          } else {
+            titleWidgetsEmpty = titleWidgetsEmpty + element;
+          }
+          print("<=>element $element");
+        });
+
+        titleWidgetsArr.clear();
+        print("titleWidgetsArr.clear $titleWidgetsArr");
+
+        String currentLanguagekz = 'kk';
+        String currentLanguageru = 'ru';
+        String currentLanguageen = 'en';
+        String titledisplayedText = "";
+
+        if (Localizations.localeOf(context).languageCode == currentLanguagekz) {
+          //fetchKeysFirebaseText();
+          if (titleWidgetsKaz.isNotEmpty) {
+            titledisplayedText = titleWidgetsKaz;
+          }
+        } else if (Localizations.localeOf(context).languageCode ==
+            currentLanguageru) {
+          // fetchKeysFirebaseText();
+          if (titleWidgetsRus.isNotEmpty) {
+            titledisplayedText = titleWidgetsRus;
+          }
+        } else if (Localizations.localeOf(context).languageCode ==
+            currentLanguageen) {
+          // fetchKeysFirebaseText;
+          if (titleWidgetsEng.isNotEmpty) {
+            titledisplayedText = titleWidgetsEng;
+          }
+        } else {
+          titledisplayedText = titleWidgetsEmpty;
+        }
+
+        print("titleWidgetsKaz $titleWidgetsKaz");
+        print("titleWidgetsRus $titleWidgetsRus");
+        print("titleWidgetsEng $titleWidgetsEng");
+        print("titleWidgetsEmpty $titleWidgetsEmpty");
+
+        return Container(
+          width: 350,
+          alignment: Alignment.center,
+          color: Colors.amber,
+          child: Container(
+            margin:
+                const EdgeInsets.only(left: 0, right: 0, top: 10, bottom: 10),
+            color: Colors.amber,
+            child: Text(
+              titledisplayedText,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.black,
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
@@ -448,60 +770,193 @@ class MyPhotoCont extends StatefulWidget {
 }
 
 class _MyPhotoContState extends State<MyPhotoCont> {
-  void initState() {
-    super.initState();
-    qrKeysFirebase(); // Загрузите ключи из Firebase
-  }
+  List<String> photoWidgetsArr = [];
+  String photoWidgetsKz = "";
+  String photoWidgetsRu = "";
+  String photoWidgetsEn = "";
+  String photoWidgetsEmpt = "";
 
-  var collRef = FirebaseFirestore.instance.collection('data');
-  String photoWidgets = "";
+  @override
+  Future<List<String>> fetchKeysFirebasePhoto() async {
+    List<String> arrlen = [];
+    arrlen.add(widget.selectedKey);
+    print("widget.selectedKey from firebase ${arrlen.length}");
 
-  Future<void> qrKeysFirebase() async {
-    String targetQR = widget.selectedKey; // Значение, которое вы ищете
-    try {
-      QuerySnapshot querySnapshot = await collRef.get();
-      List<QueryDocumentSnapshot> docs = querySnapshot.docs;
-      String newDescription = "";
+    List<QueryDocumentSnapshot<Map<String, dynamic>>>? datafirebasekz;
+    List<QueryDocumentSnapshot<Map<String, dynamic>>>? datafirebaseru;
+    List<QueryDocumentSnapshot<Map<String, dynamic>>>? datafirebaseen;
+    late QuerySnapshot<Map<String, dynamic>> datakz;
+    late QuerySnapshot<Map<String, dynamic>> dataru;
+    late QuerySnapshot<Map<String, dynamic>> dataen;
+    dataru = await FirebaseFirestore.instance.collection('dataru').get();
+    datakz = await FirebaseFirestore.instance.collection('datakz').get();
+    dataen = await FirebaseFirestore.instance.collection('dataen').get();
 
-      for (QueryDocumentSnapshot doc in docs) {
-        Map<String, dynamic> autodata = doc.data() as Map<String, dynamic>;
-        String autokey = doc.id; // Получение ключа документа
+    datafirebasekz = datakz.docs.toList();
+    datafirebaseru = dataru.docs.toList();
+    datafirebaseen = dataen.docs.toList();
 
-        // Проверка, соответствует ли поле title значению, которое вы ищете
-        if (autokey == targetQR) {
-          newDescription = autodata['filephotopath'];
-        }
+    late String autokey;
+    late Map<String, dynamic> autodata;
+
+    for (int i = 0; i < datafirebasekz.length; i++) {
+      autokey = datafirebasekz[i].id;
+      autodata = datafirebasekz[i].data() as Map<String, dynamic>;
+      print(
+          "datafirebasekz[i]['title']KZ from firebase ${datafirebasekz[i]['title']}");
+      if (widget.selectedKey == autokey &&
+          !photoWidgetsArr.contains(photoWidgetsKz)) {
+        photoWidgetsKz = datafirebasekz[i]['filephotopath'];
+        photoWidgetsArr.add(photoWidgetsKz);
+        break;
       }
-      setState(() {
-        photoWidgets = newDescription;
-      });
-    } catch (e) {
-      print("Error qr object page: $e");
     }
+
+    print("widget.selectedKey from firebase ${widget.selectedKey}");
+
+    for (int i = 0; i < datafirebaseru.length; i++) {
+      autokey = datafirebaseru[i].id;
+      autodata = datafirebaseru[i].data() as Map<String, dynamic>;
+      print(
+          "datafirebaseru[i]['title']RU from firebase ${datafirebaseru[i]['title']}");
+      if (widget.selectedKey == autokey &&
+          !photoWidgetsArr.contains(photoWidgetsRu)) {
+        photoWidgetsRu = datafirebaseru[i]['filephotopath'];
+        photoWidgetsArr.add(photoWidgetsRu);
+        break;
+      }
+    }
+
+    for (int i = 0; i < datafirebaseen.length; i++) {
+      autokey = datafirebaseen[i].id;
+      autodata = datafirebaseen[i].data() as Map<String, dynamic>;
+      print(
+          "datafirebasekz[i]['title']EN from firebase ${datafirebaseen[i]['title']}");
+      if (widget.selectedKey == autokey &&
+          !photoWidgetsArr.contains(photoWidgetsEn)) {
+        photoWidgetsEn = datafirebaseen[i]['filephotopath'];
+        photoWidgetsArr.add(photoWidgetsEn);
+        break;
+      }
+    }
+
+    if (photoWidgetsKz.isEmpty &&
+        photoWidgetsRu.isEmpty &&
+        photoWidgetsEn.isEmpty &&
+        autokey == autokey) {
+      photoWidgetsEmpt = autodata['filephotopath'];
+      photoWidgetsArr.add(photoWidgetsEmpt);
+    }
+
+    print("photoWidgetsKz***************${photoWidgetsKz}");
+    print("photoWidgetsEn***************${photoWidgetsEn}");
+    print("photoWidgetsRu***************${photoWidgetsRu}");
+    print("photoWidgetsEmpt***************${photoWidgetsEmpt}");
+    print("photoWidgetsArr $photoWidgetsArr");
+    print("photoWidgetsArr.length ${photoWidgetsArr.length}");
+
+    return photoWidgetsArr;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 150,
-      width: 340,
-      child: Card(
-        margin: const EdgeInsets.only(left: 0, right: 0, top: 0, bottom: 10),
-        elevation: 5,
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(30),
+    return FutureBuilder<List<String>>(
+      // Pass the Future that will return data after executing fetchKeysFirebase()
+      future: fetchKeysFirebasePhoto(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator(); // Show a loading indicator while waiting for data
+        }
+
+        if (snapshot.hasError) {
+          return Text("Error: ${snapshot.error}");
+        }
+
+        // If data is loaded successfully, display it
+        final List<String> photoWidgetsArr = snapshot.data ?? [];
+        print("*******************<=>photoWidgetsArr $photoWidgetsArr");
+
+        print(
+            "*******************<=>photoWidgetsArr.length ${photoWidgetsArr.length}");
+
+        print("*******************<=>widget.selectedKey ${widget.selectedKey}");
+
+        String photoWidgetsKaz = "";
+        String photoWidgetsRus = "";
+        String photoWidgetsEng = "";
+        String photoWidgetsEmpty = "";
+
+        String photoDisplayed = "";
+        String currentLanguagekz = 'kk';
+        String currentLanguageru = 'ru';
+        String currentLanguageen = 'en';
+
+        photoWidgetsArr.forEach((element) {
+          if (photoWidgetsKz == element) {
+            photoWidgetsKaz = photoWidgetsKaz + element;
+          } else if (photoWidgetsRu == element) {
+            photoWidgetsRus = photoWidgetsRus + element;
+          } else if (photoWidgetsEn == element) {
+            photoWidgetsEng = photoWidgetsEng + element;
+          } else {
+            photoWidgetsEmpty = photoWidgetsEmpty + element;
+          }
+          print("*******************<=>element $element");
+        });
+
+        //photoWidgetsArr.clear();
+
+        if (Localizations.localeOf(context).languageCode == currentLanguagekz) {
+          // fetchKeysFirebase();
+          if (photoWidgetsKaz.isNotEmpty) {
+            photoDisplayed = photoWidgetsKaz;
+          }
+        } else if (Localizations.localeOf(context).languageCode ==
+            currentLanguageru) {
+          // fetchKeysFirebase();
+          if (photoWidgetsRus.isNotEmpty) {
+            photoDisplayed = photoWidgetsRus;
+          }
+        } else if (Localizations.localeOf(context).languageCode ==
+            currentLanguageen) {
+          // fetchKeysFirebase;
+          if (photoWidgetsEng.isNotEmpty) {
+            photoDisplayed = photoWidgetsEng;
+          }
+        } else {
+          photoDisplayed = photoWidgetsEmpty;
+        }
+
+        print("photoWidgetsKaz $photoWidgetsKaz");
+        print("photoWidgetsRus $photoWidgetsRus");
+        print("photoWidgetsEng $photoWidgetsEng");
+        print("photoWidgetsEmpty $photoWidgetsEmpty");
+
+        print(photoDisplayed);
+        return Container(
+          height: 150,
+          width: 340,
+          child: Card(
+            margin:
+                const EdgeInsets.only(left: 0, right: 0, top: 0, bottom: 10),
+            elevation: 5,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30),
+              ),
+              //child: Text('No image'),
+              child: Image.file(
+                File(photoDisplayed),
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
-          // child: Text('No image'),
-          child: Image.file(
-            File(photoWidgets),
-            fit: BoxFit.cover,
-          ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
+
 
 class MenuTile extends StatefulWidget {
   @override
@@ -511,49 +966,34 @@ class MenuTile extends StatefulWidget {
 class MenuTileWidget extends State<MenuTile> {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        Container(
-          color: Colors.amber,
-          margin: const EdgeInsets.all(0),
-          child: _buildRating(),
-        ),
-        Card(
-          elevation: 5,
-          margin: const EdgeInsets.all(0),
-          child: Container(
-            color: Colors.amber,
-            padding: const EdgeInsets.all(0),
-            child: _buildAction(),
+    return Container(
+      child: Column(
+        children: <Widget>[
+          SizedBox(height: 0),
+          Card(
+            elevation: 5,
+            margin: const EdgeInsets.all(0),
+            child: Container(
+              color: Color.fromARGB(255, 67, 83, 68),
+              padding: const EdgeInsets.all(10),
+              child: _buildAction(),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
+      decoration: BoxDecoration(
+        color: Color.fromARGB(255, 67, 83, 68),
+        border: Border.all(),
+      ),
     );
   }
-
-  Widget _buildRating() => ListTile(
-        title: Text(
-          'Добавить в избранное',
-          style: TextStyle(
-            fontWeight: FontWeight.w500,
-            fontSize: 16.0,
-          ),
-        ),
-        // subtitle: Text('Выбирите небходимый раздел'),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            FavoriteWidjet(),
-          ],
-        ),
-      );
 
   Widget _buildAction() => Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          _buildButton("Меню", Icons.menu, Colors.transparent),
-          _buildButton("Карта", Icons.map, Colors.transparent),
-          _buildButton("Избранное", Icons.favorite, Colors.transparent),
+          _buildButton("myhomepage".tr(), Icons.home, Colors.black),
+          _buildButton("myQR".tr(), Icons.qr_code, Colors.black),
+          _buildButton("mymap".tr(), Icons.map, Colors.black),
         ],
       );
 
@@ -567,7 +1007,7 @@ class MenuTileWidget extends State<MenuTile> {
         children: <Widget>[
           Icon(
             icon,
-            color: Colors.brown,
+            color: Colors.deepOrange,
           ),
           Container(
             child: Text(
@@ -580,54 +1020,4 @@ class MenuTileWidget extends State<MenuTile> {
           ),
         ],
       );
-}
-
-class FavoriteWidjet extends StatefulWidget {
-  @override
-  _FavoriteWidjetState createState() => _FavoriteWidjetState();
-}
-
-class _FavoriteWidjetState extends State<FavoriteWidjet> {
-  bool _choiceFavor = false;
-  int _favorCount = 123;
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: <Widget>[
-        Container(
-          child: IconButton(
-            icon: (_choiceFavor
-                ? Icon(Icons.favorite)
-                : Icon(Icons.favorite_border)),
-            onPressed: _toggleFavorite,
-            color: Colors.brown[500],
-          ),
-        ),
-        SizedBox(
-          width: 40,
-          child: Container(
-              child: Text(
-            '$_favorCount',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 20, // Увеличиваем размер шрифта на 24
-              color: Colors.brown[500],
-            ),
-          )),
-        ),
-      ],
-    );
-  }
-
-  void _toggleFavorite() {
-    setState(() {
-      if (_choiceFavor == true) {
-        _choiceFavor = false;
-        _favorCount = _favorCount - 1;
-      } else {
-        _choiceFavor = true;
-        _favorCount = _favorCount + 1;
-      }
-    });
-  }
 }
