@@ -98,12 +98,9 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
                     ),
                   ),
                   Container(
-                    child: MyCoordinate(
+                    child: MenuTile(
                       selectedKey: widget.selectedKey,
                     ),
-                  ),
-                  Container(
-                    child: MenuTile(),
                   ),
                 ],
               ),
@@ -112,48 +109,14 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
         ),
         floatingActionButton: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
+          children: [           
             Padding(
-              padding: const EdgeInsets.only(left: 50.0, bottom: 0.0),
-              child: FloatingActionButton(
-                onPressed: () async {
-                  await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (BuildContext context) => EditFirebasePage(
-                        //editMydb: editMydb,
-                        selectedKey: widget.selectedKey,
-                      ),
-                    ),
-                  );
-                },
-                mini:
-                    true, // Установите mini: true для уменьшения размера кнопки
-                shape: RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(15), // Настройте форму кнопки
-                ),
-                child: const Icon(Icons.create),
+              padding: const EdgeInsets.only(
+                top: 0,
+                left: 0,
+                right: 0.0,
+                bottom: 0.0,
               ),
-            ),
-            FloatingActionButton(
-              onPressed: () async {
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => QrScanner(),
-                  ),
-                );
-              },
-              child: const Icon(Icons.qr_code_scanner),
-              mini: true, // Установите mini: true для уменьшения размера кнопки
-              shape: RoundedRectangleBorder(
-                borderRadius:
-                    BorderRadius.circular(15), // Настройте форму кнопки
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(right: 50.0, bottom: 0.0),
               child: FloatingActionButton(
                 onPressed: () async {
                   Navigator.push(
@@ -200,7 +163,31 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
                 child: const Icon(Icons.delete),
               ),
             ),
-          ],
+             Padding(
+              padding: const EdgeInsets.only(
+                  left: 0.0, bottom: 0.0, right: 0, top: 0),
+              child: FloatingActionButton(
+                onPressed: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (BuildContext context) => EditFirebasePage(
+                        //editMydb: editMydb,
+                        selectedKey: widget.selectedKey,
+                      ),
+                    ),
+                  );
+                },
+                mini:
+                    true, // Установите mini: true для уменьшения размера кнопки
+                shape: RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(15), // Настройте форму кнопки
+                ),
+                child: const Icon(Icons.create),
+              ),
+            ),
+          ],          
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       ),
@@ -403,90 +390,6 @@ class MyOverviewsState extends State<MyOverviews> {
   }
 }
 
-class MyCoordinate extends StatefulWidget {
-  String selectedKey;
-
-  MyCoordinate({
-    //required this.mapdata,
-    required this.selectedKey,
-  });
-
-  @override
-  State<MyCoordinate> createState() => MyCoordinateState();
-}
-
-class MyCoordinateState extends State<MyCoordinate> {
-  final whiteTextStyle =
-      TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 20);
-
-  Widget build(BuildContext context) {
-    late Stream<QuerySnapshot<Map<String, dynamic>>> datastream;
-    if (Localizations.localeOf(context).languageCode == 'kk') {
-      datastream = FirebaseFirestore.instance.collection('datakz').snapshots();
-    } else if (Localizations.localeOf(context).languageCode == 'ru') {
-      datastream = FirebaseFirestore.instance.collection('dataru').snapshots();
-    } else if (Localizations.localeOf(context).languageCode == 'en') {
-      datastream = FirebaseFirestore.instance.collection('dataen').snapshots();
-    }
-    return StreamBuilder<QuerySnapshot>(
-      stream: datastream,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator(); // Показываем индикатор загрузки во время ожидания данных
-        }
-
-        if (snapshot.hasError) {
-          return Text("Error: ${snapshot.error}");
-        }
-
-        late double xCoordinateWidgets;
-        late double yCoordinateWidgets;
-        late String autokey;
-        late Map<String, dynamic> autodata;
-        final keysfirebase = snapshot.data?.docs.toList();
-
-        for (var key in keysfirebase!) {
-          autokey = key.id;
-          autodata = key.data() as Map<String, dynamic>;
-          if (widget.selectedKey == key['id']) {
-            xCoordinateWidgets = key['xCoordinate'];
-            yCoordinateWidgets = key['yCoordinate'];
-            break;
-          }
-        }
-        if (autokey == autokey) {
-          xCoordinateWidgets = autodata['xCoordinate'];
-          yCoordinateWidgets = autodata['yCoordinate'];
-        }
-
-        return Container(
-          padding: const EdgeInsets.only(left: 50.0, bottom: 0.0),
-          child: FloatingActionButton(
-            onPressed: () async {
-              await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (BuildContext context) => MapControlsPage(
-                    //editMydb: editMydb,
-                    id: widget.selectedKey,
-                    selectedX: xCoordinateWidgets,
-                    selectedY: yCoordinateWidgets,
-                  ),
-                ),
-              );
-            },
-            mini: true, // Установите mini: true для уменьшения размера кнопки
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15), // Настройте форму кнопки
-            ),
-            child: const Icon(Icons.map),
-          ),
-        );
-      },
-    );
-  }
-}
-
 class mySearch extends StatefulWidget {
   @override
   State<mySearch> createState() => _MySearchState();
@@ -644,10 +547,10 @@ class _MyTextContState extends State<MyTextCont> {
       titleWidgetsArr.add(titleWidgetsEmpt);
     }
 
-    print("titleWidgetsKz***************${titleWidgetsKz}");
-    print("titleWidgetsEn***************${titleWidgetsEn}");
-    print("titleWidgetsRu***************${titleWidgetsRu}");
-    print("titleWidgetsEmpt***************${titleWidgetsEmpt}");
+    print("titleWidgetsKz***${titleWidgetsKz}");
+    print("titleWidgetsEn***${titleWidgetsEn}");
+    print("titleWidgetsRu***${titleWidgetsRu}");
+    print("titleWidgetsEmpt***${titleWidgetsEmpt}");
     print("titleWidgetsArr $titleWidgetsArr");
     print("titleWidgetsArr.length ${titleWidgetsArr.length}");
 
@@ -847,10 +750,10 @@ class _MyPhotoContState extends State<MyPhotoCont> {
       photoWidgetsArr.add(photoWidgetsEmpt);
     }
 
-    print("photoWidgetsKz***************${photoWidgetsKz}");
-    print("photoWidgetsEn***************${photoWidgetsEn}");
-    print("photoWidgetsRu***************${photoWidgetsRu}");
-    print("photoWidgetsEmpt***************${photoWidgetsEmpt}");
+    print("photoWidgetsKz***${photoWidgetsKz}");
+    print("photoWidgetsEn***${photoWidgetsEn}");
+    print("photoWidgetsRu***${photoWidgetsRu}");
+    print("photoWidgetsEmpt***${photoWidgetsEmpt}");
     print("photoWidgetsArr $photoWidgetsArr");
     print("photoWidgetsArr.length ${photoWidgetsArr.length}");
 
@@ -875,8 +778,7 @@ class _MyPhotoContState extends State<MyPhotoCont> {
         final List<String> photoWidgetsArr = snapshot.data ?? [];
         print("***<=>photoWidgetsArr $photoWidgetsArr");
 
-        print(
-            "***<=>photoWidgetsArr.length ${photoWidgetsArr.length}");
+        print("***<=>photoWidgetsArr.length ${photoWidgetsArr.length}");
 
         print("***<=>widget.selectedKey ${widget.selectedKey}");
 
@@ -900,7 +802,7 @@ class _MyPhotoContState extends State<MyPhotoCont> {
           } else {
             photoWidgetsEmpty = photoWidgetsEmpty + element;
           }
-          print("*******************<=>element $element");
+          print("***<=>element $element");
         });
 
         //photoWidgetsArr.clear();
@@ -940,7 +842,6 @@ class _MyPhotoContState extends State<MyPhotoCont> {
                 const EdgeInsets.only(left: 0, right: 0, top: 0, bottom: 10),
             elevation: 5,
             child: Container(
-             
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(0),
                 image: DecorationImage(
@@ -961,6 +862,12 @@ class _MyPhotoContState extends State<MyPhotoCont> {
 }
 
 class MenuTile extends StatefulWidget {
+  String selectedKey;
+
+  MenuTile({
+    //required this.mapdata,
+    required this.selectedKey,
+  });
   @override
   MenuTileWidget createState() => MenuTileWidget();
 }
@@ -971,35 +878,110 @@ class MenuTileWidget extends State<MenuTile> {
     return Container(
       child: Column(
         children: <Widget>[
-          SizedBox(height: 0),
           Card(
             elevation: 5,
             margin: const EdgeInsets.all(0),
             child: Container(
-              color: Color.fromARGB(255, 67, 83, 68),
-              padding: const EdgeInsets.all(10),
+              color: Colors.white70,
+              padding: const EdgeInsets.all(0),
               child: _buildAction(),
             ),
           ),
         ],
       ),
       decoration: BoxDecoration(
-        color: Color.fromARGB(255, 67, 83, 68),
+        color: Colors.white,
         border: Border.all(),
       ),
     );
   }
 
   Widget _buildAction() => Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
-          _buildButton("myhomepage".tr(), Icons.home, Colors.black),
-          _buildButton("myQR".tr(), Icons.qr_code, Colors.black),
-          _buildButton("mymap".tr(), Icons.map, Colors.black),
+          _buildButtonHomePage("myhomepage".tr(), Icons.home, Colors.black),
+          _buildButtonQR("myQR".tr(), Icons.qr_code, Colors.black),
+          _buildButtonMap("mymap".tr(), Icons.map, Colors.black, this.context),
         ],
       );
 
-  Widget _buildButton(
+  Widget _buildButtonMap(
+      String label, IconData icon, Color color, BuildContext context) {
+    late Stream<QuerySnapshot<Map<String, dynamic>>> datastream;
+    if (Localizations.localeOf(context).languageCode == 'kk') {
+      datastream = FirebaseFirestore.instance.collection('datakz').snapshots();
+    } else if (Localizations.localeOf(context).languageCode == 'ru') {
+      datastream = FirebaseFirestore.instance.collection('dataru').snapshots();
+    } else if (Localizations.localeOf(context).languageCode == 'en') {
+      datastream = FirebaseFirestore.instance.collection('dataen').snapshots();
+    }
+    return StreamBuilder<QuerySnapshot>(
+      stream: datastream,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator(); // Показываем индикатор загрузки во время ожидания данных
+        }
+
+        if (snapshot.hasError) {
+          return Text("Error: ${snapshot.error}");
+        }
+
+        late double xCoordinateWidgets;
+        late double yCoordinateWidgets;
+        late String autokey;
+        late Map<String, dynamic> autodata;
+        final keysfirebase = snapshot.data?.docs.toList();
+
+        for (var key in keysfirebase!) {
+          autokey = key.id;
+          autodata = key.data() as Map<String, dynamic>;
+          if (widget.selectedKey == key['id']) {
+            xCoordinateWidgets = key['xCoordinate'];
+            yCoordinateWidgets = key['yCoordinate'];
+            break;
+          }
+        }
+        if (autokey == autokey) {
+          xCoordinateWidgets = autodata['xCoordinate'];
+          yCoordinateWidgets = autodata['yCoordinate'];
+        }
+
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            InkWell(
+              onTap: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (BuildContext context) => MapControlsPage(
+                      //editMydb: editMydb,
+                      id: widget.selectedKey,
+                      selectedX: xCoordinateWidgets,
+                      selectedY: yCoordinateWidgets,
+                    ),
+                  ),
+                );
+              },
+              child: const Icon(Icons.map),
+            ),
+            Container(
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w400,
+                  color: color,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildButtonQR(
     String label,
     IconData icon,
     Color color,
@@ -1007,14 +989,54 @@ class MenuTileWidget extends State<MenuTile> {
       Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Icon(
-            icon,
-            color: Colors.deepOrange,
+          InkWell(
+            onTap: () async {
+              await Navigator.push(
+                this.context,
+                MaterialPageRoute(
+                  builder: (context) => QrScanner(),
+                ),
+              );
+            },
+            child: const Icon(Icons.qr_code_scanner),
           ),
           Container(
             child: Text(
               label,
               style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w400,
+                color: color,
+              ),
+            ),
+          ),
+        ],
+      );
+
+  Widget _buildButtonHomePage(
+    String label,
+    IconData icon,
+    Color color,
+  ) =>
+      Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          InkWell(
+            onTap: () async {
+              await Navigator.push(
+                this.context,
+                MaterialPageRoute(
+                  builder: (context) => HomePage(),
+                ),
+              );
+            },
+            child: const Icon(Icons.home),
+          ),
+          Container(
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 15,
                 fontWeight: FontWeight.w400,
                 color: color,
               ),
