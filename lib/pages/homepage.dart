@@ -89,7 +89,7 @@ class AppHomePage extends State<HomePage> {
                     ],
                   ),
                   Container(
-                    height: MediaQuery.of(context).size.height - 145,
+                    height: MediaQuery.of(context).size.height - 126,
                     padding: const EdgeInsets.only(left: 0, right: 0),
                     decoration: BoxDecoration(
                       image: DecorationImage(
@@ -214,40 +214,6 @@ class HomePageState extends State<MyHomePage> {
                 });
               },
               child: const Icon(Icons.delete),
-            ),
-          ),
-          Positioned(
-            right: 160,
-            bottom: 0,
-            child: FloatingActionButton(
-              onPressed: () async {
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => QrScanner(),
-                  ),
-                );
-              },
-              child: const Icon(Icons.qr_code_scanner),
-            ),
-          ),
-          Positioned(
-            right: 80,
-            bottom: 0,
-            child: FloatingActionButton(
-              onPressed: () async {
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => MapControlsPage(
-                      id: "1",
-                      selectedX: 43.29785383147346,
-                      selectedY: 68.27119119202341,
-                    ),
-                  ),
-                );
-              },
-              child: const Icon(Icons.map),
             ),
           ),
         ],
@@ -561,35 +527,34 @@ class MenuTileWidget extends State<MenuTile> {
     return Container(
       child: Column(
         children: <Widget>[
-          SizedBox(height: 0),
           Card(
             elevation: 5,
             margin: const EdgeInsets.all(0),
             child: Container(
-              color: Color.fromARGB(255, 67, 83, 68),
-              padding: const EdgeInsets.all(10),
+              color: Colors.white70,
+              padding: const EdgeInsets.all(0),
               child: _buildAction(),
             ),
           ),
         ],
       ),
       decoration: BoxDecoration(
-        color: Color.fromARGB(255, 67, 83, 68),
+        color: Colors.white,
         border: Border.all(),
       ),
     );
   }
 
   Widget _buildAction() => Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
-          _buildButton("myhomepage".tr(), Icons.home, Colors.black),
-          _buildButton("myQR".tr(), Icons.qr_code, Colors.black),
-          _buildButton("mymap".tr(), Icons.map, Colors.black),
+          _buildButtonHomePage("myhomepage".tr(), Icons.home, Colors.black),
+          _buildButtonQR("myQR".tr(), Icons.qr_code, Colors.black),
+          _buildButtonMap("mymap".tr(), Icons.map, Colors.black),
         ],
       );
 
-  Widget _buildButton(
+  Widget _buildButtonMap(
     String label,
     IconData icon,
     Color color,
@@ -597,14 +562,90 @@ class MenuTileWidget extends State<MenuTile> {
       Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Icon(
-            icon,
-            color: Colors.deepOrange,
+          InkWell(
+            onTap: () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MapControlsPage(
+                    id: "1",
+                    selectedX: 43.29785383147346,
+                    selectedY: 68.27119119202341,
+                  ),
+                ),
+              );
+            },
+            child: const Icon(Icons.map),
           ),
           Container(
             child: Text(
               label,
               style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w300,
+                color: color,
+              ),
+            ),
+          ),
+        ],
+      );
+
+  Widget _buildButtonQR(
+    String label,
+    IconData icon,
+    Color color,
+  ) =>
+      Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          InkWell(
+            onTap: () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => QrScanner(),
+                ),
+              );
+            },
+            child: const Icon(Icons.qr_code_scanner),
+          ),
+          Container(
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w400,
+                color: color,
+              ),
+            ),
+          ),
+        ],
+      );
+
+  Widget _buildButtonHomePage(
+    String label,
+    IconData icon,
+    Color color,
+  ) =>
+      Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          InkWell(
+            onTap: () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => HomePage(),
+                ),
+              );
+            },
+            child: const Icon(Icons.home),
+          ),
+          Container(
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 15,
                 fontWeight: FontWeight.w400,
                 color: color,
               ),
@@ -613,6 +654,9 @@ class MenuTileWidget extends State<MenuTile> {
         ],
       );
 }
+
+
+
 // class FavoriteWidjet extends StatefulWidget {
 //   @override
 //   _FavoriteWidjetState createState() => _FavoriteWidjetState();
