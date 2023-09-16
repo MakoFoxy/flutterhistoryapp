@@ -873,12 +873,12 @@ class _MyPhotoContState extends State<MyPhotoCont> {
 
         // If data is loaded successfully, display it
         final List<String> photoWidgetsArr = snapshot.data ?? [];
-        print("*******************<=>photoWidgetsArr $photoWidgetsArr");
+        print("***<=>photoWidgetsArr $photoWidgetsArr");
 
         print(
-            "*******************<=>photoWidgetsArr.length ${photoWidgetsArr.length}");
+            "***<=>photoWidgetsArr.length ${photoWidgetsArr.length}");
 
-        print("*******************<=>widget.selectedKey ${widget.selectedKey}");
+        print("***<=>widget.selectedKey ${widget.selectedKey}");
 
         String photoWidgetsKaz = "";
         String photoWidgetsRus = "";

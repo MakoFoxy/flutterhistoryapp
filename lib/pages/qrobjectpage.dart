@@ -142,7 +142,7 @@ class QRobjectpageState extends State<QRobjectpage> {
                     Map<String, dynamic> autodata = doc.data();
                     String autokey = doc.id; // Получение ключа документа
                     // Проверка, соответствует ли поле title значению, которое вы ищете
-                    if (autokey == targetTitle) {
+                    if (autodata['id'] == targetTitle) {
                       keyforedit = autodata['id'];
                     }
                   }
@@ -215,7 +215,7 @@ class QRobjectpageState extends State<QRobjectpage> {
                     Map<String, dynamic> autodata = doc.data();
                     String autokey = doc.id; // Получение ключа документа
                     // Проверка, соответствует ли поле title значению, которое вы ищете
-                    if (autokey == targetTitle) {
+                    if (autodata['id'] == targetTitle) {
                       await collRef.doc(autokey).delete();
                       print("Document deleted: $autokey");
                     }
@@ -294,7 +294,7 @@ class MyOverviewsState extends State<MyOverviews> {
       autodata = datafirebasekz[i].data() as Map<String, dynamic>;
       print(
           "datafirebasekz[i]['title']KZ from firebase ${datafirebasekz[i]['title']}");
-      if (widget.selectedKey == autokey &&
+      if (widget.selectedKey == datafirebasekz[i]['id'] &&
           !discripWidgetsArr.contains(discripWidgetsKz)) {
         discripWidgetsKz = datafirebasekz[i]['description'];
         discripWidgetsArr.add(discripWidgetsKz);
@@ -309,7 +309,7 @@ class MyOverviewsState extends State<MyOverviews> {
       autodata = datafirebaseru[i].data() as Map<String, dynamic>;
       print(
           "datafirebaseru[i]['title']RU from firebase ${datafirebaseru[i]['title']}");
-      if (widget.selectedKey == autokey &&
+      if (widget.selectedKey == datafirebaseru[i]['id'] &&
           !discripWidgetsArr.contains(discripWidgetsRu)) {
         discripWidgetsRu = datafirebaseru[i]['description'];
         print("discripWidgetsRu $discripWidgetsRu");
@@ -326,7 +326,7 @@ class MyOverviewsState extends State<MyOverviews> {
       autodata = datafirebaseen[i].data() as Map<String, dynamic>;
       print(
           "datafirebasekz[i]['title']EN from firebase ${datafirebaseen[i]['title']}");
-      if (widget.selectedKey == autokey &&
+      if (widget.selectedKey == datafirebaseen[i]['id'] &&
           !discripWidgetsArr.contains(discripWidgetsEn)) {
         discripWidgetsEn = datafirebaseen[i]['description'];
         print("discripWidgetsEn $discripWidgetsEn");
@@ -633,7 +633,7 @@ class _MyTextContState extends State<MyTextCont> {
           "datafirebasekz[i]['title']KZ from firebase ${datafirebasekz[i]['title']}");
       print('QRwidget.selectedKey start ${widget.selectedKey}');
       print('autokey start $autokey');
-      if (widget.selectedKey == autokey &&
+      if (widget.selectedKey == datafirebasekz[i]['id'] &&
           !titleWidgetsArr.contains(titleWidgetsKz)) {
         print('QRwidget.selectedKey finish ${widget.selectedKey}');
         print('autokey finish $autokey');
@@ -649,7 +649,7 @@ class _MyTextContState extends State<MyTextCont> {
       autodata = datafirebaseru[i].data() as Map<String, dynamic>;
       print(
           "datafirebaseru[i]['title']RU from firebase ${datafirebaseru[i]['title']}");
-      if (widget.selectedKey == autokey &&
+      if (widget.selectedKey == datafirebaseru[i]['id'] &&
           !titleWidgetsArr.contains(titleWidgetsRu)) {
         titleWidgetsRu = datafirebaseru[i]['title'];
         titleWidgetsArr.add(titleWidgetsRu);
@@ -662,7 +662,7 @@ class _MyTextContState extends State<MyTextCont> {
       autodata = datafirebaseen[i].data() as Map<String, dynamic>;
       print(
           "datafirebaseen[i]['title']EN from firebase ${datafirebaseen[i]['title']}");
-      if (widget.selectedKey == autokey &&
+      if (widget.selectedKey == datafirebaseen[i]['id'] &&
           !titleWidgetsArr.contains(titleWidgetsEn)) {
         titleWidgetsEn = datafirebaseen[i]['title'];
         titleWidgetsArr.add(titleWidgetsEn);
@@ -831,7 +831,7 @@ class _MyPhotoContState extends State<MyPhotoCont> {
       autodata = datafirebasekz[i].data() as Map<String, dynamic>;
       print(
           "datafirebasekz[i]['title']KZ from firebase ${datafirebasekz[i]['title']}");
-      if (widget.selectedKey == autokey &&
+      if (widget.selectedKey == datafirebasekz[i]['id'] &&
           !photoWidgetsArr.contains(photoWidgetsKz)) {
         photoWidgetsKz = datafirebasekz[i]['filephotopath'];
         photoWidgetsArr.add(photoWidgetsKz);
@@ -846,7 +846,7 @@ class _MyPhotoContState extends State<MyPhotoCont> {
       autodata = datafirebaseru[i].data() as Map<String, dynamic>;
       print(
           "datafirebaseru[i]['title']RU from firebase ${datafirebaseru[i]['title']}");
-      if (widget.selectedKey == autokey &&
+      if (widget.selectedKey == datafirebaseru[i]['id'] &&
           !photoWidgetsArr.contains(photoWidgetsRu)) {
         photoWidgetsRu = datafirebaseru[i]['filephotopath'];
         photoWidgetsArr.add(photoWidgetsRu);
@@ -859,7 +859,7 @@ class _MyPhotoContState extends State<MyPhotoCont> {
       autodata = datafirebaseen[i].data() as Map<String, dynamic>;
       print(
           "datafirebasekz[i]['title']EN from firebase ${datafirebaseen[i]['title']}");
-      if (widget.selectedKey == autokey &&
+      if (widget.selectedKey == datafirebaseen[i]['id'] &&
           !photoWidgetsArr.contains(photoWidgetsEn)) {
         photoWidgetsEn = datafirebaseen[i]['filephotopath'];
         photoWidgetsArr.add(photoWidgetsEn);
