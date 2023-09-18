@@ -2,8 +2,8 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
-class DropdawnFlag extends StatefulWidget {
-  const DropdawnFlag({
+class DropdownFlag extends StatefulWidget {
+  const DropdownFlag({
     super.key,
     required this.changedLanguage,
   });
@@ -11,14 +11,14 @@ class DropdawnFlag extends StatefulWidget {
   final ValueChanged<String> changedLanguage;
 
   @override
-  State<DropdawnFlag> createState() => DropdawnFlagState();
+  State<DropdownFlag> createState() => DropdawnFlagState();
 }
 
-class DropdawnFlagState extends State<DropdawnFlag> {
+class DropdawnFlagState extends State<DropdownFlag> {
   String dropdownValue = "";
 
   @override
-  void didUpdateWidget(covariant DropdawnFlag oldWidget) {
+  void didUpdateWidget(covariant DropdownFlag oldWidget) {
     dropdownValue = context.locale.languageCode;
     super.didUpdateWidget(oldWidget);
   }

@@ -71,7 +71,7 @@ class QRobjectpageState extends State<QRobjectpage> {
                     actions: [
                       Padding(
                         padding: const EdgeInsets.only(right: 20),
-                        child: DropdawnFlag(
+                        child: DropdownFlag(
                           changedLanguage: (value) {
                             setState(() {
                               currentSelectedKey =

@@ -78,7 +78,7 @@ class _ApptakeSearchPage extends State<takeSearchFirebasePage> {
                     actions: [
                       Padding(
                         padding: const EdgeInsets.only(right: 20),
-                        child: DropdawnFlag(
+                        child: DropdownFlag(
                           changedLanguage: (value) {
                             setState(() {
                               context.setLocale(Locale((value)));
@@ -399,7 +399,7 @@ class FirebaseSearchWidget extends State<FirebaseSearch>
             ),
           ),
         ),
-        Mausoleum(),
+       // Mausoleum(),
         SingleChildScrollView(
           child: ConstrainedBox(
             constraints: BoxConstraints(

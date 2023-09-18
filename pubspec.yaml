@@ -43,6 +43,8 @@ dependencies:
   yandex_mapkit: ^3.3.3
   easy_localization: ^3.0.3
   dropdown_button2: ^2.3.9
+  provider: ^6.0.5
+  riverpod: ^2.4.0
   
 
 
