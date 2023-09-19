@@ -16,7 +16,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List resultList = []; // Объявите resultList здесь
+  List<dynamic> onResultListChanged = [];
+
+  void handleResultListChanged(List<dynamic> resultList) {
+    setState(() {
+      onResultListChanged = resultList;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,13 +30,8 @@ class _HomePageState extends State<HomePage> {
       appBar: PreferredSize(
         preferredSize:
             Size.fromHeight(kToolbarHeight), // Set your preferred height here
-        child: YoutubeAppBar(
-          resultList: resultList,
-          onResultListChanged: (resultList) {
-            setState(() {
-              resultList = resultList;
-            });
-          },
+        child: MyAppBar(
+          onResultListChanged: handleResultListChanged,
         ), // Use your custom app bar
       ),
       body: SafeArea(
@@ -67,6 +68,7 @@ class _HomePageState extends State<HomePage> {
                   height: MediaQuery.of(context).size.height - 126,
                   padding: const EdgeInsets.only(left: 0, right: 0),
                   child: MyHomePage(
+                    resultListHome: onResultListChanged,
                     backgroundImage: DecorationImage(
                       image:
                           AssetImage('lib/assets/images/backgroundImages.jpg'),
@@ -87,20 +89,18 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-class YoutubeAppBar extends StatefulWidget {
-  final List<dynamic> resultList;
-  final Function(List<dynamic>) onResultListChanged;
+class MyAppBar extends StatefulWidget {
+  final ValueChanged<List<dynamic>> onResultListChanged;
 
-  YoutubeAppBar({
-    required this.resultList,
+  MyAppBar({
     required this.onResultListChanged,
   });
 
   @override
-  State<YoutubeAppBar> createState() => _YoutubeAppBarState();
+  State<MyAppBar> createState() => _MyAppBarState();
 }
 
-class _YoutubeAppBarState extends State<YoutubeAppBar> {
+class _MyAppBarState extends State<MyAppBar> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
@@ -109,16 +109,14 @@ class _YoutubeAppBarState extends State<YoutubeAppBar> {
       automaticallyImplyLeading: false,
       actions: <Widget>[
         SizedBox(
+          width: 10, // Устанавливаем отступ сверху
+        ),
+        SizedBox(
           width: 185,
           child: FutureBuilder(
             builder: (context, snapshot) {
               return FirebaseSearch(
-                resultList: widget.resultList,
-                onResultListChanged: (resultList) {
-                  setState(() {
-                    resultList = resultList;
-                  });
-                },
+                onResultListChanged: widget.onResultListChanged,
               );
             },
             future: Future.delayed(const Duration(seconds: 1)),
@@ -129,22 +127,24 @@ class _YoutubeAppBarState extends State<YoutubeAppBar> {
           icon: Icon(Icons.bookmark_add),
         ),
         Padding(
-          padding: const EdgeInsets.all(12.0),
+          padding: const EdgeInsets.only(right: 10),
           child: CircleAvatar(
-            radius: 12.0,
-            backgroundImage: NetworkImage(
-                'https://www.flutterant.com/wp-content/uploads/2020/07/satyam.jpg'),
-            backgroundColor: Colors.transparent,
+            radius: 20.0,
+            backgroundImage: AssetImage('lib/assets/images/en.png'),
           ),
-        )
+        ),
       ],
       leading: Builder(
         builder: (context) {
-          return IconButton(
-            icon: Icon(Icons.menu),
-            onPressed: () {
-              Scaffold.of(context).openDrawer();
-            },
+          return Padding(
+            padding: const EdgeInsets.only(
+                right: 20.0), // Устанавливаем отступ слева
+            child: IconButton(
+              icon: Icon(Icons.menu),
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+            ),
           );
         },
       ),
@@ -153,21 +153,22 @@ class _YoutubeAppBarState extends State<YoutubeAppBar> {
 }
 
 class FirebaseSearch extends StatefulWidget {
-  List<dynamic> resultList;
-  final Function(List<dynamic>) onResultListChanged; // Добавьте эту строку
+  final ValueChanged<List<dynamic>>
+      onResultListChanged; // Изменили тип на ValueChanged
 
   FirebaseSearch({
-    required this.resultList,
-    required this.onResultListChanged, // Добавьте эту строку
+    required this.onResultListChanged,
   });
+
   @override
-  FirebaseSearchWidgetState createState() => FirebaseSearchWidgetState();
+  FirebaseSearchWidget createState() => FirebaseSearchWidget();
 }
 
-class FirebaseSearchWidgetState extends State<FirebaseSearch> {
+class FirebaseSearchWidget extends State<FirebaseSearch> {
   TextEditingController keyword = TextEditingController();
 
   List allResults = [];
+  List resultList = [];
 
   @override
   void initState() {
@@ -176,26 +177,38 @@ class FirebaseSearchWidgetState extends State<FirebaseSearch> {
   }
 
   _onSearchChanged() {
+    print(keyword.text);
     searchResultList();
   }
 
   searchResultList() {
+    var showRes = [];
     if (keyword.text != "") {
       for (var keySnap in allResults) {
         var id = keySnap['id'].toString().toLowerCase();
         var title = keySnap['title'].toString().toLowerCase();
         if (id.contains(keyword.text.toLowerCase()) ||
             title.contains(keyword.text.toLowerCase())) {
-          widget.resultList.add(keySnap);
+          showRes.add(keySnap);
         }
       }
+
+      print('showRes $showRes');
     } else {
-      widget.resultList = List.from(allResults);
+      showRes = List.from(allResults);
     }
-    setState(() {
-      //widget.resultList = showRes;
-      widget.onResultListChanged(widget.resultList);
+
+    showRes.forEach((element) {
+      print("showReselement $element");
     });
+
+    setState(() {
+      resultList = showRes;
+    });
+
+    widget.onResultListChanged(resultList);
+
+    print('widget.onResultListChanged ${widget.onResultListChanged}');
   }
 
   getClientStream() async {
@@ -237,65 +250,74 @@ class FirebaseSearchWidgetState extends State<FirebaseSearch> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          Container(
-            width: double.infinity,
-            height: 55,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(15),
-            ),
-            child: Center(
-              child: TextField(
-                controller: keyword,
-                onSubmitted: (value) {
-                  setState(() {
-                    keyword.text = value;
-                  });
-                },
-                decoration: InputDecoration(
-                  prefixIcon: IconButton(
-                    icon: const Icon(Icons.search),
-                    onPressed: () {
-                      setState(() {
-                        getClientStream();
-                      });
-                    },
-                  ),
-                  suffixIcon: IconButton(
-                    icon: const Icon(Icons.clear),
-                    onPressed: () {
-                      keyword.text = '';
-                    },
-                  ),
-                  hintText: 'searchword'.tr(),
-                  border: InputBorder.none,
+    return Column(
+      children: [
+        SizedBox(
+          height: 5, // Устанавливаем отступ сверху
+        ),
+        Container(
+          width: double.infinity,
+          height: 45,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: Center(
+            child: TextField(
+              controller: keyword,
+              onSubmitted: (value) {
+                setState(() {
+                  // ignore: unrelated_type_equality_checks
+                  keyword.text = value;
+                });
+              },
+              decoration: InputDecoration(
+                prefixIcon: IconButton(
+                  icon: const Icon(Icons.search),
+                  onPressed: () {
+                    setState(() {
+                      getClientStream();
+                    });
+                  },
                 ),
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.clear),
+                  onPressed: () {
+                    keyword.text = '';
+                  },
+                ),
+                hintText: 'searchword'.tr(),
+                border: InputBorder.none,
               ),
             ),
           ),
-          ConstrainedBox(
-            constraints: BoxConstraints(
-              maxHeight: MediaQuery.of(context).size.height - 228,
-            ),
-            child: ListView(
-              children: [
-                StreamBuild(resultList: widget.resultList),
-              ],
-            ),
-          ),
-        ],
-      ),
+        ),
+        SizedBox(
+          height: 5, // Устанавливаем отступ сверху
+        ),
+        // Mausoleum(),
+        // SingleChildScrollView(
+        //   child: ConstrainedBox(
+        //     constraints: BoxConstraints(
+        //       maxHeight: MediaQuery.of(context).size.height -
+        //           518, // appBarHeight - это высота вашего AppBar
+        //     ),
+        //     child: ListView(
+        //       children: [
+        //         streamBuild(resultList: resultList),
+        //       ],
+        //     ),
+        //   ),
+        // ),
+      ],
     );
   }
 }
 
-class StreamBuild extends StatelessWidget {
+class streamBuild extends StatelessWidget {
   List<dynamic> resultList;
 
-  StreamBuild({
+  streamBuild({
     required this.resultList,
   });
 
@@ -324,7 +346,7 @@ class StreamBuild extends StatelessWidget {
         }
         final keysfirebase = snapshot.data?.docs.toList();
 
-        if (resultList.isNotEmpty) {
+        if (resultList != "") {
           return Column(
             children: resultList.map((data) {
               final doc = data.data() as Map<String, dynamic>;
@@ -397,15 +419,18 @@ class StreamBuild extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
+  final List<dynamic> resultListHome;
   final DecorationImage backgroundImage;
-  MyHomePage({required this.backgroundImage, Key? key}) : super(key: key);
+  MyHomePage(
+      {required this.backgroundImage, required this.resultListHome, Key? key})
+      : super(key: key);
 
   @override
   HomePageState createState() => HomePageState();
 }
 
 class HomePageState extends State<MyHomePage> {
-  List resultList = [];
+  //List resultList = [];
 
   @override
   final whiteTexstStyle = TextStyle(color: Colors.white, fontSize: 24);
@@ -416,7 +441,7 @@ class HomePageState extends State<MyHomePage> {
       color: Color.fromARGB(255, 78, 82, 26),
       fontSize: 25,
     ); // Обновленный размер текста
-
+    print('widget.onResultListChanged2 ${widget.resultListHome}');
     return Scaffold(
       body: Column(
         children: [
@@ -433,29 +458,11 @@ class HomePageState extends State<MyHomePage> {
               ),
               child: ListView(
                 children: [
-                  StreamBuild(resultList: resultList),
+                  streamBuild(resultList: widget.resultListHome),
                 ],
               ),
             ),
           ),
-          // Container(
-          //   child: Padding(
-          //     padding: const EdgeInsets.symmetric(horizontal: 5),
-          //     child: FutureBuilder(
-          //       builder: (context, snapshot) {
-          //         return FirebaseSearch(
-          //           resultList: resultList,
-          //           onResultListChanged: (resultList) {
-          //             setState(() {
-          //               resultList = resultList;
-          //             });
-          //           },
-          //         );
-          //       },
-          //       future: Future.delayed(const Duration(seconds: 1)),
-          //     ),
-          //   ),
-          // ),
         ],
       ),
       floatingActionButton: Stack(
