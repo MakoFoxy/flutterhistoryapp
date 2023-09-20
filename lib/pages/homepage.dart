@@ -40,30 +40,6 @@ class _HomePageState extends State<HomePage> {
             color: Colors.white,
             child: ListView(
               children: <Widget>[
-                // AppBar(
-                //   elevation: 0,
-                //   backgroundColor: Color.fromARGB(255, 83, 112, 85),
-                //   title: Text(
-                //     'mytitlepage'.tr(),
-                //     style: TextStyle(
-                //       fontSize: 18,
-                //       fontWeight: FontWeight.w600,
-                //       color: Color.fromARGB(255, 184, 182, 156),
-                //     ),
-                //   ),
-                //   actions: [
-                //     Padding(
-                //       padding: const EdgeInsets.only(right: 20),
-                //       child: DropdownFlag(
-                //         changedLanguage: (value) {
-                //           setState(() {
-                //             context.setLocale(Locale((value)));
-                //           });
-                //         },
-                //       ),
-                //     ),
-                //   ],
-                // ),
                 Container(
                   height: MediaQuery.of(context).size.height - 126,
                   padding: const EdgeInsets.only(left: 0, right: 0),
@@ -111,26 +87,33 @@ class _MyAppBarState extends State<MyAppBar> {
         SizedBox(
           width: 10, // Устанавливаем отступ сверху
         ),
-        SizedBox(
-          width: 185,
-          child: FutureBuilder(
-            builder: (context, snapshot) {
-              return FirebaseSearch(
-                onResultListChanged: widget.onResultListChanged,
-              );
-            },
-            future: Future.delayed(const Duration(seconds: 1)),
+        Padding(
+          padding: const EdgeInsets.only(left: 0),
+          child: SizedBox(
+            width: 160,
+            child: FutureBuilder(
+              builder: (context, snapshot) {
+                return FirebaseSearch(
+                  onResultListChanged: widget.onResultListChanged,
+                );
+              },
+              future: Future.delayed(const Duration(seconds: 1)),
+            ),
           ),
         ),
         IconButton(
+          padding: const EdgeInsets.only(left: 0),
           onPressed: () {},
           icon: Icon(Icons.bookmark_add),
         ),
         Padding(
           padding: const EdgeInsets.only(right: 10),
-          child: CircleAvatar(
-            radius: 20.0,
-            backgroundImage: AssetImage('lib/assets/images/en.png'),
+          child: DropdownFlag(
+            changedLanguage: (value) {
+              setState(() {
+                context.setLocale(Locale((value)));
+              });
+            },
           ),
         ),
       ],
@@ -668,8 +651,6 @@ class MenuTileWidget extends State<MenuTile> {
       );
 }
 
-
-
 // class FavoriteWidjet extends StatefulWidget {
 //   @override
 //   _FavoriteWidjetState createState() => _FavoriteWidjetState();
@@ -719,3 +700,29 @@ class MenuTileWidget extends State<MenuTile> {
 //     });
 //   }
 // }
+
+
+// AppBar(
+//   elevation: 0,
+//   backgroundColor: Color.fromARGB(255, 83, 112, 85),
+//   title: Text(
+//     'mytitlepage'.tr(),
+//     style: TextStyle(
+//       fontSize: 18,
+//       fontWeight: FontWeight.w600,
+//       color: Color.fromARGB(255, 184, 182, 156),
+//     ),
+//   ),
+//   actions: [
+//     Padding(
+//       padding: const EdgeInsets.only(right: 20),
+//       child: DropdownFlag(
+//         changedLanguage: (value) {
+//           setState(() {
+//             context.setLocale(Locale((value)));
+//           });
+//         },
+//       ),
+//     ),
+//   ],
+// ),

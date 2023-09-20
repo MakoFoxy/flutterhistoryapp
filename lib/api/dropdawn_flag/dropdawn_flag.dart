@@ -37,12 +37,12 @@ class DropdawnFlagState extends State<DropdownFlag> {
           children: [
             Text(dropdownValue),
             const SizedBox(
-              width: 12,
+              width: 5,
             ),
             Image.asset('lib/assets/images/$dropdownValue.png'),
           ],
         ),
-        buttonStyleData: const ButtonStyleData(
+        buttonStyleData: ButtonStyleData(
           height: 40,
           width: 90,
         ),
