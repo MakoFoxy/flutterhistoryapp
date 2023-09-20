@@ -80,8 +80,8 @@ class _MyAppBarState extends State<MyAppBar> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      iconTheme: IconThemeData(color: Colors.white),
-      backgroundColor: Colors.green,
+      iconTheme: IconThemeData(color: Colors.grey),
+      backgroundColor: Colors.white,
       automaticallyImplyLeading: false,
       actions: <Widget>[
         SizedBox(
@@ -330,7 +330,7 @@ class streamBuild extends StatelessWidget {
         final keysfirebase = snapshot.data?.docs.toList();
 
         if (resultList != "") {
-          return Column(
+          return Row(
             children: resultList.map((data) {
               final doc = data.data() as Map<String, dynamic>;
               return Container(
@@ -363,7 +363,7 @@ class streamBuild extends StatelessWidget {
             }).toList(),
           );
         } else {
-          return Column(
+          return Row(
             children: keysfirebase!.map((data) {
               final doc = data.data() as Map<String, dynamic>;
               return Container(
@@ -429,21 +429,84 @@ class HomePageState extends State<MyHomePage> {
       body: Column(
         children: [
           Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('lib/assets/images/backgroundImages.jpg'),
-                fit: BoxFit.cover,
+            // decoration: BoxDecoration(
+            //   image: DecorationImage(
+            //     image: AssetImage('lib/assets/images/backgroundImages.jpg'),
+            //     fit: BoxFit.cover,
+            //   ),
+            // ),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.of(context).size.height -
+                      228, // appBarHeight - это высота вашего AppBar
+                ),
+                child: Row(
+                  children: [
+                    streamBuild(resultList: widget.resultListHome),
+                  ],
+                ),
               ),
             ),
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                maxHeight: MediaQuery.of(context).size.height - 228,
-              ),
-              child: ListView(
-                children: [
-                  streamBuild(resultList: widget.resultListHome),
-                ],
-              ),
+          ),
+          Container(
+            padding: EdgeInsets.only(
+                left: 10, top: 0, bottom: 0, right: 0), // Устанавливаем отступы
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment
+                  .start, // Выравниваем элементы по центру вертикально
+              children: [
+                Container(
+                  padding: const EdgeInsets.only(left: 0, bottom: 0, top: 0),
+                  child: Image.asset(
+                    'lib/assets/images/mavzoley_yasavi.jpg',
+                    width: 115, // Ширина картинки
+                    height: 90, // Высота картинки
+                  ),
+                ),
+                SizedBox(width: 10.0),
+                Container(
+                  padding: const EdgeInsets.only(left: 0, top: 5, right: 0),
+                  child: Text(
+                    'Ваш текст',
+                    style: TextStyle(
+                      fontSize: 18.0, // Размер текста
+                      fontWeight: FontWeight.bold, // Жирный шрифт
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.only(left: 0, top: 45, right: 0),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => ObjectFirebasePage(
+                      //       selectedKey: doc['id'],
+                      //     ),
+                      //   ),
+                      // );
+                    },
+                    child: Text(
+                      "details".tr(),
+                      style: TextStyle(
+                        fontSize: 12.0, // Размер текста
+                        fontWeight: FontWeight.bold, // Жирный шрифт
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  child: IconButton(
+                    padding: const EdgeInsets.only(
+                        left: 0, bottom: 10, top: 0, right: 10),
+                    onPressed: () {},
+                    icon: Icon(Icons.bookmark_add),
+                  ),
+                ),
+              ],
             ),
           ),
         ],

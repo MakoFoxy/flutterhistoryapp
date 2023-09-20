@@ -46,7 +46,7 @@ class MyApp extends StatelessWidget {
       locale: context.locale,
       title: 'Turkestan',
       theme: ThemeData(
-        primarySwatch: Colors.amber,
+        primarySwatch: Colors.green,
         textTheme: GoogleFonts.openSansCondensedTextTheme(
           Theme.of(context).textTheme,
         ),
