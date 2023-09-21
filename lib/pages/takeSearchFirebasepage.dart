@@ -278,7 +278,7 @@ class FirebaseSearchWidget extends State<FirebaseSearch>
   @override
   void initState() {
     // getClientStream();
-    keyword.addListener(_onSearchChanged);
+    keywordText.addListener(_onSearchChanged);
     super.initState();
     // mapdata = mapOver.mapdatas;
   }
@@ -294,8 +294,8 @@ class FirebaseSearchWidget extends State<FirebaseSearch>
       for (var keySnap in allResults) {
         var id = keySnap['id'].toString().toLowerCase();
         var title = keySnap['title'].toString().toLowerCase();
-        if (id.contains(keyword.text.toLowerCase()) ||
-            title.contains(keyword.text.toLowerCase())) {
+        if (id.contains(keywordText.text.toLowerCase()) ||
+            title.contains(keywordText.text.toLowerCase())) {
           showRes.add(keySnap);
         }
       }
@@ -338,8 +338,8 @@ class FirebaseSearchWidget extends State<FirebaseSearch>
 
   @override
   void dispose() {
-    keyword.removeListener(_onSearchChanged);
-    keyword.dispose();
+    keywordText.removeListener(_onSearchChanged);
+    keywordText.dispose();
     super.dispose();
   }
 
@@ -363,18 +363,18 @@ class FirebaseSearchWidget extends State<FirebaseSearch>
           ),
           child: Center(
             child: TextField(
-              controller: keyword,
+              controller: keywordText,
               onSubmitted: (value) {
                 setState(() {
                   // ignore: unrelated_type_equality_checks
-                  keyword.text = value;
+                  keywordText.text = value;
                 });
               },
               decoration: InputDecoration(
                 prefixIcon: IconButton(
                   icon: const Icon(Icons.search),
                   onPressed: () {
-                    if (keyword.text == '') {
+                    if (keywordText.text == '') {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -390,7 +390,7 @@ class FirebaseSearchWidget extends State<FirebaseSearch>
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.clear),
                   onPressed: () {
-                    keyword.text = '';
+                    keywordText.text = '';
                   },
                 ),
                 hintText: 'searchword'.tr(),
@@ -399,7 +399,7 @@ class FirebaseSearchWidget extends State<FirebaseSearch>
             ),
           ),
         ),
-       // Mausoleum(),
+        // Mausoleum(),
         SingleChildScrollView(
           child: ConstrainedBox(
             constraints: BoxConstraints(

@@ -24,6 +24,14 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
   String currentSelectedKey = ''; // Инициализируйте переменную пустым значением
   int _backPressCount = 0;
 
+  List<dynamic> onResultListChanged = [];
+
+  void handleResultListChanged(List<dynamic> resultList) {
+    setState(() {
+      onResultListChanged = resultList;
+    });
+  }
+
   final whiteTextStyle = TextStyle(color: Colors.white, fontSize: 24);
   @override
   Widget build(BuildContext context) {
@@ -47,6 +55,13 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
         }
       },
       child: Scaffold(
+        appBar: PreferredSize(
+          preferredSize:
+              Size.fromHeight(kToolbarHeight), // Set your preferred height here
+          child: MyAppBar(
+            onResultListChanged: handleResultListChanged,
+          ), // Use your custom app bar
+        ),
         body: SafeArea(
           child: DefaultTextStyle(
             style: whiteTextStyle,
@@ -54,33 +69,6 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
               color: Colors.amber,
               child: ListView(
                 children: <Widget>[
-                  AppBar(
-                    elevation: 0,
-                    backgroundColor: Color.fromARGB(255, 83, 112, 85),
-                    title: Text(
-                      'mytitlepage'.tr(),
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: Color.fromARGB(255, 184, 182, 156),
-                      ),
-                    ),
-                    actions: [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 20),
-                        child: DropdownFlag(
-                          changedLanguage: (value) {
-                            setState(() {
-                              currentSelectedKey =
-                                  value; // Обновляем текущий выбранный ключ
-                              context.setLocale(Locale((value)));
-                            });
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                  mySearch(),
                   Container(
                     height: MediaQuery.of(context).size.height - 163,
                     child: ListView(
@@ -109,7 +97,7 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
         ),
         floatingActionButton: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [           
+          children: [
             Padding(
               padding: const EdgeInsets.only(
                 top: 0,
@@ -163,7 +151,7 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
                 child: const Icon(Icons.delete),
               ),
             ),
-             Padding(
+            Padding(
               padding: const EdgeInsets.only(
                   left: 0.0, bottom: 0.0, right: 0, top: 0),
               child: FloatingActionButton(
@@ -187,7 +175,7 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
                 child: const Icon(Icons.create),
               ),
             ),
-          ],          
+          ],
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       ),
@@ -390,14 +378,98 @@ class MyOverviewsState extends State<MyOverviews> {
   }
 }
 
+class MyAppBar extends StatefulWidget {
+  final ValueChanged<List<dynamic>> onResultListChanged;
+
+  MyAppBar({
+    required this.onResultListChanged,
+  });
+
+  @override
+  State<MyAppBar> createState() => _MyAppBarState();
+}
+
+class _MyAppBarState extends State<MyAppBar> {
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      iconTheme: IconThemeData(color: Colors.grey),
+      backgroundColor: Colors.white,
+      automaticallyImplyLeading: false,
+      actions: <Widget>[
+        SizedBox(
+          width: 10, // Устанавливаем отступ сверху
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 0),
+          child: SizedBox(
+            width: 160,
+            child: FutureBuilder(
+              builder: (context, snapshot) {
+                return mySearch(
+                  onResultListChanged: widget.onResultListChanged,
+                );
+              },
+              future: Future.delayed(const Duration(seconds: 1)),
+            ),
+          ),
+        ),
+        IconButton(
+          padding: const EdgeInsets.only(left: 0),
+          onPressed: () {},
+          icon: Icon(Icons.bookmark_add),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(right: 10),
+          child: DropdownFlag(
+            changedLanguage: (value) {
+              setState(() {
+                context.setLocale(Locale((value)));
+              });
+            },
+          ),
+        ),
+      ],
+      leading: Builder(
+        builder: (context) {
+          return Padding(
+            padding: const EdgeInsets.only(
+                right: 20.0), // Устанавливаем отступ слева
+            child: IconButton(
+              icon: Icon(Icons.menu),
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
 class mySearch extends StatefulWidget {
+  final ValueChanged<List<dynamic>>
+      onResultListChanged; // Изменили тип на ValueChanged
+
+  mySearch({
+    required this.onResultListChanged,
+  });
+
   @override
   State<mySearch> createState() => _MySearchState();
 }
 
-TextEditingController keyword = TextEditingController();
+TextEditingController keywordText = TextEditingController();
 
 class _MySearchState extends State<mySearch> {
+
+  @override
+  void dispose() {
+    keywordText.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -409,11 +481,11 @@ class _MySearchState extends State<mySearch> {
       ),
       child: Center(
         child: TextField(
-          controller: keyword,
+          controller: keywordText,
           onSubmitted: (value) {
             setState(() {
               // ignore: unrelated_type_equality_checks
-              keyword.text = value;
+              keywordText.text = value;
             });
           },
           decoration: InputDecoration(
@@ -427,10 +499,10 @@ class _MySearchState extends State<mySearch> {
                   context,
                   MaterialPageRoute(
                     builder: (context) {
-                      if (keyword.text != '') {
+                      if (keywordText.text != '') {
                         return takeSearchFirebasePage(
                             // resList: resList,
-                            mykeyword: keyword.text);
+                            mykeyword: keywordText.text);
                       } else {
                         return HomePage();
                       }
@@ -442,7 +514,7 @@ class _MySearchState extends State<mySearch> {
             suffixIcon: IconButton(
               icon: const Icon(Icons.clear),
               onPressed: () {
-                keyword.text = '';
+                keywordText.text = '';
               },
             ),
             hintText: 'searchword'.tr(),
@@ -1045,3 +1117,32 @@ class MenuTileWidget extends State<MenuTile> {
         ],
       );
 }
+
+
+
+ // AppBar(
+                  //   elevation: 0,
+                  //   backgroundColor: Color.fromARGB(255, 83, 112, 85),
+                  //   title: Text(
+                  //     'mytitlepage'.tr(),
+                  //     style: TextStyle(
+                  //       fontSize: 18,
+                  //       fontWeight: FontWeight.w600,
+                  //       color: Color.fromARGB(255, 184, 182, 156),
+                  //     ),
+                  //   ),
+                  //   actions: [
+                  //     Padding(
+                  //       padding: const EdgeInsets.only(right: 20),
+                  //       child: DropdownFlag(
+                  //         changedLanguage: (value) {
+                  //           setState(() {
+                  //             currentSelectedKey =
+                  //                 value; // Обновляем текущий выбранный ключ
+                  //             context.setLocale(Locale((value)));
+                  //           });
+                  //         },
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),

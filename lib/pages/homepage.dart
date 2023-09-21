@@ -433,11 +433,11 @@ class streamBuildHome extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Colors.red,
-                                ),
-                              ),
+                              // decoration: BoxDecoration(
+                              //   border: Border.all(
+                              //     color: Colors.red,
+                              //   ),
+                              // ),
                               child: Image.asset(
                                 'lib/assets/images/mavzoley_yasavi.jpg',
                                 width: 150,
