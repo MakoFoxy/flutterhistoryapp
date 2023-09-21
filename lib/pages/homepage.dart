@@ -327,75 +327,174 @@ class streamBuild extends StatelessWidget {
         if (!snapshot.hasData || snapshot.data == null) {
           return Text('No data');
         }
-        final keysfirebase = snapshot.data?.docs.toList();
 
         if (resultList != "") {
-          return Row(
-            children: resultList.map((data) {
-              final doc = data.data() as Map<String, dynamic>;
-              return Container(
-                margin: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 5,
-                ),
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ObjectFirebasePage(
-                          selectedKey: doc['id'],
+          return Container(
+            child: Row(
+              // Use curly braces here instead of parentheses
+              children: resultList.map((data) {
+                final doc = data.data() as Map<String, dynamic>;
+                return Container(
+                  child: Row(children: [
+                    Container(
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 5,
+                      ),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ObjectFirebasePage(
+                                selectedKey: doc['id'],
+                              ),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                        child: Text(
+                          doc['title'],
+                          style: TextStyle(color: Colors.white, fontSize: 24),
                         ),
                       ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
                     ),
-                  ),
-                  child: Text(
-                    doc['title'],
-                    style: TextStyle(color: Colors.white, fontSize: 24),
-                  ),
-                ),
-              );
-            }).toList(),
-          );
-        } else {
-          return Row(
-            children: keysfirebase!.map((data) {
-              final doc = data.data() as Map<String, dynamic>;
-              return Container(
-                margin: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 5,
-                ),
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ObjectFirebasePage(
-                          selectedKey: doc['id'],
-                        ),
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                  ),
-                  child: Text(
-                    doc['title'],
-                    style: TextStyle(color: Colors.white, fontSize: 24),
-                  ),
-                ),
-              );
-            }).toList(),
+                  ]),
+                );
+              }).toList(),
+            ),
           );
         }
+        return Container();
+      },
+    );
+  }
+}
+
+class streamBuildHome extends StatelessWidget {
+  List<dynamic> resultList;
+
+  streamBuildHome({
+    required this.resultList,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    late Stream<QuerySnapshot<Map<String, dynamic>>> datastream;
+    if (Localizations.localeOf(context).languageCode == 'kk') {
+      datastream = FirebaseFirestore.instance.collection('datakz').snapshots();
+    } else if (Localizations.localeOf(context).languageCode == 'ru') {
+      datastream = FirebaseFirestore.instance.collection('dataru').snapshots();
+    } else if (Localizations.localeOf(context).languageCode == 'en') {
+      datastream = FirebaseFirestore.instance.collection('dataen').snapshots();
+    }
+
+    return StreamBuilder<QuerySnapshot>(
+      stream: datastream,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator();
+        }
+        if (snapshot.hasError) {
+          return Text('Error');
+        }
+        if (!snapshot.hasData || snapshot.data == null) {
+          return Text('No data');
+        }
+
+        if (resultList != "") {
+          return Container(
+            child: Column(
+              children: resultList.map((data) {
+                final doc = data.data() as Map<String, dynamic>;
+                return Container(
+                  child: Column(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.only(
+                          left: 10,
+                          top: 0,
+                          bottom: 0,
+                          right: 0,
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.only(
+                                left: 0,
+                                bottom: 0,
+                                top: 0,
+                              ),
+                              child: Image.asset(
+                                'lib/assets/images/mavzoley_yasavi.jpg',
+                                width: 115,
+                                height: 90,
+                              ),
+                            ),
+                            SizedBox(width: 10.0),
+                            Container(
+                              padding: const EdgeInsets.only(
+                                  left: 0, top: 5, right: 0),
+                              child: Text(
+                                doc['title'],
+                                style: TextStyle(
+                                  fontSize: 18.0,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.only(
+                                  left: 0, top: 45, right: 0),
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ObjectFirebasePage(
+                                        selectedKey: doc['id'],
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Text(
+                                  "details".tr(),
+                                  style: TextStyle(
+                                    fontSize: 12.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Container(
+                              child: IconButton(
+                                padding: const EdgeInsets.only(
+                                  left: 0,
+                                  bottom: 10,
+                                  top: 0,
+                                  right: 10,
+                                ),
+                                onPressed: () {},
+                                icon: Icon(Icons.bookmark_add),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }).toList(), // Convert the mapped items to a list
+            ),
+          );
+        }
+        return Container();
       },
     );
   }
@@ -428,13 +527,23 @@ class HomePageState extends State<MyHomePage> {
     return Scaffold(
       body: Column(
         children: [
+          // Container(
+          //   child: SingleChildScrollView(
+          //     scrollDirection: Axis.horizontal,
+          //     child: ConstrainedBox(
+          //       constraints: BoxConstraints(
+          //         maxHeight: MediaQuery.of(context).size.height -
+          //             228, // appBarHeight - это высота вашего AppBar
+          //       ),
+          //       child: Row(
+          //         children: [
+          //           streamBuild(resultList: widget.resultListHome),
+          //         ],
+          //       ),
+          //     ),
+          //   ),
+          // ),
           Container(
-            // decoration: BoxDecoration(
-            //   image: DecorationImage(
-            //     image: AssetImage('lib/assets/images/backgroundImages.jpg'),
-            //     fit: BoxFit.cover,
-            //   ),
-            // ),
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: ConstrainedBox(
@@ -442,71 +551,12 @@ class HomePageState extends State<MyHomePage> {
                   maxHeight: MediaQuery.of(context).size.height -
                       228, // appBarHeight - это высота вашего AppBar
                 ),
-                child: Row(
+                child: Column(
                   children: [
-                    streamBuild(resultList: widget.resultListHome),
+                    streamBuildHome(resultList: widget.resultListHome),
                   ],
                 ),
               ),
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.only(
-                left: 10, top: 0, bottom: 0, right: 0), // Устанавливаем отступы
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment
-                  .start, // Выравниваем элементы по центру вертикально
-              children: [
-                Container(
-                  padding: const EdgeInsets.only(left: 0, bottom: 0, top: 0),
-                  child: Image.asset(
-                    'lib/assets/images/mavzoley_yasavi.jpg',
-                    width: 115, // Ширина картинки
-                    height: 90, // Высота картинки
-                  ),
-                ),
-                SizedBox(width: 10.0),
-                Container(
-                  padding: const EdgeInsets.only(left: 0, top: 5, right: 0),
-                  child: Text(
-                    'Ваш текст',
-                    style: TextStyle(
-                      fontSize: 18.0, // Размер текста
-                      fontWeight: FontWeight.bold, // Жирный шрифт
-                    ),
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.only(left: 0, top: 45, right: 0),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //     builder: (context) => ObjectFirebasePage(
-                      //       selectedKey: doc['id'],
-                      //     ),
-                      //   ),
-                      // );
-                    },
-                    child: Text(
-                      "details".tr(),
-                      style: TextStyle(
-                        fontSize: 12.0, // Размер текста
-                        fontWeight: FontWeight.bold, // Жирный шрифт
-                      ),
-                    ),
-                  ),
-                ),
-                Container(
-                  child: IconButton(
-                    padding: const EdgeInsets.only(
-                        left: 0, bottom: 10, top: 0, right: 10),
-                    onPressed: () {},
-                    icon: Icon(Icons.bookmark_add),
-                  ),
-                ),
-              ],
             ),
           ),
         ],
@@ -763,7 +813,6 @@ class MenuTileWidget extends State<MenuTile> {
 //     });
 //   }
 // }
-
 
 // AppBar(
 //   elevation: 0,
