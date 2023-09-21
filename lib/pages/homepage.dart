@@ -408,10 +408,18 @@ class streamBuildHome extends StatelessWidget {
 
         if (resultList != "") {
           return Container(
+            decoration: BoxDecoration(
+              border: Border.all(
+                  color: Colors.greenAccent), // Устанавливаем красную границу
+            ),
             child: Column(
               children: resultList.map((data) {
                 final doc = data.data() as Map<String, dynamic>;
                 return Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                        color: Colors.green), // Устанавливаем красную границу
+                  ),
                   child: Column(
                     children: [
                       Container(
@@ -425,54 +433,101 @@ class streamBuildHome extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
-                              padding: const EdgeInsets.only(
-                                left: 0,
-                                bottom: 0,
-                                top: 0,
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: Colors.red,
+                                ),
                               ),
                               child: Image.asset(
                                 'lib/assets/images/mavzoley_yasavi.jpg',
-                                width: 115,
-                                height: 90,
+                                width: 150,
+                                height: 120,
+                                fit: BoxFit.cover,
                               ),
                             ),
                             SizedBox(width: 10.0),
-                            Container(
-                              padding: const EdgeInsets.only(
-                                  left: 0, top: 5, right: 0),
-                              child: Text(
-                                doc['title'],
-                                style: TextStyle(
-                                  fontSize: 18.0,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
+                            Expanded(
+                              // Используем Expanded для текста и кнопки
+                              child: Container(
+                                padding: const EdgeInsets.only(
+                                  left: 0,
+                                  top: 0,
+                                  right: 0,
+                                  bottom: 0,
                                 ),
-                              ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.only(
-                                  left: 0, top: 45, right: 0),
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => ObjectFirebasePage(
-                                        selectedKey: doc['id'],
+                                // decoration: BoxDecoration(
+                                //   border: Border.all(
+                                //     color: Colors.red,
+                                //   ),
+                                // ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment
+                                      .center, // Выравнивание текста по левому краю
+                                  children: [
+                                    Text(
+                                      doc['title'],
+                                      style: TextStyle(
+                                        fontSize: 18.0,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      softWrap: true,
+                                      //overflow: TextOverflow.ellipsis,
+                                    ),
+                                    SizedBox(
+                                      height: 43,
+                                    ),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                ObjectFirebasePage(
+                                              selectedKey: doc['id'],
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        padding: EdgeInsets.all(0),
+                                      ),
+                                      child: Container(
+                                        width: double
+                                            .infinity, // Разрешаем кнопке занимать всю ширину
+                                        alignment: Alignment
+                                            .topCenter, // Выравнивание текста по центру
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 8,
+                                            horizontal:
+                                                0), // Отступы для текста кнопки
+                                        child: Text(
+                                          "details".tr(),
+                                          style: TextStyle(
+                                            fontSize: 14.0,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
                                       ),
                                     ),
-                                  );
-                                },
-                                child: Text(
-                                  "details".tr(),
-                                  style: TextStyle(
-                                    fontSize: 12.0,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  ],
                                 ),
                               ),
                             ),
                             Container(
+                              padding: const EdgeInsets.only(
+                                left: 0,
+                                bottom: 10,
+                                top: 0,
+                                right: 10,
+                              ),
+                              height: 25,
+                              width: 25,
+                              // decoration: BoxDecoration(
+                              //   border: Border.all(
+                              //       color: Colors
+                              //           .red), // Устанавливаем красную границу
+                              // ),
                               child: IconButton(
                                 padding: const EdgeInsets.only(
                                   left: 0,
@@ -525,31 +580,30 @@ class HomePageState extends State<MyHomePage> {
     ); // Обновленный размер текста
     print('widget.onResultListChanged2 ${widget.resultListHome}');
     return Scaffold(
-      body: Column(
-        children: [
-          // Container(
-          //   child: SingleChildScrollView(
-          //     scrollDirection: Axis.horizontal,
-          //     child: ConstrainedBox(
-          //       constraints: BoxConstraints(
-          //         maxHeight: MediaQuery.of(context).size.height -
-          //             228, // appBarHeight - это высота вашего AppBar
-          //       ),
-          //       child: Row(
-          //         children: [
-          //           streamBuild(resultList: widget.resultListHome),
-          //         ],
-          //       ),
-          //     ),
-          //   ),
-          // ),
-          Container(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            // Container(
+            //   child: SingleChildScrollView(
+            //     scrollDirection: Axis.horizontal,
+            //     child: ConstrainedBox(
+            //       constraints: BoxConstraints(
+            //         maxHeight: MediaQuery.of(context).size.height -
+            //             228, // appBarHeight - это высота вашего AppBar
+            //       ),
+            //       child: Row(
+            //         children: [
+            //           streamBuild(resultList: widget.resultListHome),
+            //         ],
+            //       ),
+            //     ),
+            //   ),
+            // ),
+            Container(
               child: ConstrainedBox(
                 constraints: BoxConstraints(
                   maxHeight: MediaQuery.of(context).size.height -
-                      228, // appBarHeight - это высота вашего AppBar
+                      0, // appBarHeight - это высота вашего AppBar
                 ),
                 child: Column(
                   children: [
@@ -558,8 +612,8 @@ class HomePageState extends State<MyHomePage> {
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       floatingActionButton: Stack(
         children: [
