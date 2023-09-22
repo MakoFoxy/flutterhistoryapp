@@ -24,14 +24,6 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
   String currentSelectedKey = ''; // Инициализируйте переменную пустым значением
   int _backPressCount = 0;
 
-  List<dynamic> onResultListChanged = [];
-
-  void handleResultListChanged(List<dynamic> resultList) {
-    setState(() {
-      onResultListChanged = resultList;
-    });
-  }
-
   final whiteTextStyle = TextStyle(color: Colors.white, fontSize: 24);
   @override
   Widget build(BuildContext context) {
@@ -58,9 +50,7 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
         appBar: PreferredSize(
           preferredSize:
               Size.fromHeight(kToolbarHeight), // Set your preferred height here
-          child: MyAppBar(
-            onResultListChanged: handleResultListChanged,
-          ), // Use your custom app bar
+          child: MyAppBar(), // Use your custom app bar
         ),
         body: SafeArea(
           child: DefaultTextStyle(
@@ -379,12 +369,6 @@ class MyOverviewsState extends State<MyOverviews> {
 }
 
 class MyAppBar extends StatefulWidget {
-  final ValueChanged<List<dynamic>> onResultListChanged;
-
-  MyAppBar({
-    required this.onResultListChanged,
-  });
-
   @override
   State<MyAppBar> createState() => _MyAppBarState();
 }
@@ -406,9 +390,7 @@ class _MyAppBarState extends State<MyAppBar> {
             width: 160,
             child: FutureBuilder(
               builder: (context, snapshot) {
-                return mySearch(
-                  onResultListChanged: widget.onResultListChanged,
-                );
+                return mySearch();
               },
               future: Future.delayed(const Duration(seconds: 1)),
             ),
@@ -449,26 +431,18 @@ class _MyAppBarState extends State<MyAppBar> {
 }
 
 class mySearch extends StatefulWidget {
-  final ValueChanged<List<dynamic>>
-      onResultListChanged; // Изменили тип на ValueChanged
-
-  mySearch({
-    required this.onResultListChanged,
-  });
-
   @override
   State<mySearch> createState() => _MySearchState();
 }
 
-TextEditingController keywordText = TextEditingController();
-
 class _MySearchState extends State<mySearch> {
+  TextEditingController keywordTextObj = TextEditingController();
 
-  @override
-  void dispose() {
-    keywordText.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   super.dispose(); // Вызываем суперклассовый метод dispose
+  //   keywordTextObj.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -481,11 +455,10 @@ class _MySearchState extends State<mySearch> {
       ),
       child: Center(
         child: TextField(
-          controller: keywordText,
+          controller: keywordTextObj,
           onSubmitted: (value) {
             setState(() {
-              // ignore: unrelated_type_equality_checks
-              keywordText.text = value;
+              keywordTextObj.text = value;
             });
           },
           decoration: InputDecoration(
@@ -499,10 +472,11 @@ class _MySearchState extends State<mySearch> {
                   context,
                   MaterialPageRoute(
                     builder: (context) {
-                      if (keywordText.text != '') {
+                      if (keywordTextObj.text != '') {
                         return takeSearchFirebasePage(
                             // resList: resList,
-                            mykeyword: keywordText.text);
+                            mykeyword: keywordTextObj.text, 
+                           takekeywordText: keywordTextObj);
                       } else {
                         return HomePage();
                       }
@@ -514,7 +488,7 @@ class _MySearchState extends State<mySearch> {
             suffixIcon: IconButton(
               icon: const Icon(Icons.clear),
               onPressed: () {
-                keywordText.text = '';
+                keywordTextObj.text = '';
               },
             ),
             hintText: 'searchword'.tr(),

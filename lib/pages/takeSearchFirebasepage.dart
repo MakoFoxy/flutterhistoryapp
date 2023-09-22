@@ -10,8 +10,10 @@ import 'package:mausoleum/api/yandexmap/map_controls_page.dart';
 
 class takeSearchFirebasePage extends StatefulWidget {
   final String mykeyword;
+  TextEditingController takekeywordText;
 
-  takeSearchFirebasePage({required this.mykeyword});
+  takeSearchFirebasePage(
+      {required this.mykeyword, required this.takekeywordText});
 
   @override
   State<takeSearchFirebasePage> createState() => _ApptakeSearchPage();
@@ -98,7 +100,8 @@ class _ApptakeSearchPage extends State<takeSearchFirebasePage> {
                       ),
                     ),
                     child: MyTakePage(
-                      mykeyword: widget.mykeyword,
+                      mykeywordpage: widget.mykeyword,
+                      takekeywordTextpage: widget.takekeywordText,
                       backgroundImage: DecorationImage(
                         image: AssetImage(imageUrl),
                         fit: BoxFit.cover,
@@ -120,10 +123,12 @@ class _ApptakeSearchPage extends State<takeSearchFirebasePage> {
 }
 
 class MyTakePage extends StatefulWidget {
-  String mykeyword;
+  String mykeywordpage;
+  TextEditingController takekeywordTextpage;
   final DecorationImage backgroundImage;
 
-  MyTakePage({required this.backgroundImage, required this.mykeyword, Key? key})
+  MyTakePage(
+      {required this.backgroundImage, required this.mykeywordpage, required this.takekeywordTextpage, Key? key})
       : super(key: key);
   @override
   MyTakePageState createState() => MyTakePageState();
@@ -152,7 +157,10 @@ class MyTakePageState extends State<MyTakePage> {
               padding: const EdgeInsets.symmetric(horizontal: 5),
               child: FutureBuilder(
                 builder: (context, snapshot) {
-                  return FirebaseSearch(keyword: widget.mykeyword);
+                  return FirebaseSearch(
+                    mykeywordpagenow: widget.mykeywordpage,
+                    keywordText: widget.takekeywordTextpage,
+                  );
                 },
                 future: Future.delayed(const Duration(seconds: 1)),
               ),
@@ -259,9 +267,11 @@ class MyTakePageState extends State<MyTakePage> {
 }
 
 class FirebaseSearch extends StatefulWidget {
-  String keyword;
-
-  FirebaseSearch({required this.keyword, Key? key}) : super(key: key);
+  String mykeywordpagenow;
+  TextEditingController keywordText; // Добавьте это поле
+  FirebaseSearch(
+      {required this.mykeywordpagenow, required this.keywordText, Key? key})
+      : super(key: key);
 
   // const FirebaseSearch({Key? key}) : super(key: key);
   @override
@@ -278,7 +288,7 @@ class FirebaseSearchWidget extends State<FirebaseSearch>
   @override
   void initState() {
     // getClientStream();
-    keywordText.addListener(_onSearchChanged);
+    widget.keywordText.addListener(_onSearchChanged);
     super.initState();
     // mapdata = mapOver.mapdatas;
   }
@@ -290,12 +300,12 @@ class FirebaseSearchWidget extends State<FirebaseSearch>
 
   searchResultList() {
     var showRes = [];
-    if (controlkey.text != "" || widget.keyword != "") {
+    if (controlkey.text != "" || widget.mykeywordpagenow != "") {
       for (var keySnap in allResults) {
         var id = keySnap['id'].toString().toLowerCase();
         var title = keySnap['title'].toString().toLowerCase();
-        if (id.contains(keywordText.text.toLowerCase()) ||
-            title.contains(keywordText.text.toLowerCase())) {
+        if (id.contains(widget.keywordText.text.toLowerCase()) ||
+            title.contains(widget.keywordText.text.toLowerCase())) {
           showRes.add(keySnap);
         }
       }
@@ -338,8 +348,8 @@ class FirebaseSearchWidget extends State<FirebaseSearch>
 
   @override
   void dispose() {
-    keywordText.removeListener(_onSearchChanged);
-    keywordText.dispose();
+    widget.keywordText.removeListener(_onSearchChanged);
+    widget.keywordText.dispose();
     super.dispose();
   }
 
@@ -363,18 +373,18 @@ class FirebaseSearchWidget extends State<FirebaseSearch>
           ),
           child: Center(
             child: TextField(
-              controller: keywordText,
+              controller: widget.keywordText,
               onSubmitted: (value) {
                 setState(() {
                   // ignore: unrelated_type_equality_checks
-                  keywordText.text = value;
+                  widget.keywordText.text = value;
                 });
               },
               decoration: InputDecoration(
                 prefixIcon: IconButton(
                   icon: const Icon(Icons.search),
                   onPressed: () {
-                    if (keywordText.text == '') {
+                    if (widget.keywordText.text == '') {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -390,7 +400,7 @@ class FirebaseSearchWidget extends State<FirebaseSearch>
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.clear),
                   onPressed: () {
-                    keywordText.text = '';
+                    widget.keywordText.text = '';
                   },
                 ),
                 hintText: 'searchword'.tr(),

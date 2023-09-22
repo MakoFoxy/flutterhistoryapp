@@ -440,28 +440,29 @@ class _MySearchState extends State<mySearch> {
             });
           },
           decoration: InputDecoration(
-            prefixIcon: IconButton(
-              icon: const Icon(Icons.search),
-              onPressed: () {
-                // setState(() {
-                //   keywordAsyncFunction(keyword.text);
-                // });
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) {
-                      if (keyword.text != '') {
-                        return takeSearchFirebasePage(
-                            // resList: resList,
-                            mykeyword: keyword.text);
-                      } else {
-                        return HomePage();
-                      }
-                    },
-                  ),
-                );
-              },
-            ),
+            // prefixIcon: IconButton(
+            //   icon: const Icon(Icons.search),
+            //   onPressed: () {
+            //     // setState(() {
+            //     //   keywordAsyncFunction(keyword.text);
+            //     // });
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //         builder: (context) {
+            //           if (keyword.text != '') {
+            //             return takeSearchFirebasePage(
+            //                 // resList: resList,
+            //                 mykeyword: keyword.text,
+            //                 takekeywordText: keywordTextObj);
+            //           } else {
+            //             return HomePage();
+            //           }
+            //         },
+            //       ),
+            //     );
+            //   },
+            // ),
             suffixIcon: IconButton(
               icon: const Icon(Icons.clear),
               onPressed: () {
