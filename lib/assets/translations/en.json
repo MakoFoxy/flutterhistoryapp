@@ -4,5 +4,6 @@
     "mymap": "Map",
     "myQR":"QR",
     "searchword": "search...",
-    "details": "Details"
+    "details": "Details",
+    "description": "Description"
 }

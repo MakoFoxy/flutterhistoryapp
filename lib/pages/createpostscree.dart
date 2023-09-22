@@ -296,7 +296,7 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
                     CollectionReference collRefEn =
                         FirebaseFirestore.instance.collection('dataen');
                     Map<String, dynamic> datakz = {
-                     'id': id.text,
+                      'id': id.text,
                       'title': teTitleKz.text,
                       'description': teDescriptionKz.text,
                       'xCoordinate': xCoordinateInt,
@@ -304,7 +304,7 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
                       'filephotopath': myimageUrl,
                     };
                     Map<String, dynamic> dataru = {
-                     'id': id.text,
+                      'id': id.text,
                       'title': teTitleRu.text,
                       'description': teDescriptionRu.text,
                       'xCoordinate': xCoordinateInt,

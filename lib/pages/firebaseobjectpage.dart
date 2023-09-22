@@ -56,13 +56,14 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
           child: DefaultTextStyle(
             style: whiteTextStyle,
             child: Container(
-              color: Colors.amber,
+              color: Colors.white,
               child: ListView(
                 children: <Widget>[
                   Container(
                     height: MediaQuery.of(context).size.height - 163,
                     child: ListView(
                       children: <Widget>[
+                        MyPhotoCont(selectedKey: widget.selectedKey),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
@@ -70,7 +71,6 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
                             //MyPhotoCont(),
                           ],
                         ),
-                        MyPhotoCont(selectedKey: widget.selectedKey),
                         MyOverviews(selectedKey: widget.selectedKey),
                       ],
                     ),
@@ -90,7 +90,7 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
           children: [
             Padding(
               padding: const EdgeInsets.only(
-                top: 0,
+                top: 70,
                 left: 0,
                 right: 0.0,
                 bottom: 0.0,
@@ -143,7 +143,11 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
             ),
             Padding(
               padding: const EdgeInsets.only(
-                  left: 0.0, bottom: 0.0, right: 0, top: 0),
+                left: 0.0,
+                bottom: 0.0,
+                right: 0,
+                top: 70,
+              ),
               child: FloatingActionButton(
                 onPressed: () async {
                   await Navigator.push(
@@ -356,11 +360,40 @@ class MyOverviewsState extends State<MyOverviews> {
         print("discripWidgetsEmpty $discripWidgetsEmpty");
 
         return Container(
-          color: Colors.amber,
-          child: Text(
-            displayedText, // Make sure the value is not null
-            style: whiteTextStyle,
-            textAlign: TextAlign.justify,
+          child: Column(
+            children: [
+              Container(
+                alignment: Alignment.topLeft,
+                padding: const EdgeInsets.only(
+                  left: 10,
+                  bottom: 0,
+                  top: 10,
+                  right: 0,
+                ),
+                child: Text(
+                  "description".tr(),
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 14.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.only(
+                  left: 10,
+                  bottom: 0,
+                  top: 10,
+                  right: 10,
+                ),
+                color: Colors.white,
+                child: Text(
+                  displayedText, // Make sure the value is not null
+                  style: TextStyle(fontSize: 15, color: Colors.black),
+                  textAlign: TextAlign.justify,
+                ),
+              ),
+            ],
           ),
         );
       },
@@ -475,8 +508,8 @@ class _MySearchState extends State<mySearch> {
                       if (keywordTextObj.text != '') {
                         return takeSearchFirebasePage(
                             // resList: resList,
-                            mykeyword: keywordTextObj.text, 
-                           takekeywordText: keywordTextObj);
+                            mykeyword: keywordTextObj.text,
+                            takekeywordText: keywordTextObj);
                       } else {
                         return HomePage();
                       }
@@ -678,20 +711,116 @@ class _MyTextContState extends State<MyTextCont> {
         print("titleWidgetsEmpty $titleWidgetsEmpty");
 
         return Container(
-          width: 350,
-          alignment: Alignment.center,
-          color: Colors.amber,
-          child: Container(
-            margin:
-                const EdgeInsets.only(left: 0, right: 0, top: 10, bottom: 10),
-            color: Colors.amber,
-            child: Text(
-              titledisplayedText,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 20,
-                color: Colors.black,
-              ),
+          child: Padding(
+            padding: const EdgeInsets.only(left: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  child: Column(
+                    children: [
+                      Container(
+                        //decoration: BoxDecoration(color: Colors.green),
+                        // padding: const EdgeInsets.only(left: 5),
+                        alignment: Alignment.topLeft,
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Container(
+                                //decoration: BoxDecoration(color: Colors.red),
+                                padding: const EdgeInsets.only(
+                                  left: 0,
+                                  bottom: 0,
+                                  top: 0,
+                                  right: 0,
+                                ),
+                                child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment
+                                        .start, // Выровнять текст влево
+                                    children: [
+                                      Text(
+                                        titledisplayedText,
+                                        style: TextStyle(
+                                            fontSize: 20, color: Colors.black),
+                                      ),
+                                    ]),
+                              ),
+                            ),
+                            Container(
+                              // decoration: BoxDecoration(color: Colors.amber),
+                              padding: const EdgeInsets.only(
+                                left: 50,
+                                bottom: 15,
+                                top: 0,
+                                right: 0,
+                              ),
+                              child: Row(
+                                children: [
+                                  IconButton(
+                                    padding: const EdgeInsets.only(
+                                      left: 0,
+                                      bottom: 0,
+                                      top: 0,
+                                      right: 0,
+                                    ),
+                                    onPressed: () {},
+                                    icon: Icon(Icons.bookmark_add),
+                                  ),
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.share_outlined,
+                                      color: Colors.green,
+                                    ),
+                                    onPressed: () {
+                                      // Действие при нажатии на иконку "bookmark_add"
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        //decoration: BoxDecoration(color: Colors.red),
+                        padding: const EdgeInsets.only(
+                          left: 0,
+                          bottom: 0,
+                          top: 0,
+                          right: 0,
+                        ),
+                        child: Row(children: [
+                          Icon(
+                            Icons.star_border,
+                            color: Colors.green,
+                            size: 24,
+                          ),
+                          Icon(
+                            Icons.star_border,
+                            color: Colors.green,
+                            size: 24,
+                          ),
+                          Icon(
+                            Icons.star_border,
+                            color: Colors.green,
+                            size: 24,
+                          ),
+                          Icon(
+                            Icons.star_border,
+                            color: Colors.green,
+                            size: 24,
+                          ),
+                          Icon(
+                            Icons.star_border,
+                            color: Colors.green,
+                            size: 24,
+                          ),
+                        ]),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
         );
@@ -880,25 +1009,28 @@ class _MyPhotoContState extends State<MyPhotoCont> {
         print("photoWidgetsEmpty $photoWidgetsEmpty");
 
         print(photoDisplayed);
-        return Container(
-          height: 150,
-          width: 340,
-          child: Card(
-            margin:
-                const EdgeInsets.only(left: 0, right: 0, top: 0, bottom: 10),
-            elevation: 5,
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(0),
-                image: DecorationImage(
-                  image: AssetImage('lib/assets/images/mavzoley_yasavi.jpg'),
-                  fit: BoxFit.cover,
+        return Padding(
+          padding: EdgeInsets.only(top: 0),
+          child: Container(
+            height: 160,
+            width: 340,
+            child: Card(
+              margin:
+                  const EdgeInsets.only(left: 0, right: 0, top: 0, bottom: 10),
+              elevation: 5,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(0),
+                  image: DecorationImage(
+                    image: AssetImage('lib/assets/images/mavzoley_yasavi.jpg'),
+                    fit: BoxFit.cover,
+                  ),
                 ),
+                // child: Image.file(
+                //   File(photoDisplayed),
+                //   fit: BoxFit.cover,
+                // ),
               ),
-              // child: Image.file(
-              //   File(photoDisplayed),
-              //   fit: BoxFit.cover,
-              // ),
             ),
           ),
         );
@@ -1092,31 +1224,29 @@ class MenuTileWidget extends State<MenuTile> {
       );
 }
 
-
-
- // AppBar(
-                  //   elevation: 0,
-                  //   backgroundColor: Color.fromARGB(255, 83, 112, 85),
-                  //   title: Text(
-                  //     'mytitlepage'.tr(),
-                  //     style: TextStyle(
-                  //       fontSize: 18,
-                  //       fontWeight: FontWeight.w600,
-                  //       color: Color.fromARGB(255, 184, 182, 156),
-                  //     ),
-                  //   ),
-                  //   actions: [
-                  //     Padding(
-                  //       padding: const EdgeInsets.only(right: 20),
-                  //       child: DropdownFlag(
-                  //         changedLanguage: (value) {
-                  //           setState(() {
-                  //             currentSelectedKey =
-                  //                 value; // Обновляем текущий выбранный ключ
-                  //             context.setLocale(Locale((value)));
-                  //           });
-                  //         },
-                  //       ),
-                  //     ),
-                  //   ],
-                  // ),
+// AppBar(
+//   elevation: 0,
+//   backgroundColor: Color.fromARGB(255, 83, 112, 85),
+//   title: Text(
+//     'mytitlepage'.tr(),
+//     style: TextStyle(
+//       fontSize: 18,
+//       fontWeight: FontWeight.w600,
+//       color: Color.fromARGB(255, 184, 182, 156),
+//     ),
+//   ),
+//   actions: [
+//     Padding(
+//       padding: const EdgeInsets.only(right: 20),
+//       child: DropdownFlag(
+//         changedLanguage: (value) {
+//           setState(() {
+//             currentSelectedKey =
+//                 value; // Обновляем текущий выбранный ключ
+//             context.setLocale(Locale((value)));
+//           });
+//         },
+//       ),
+//     ),
+//   ],
+// ),
