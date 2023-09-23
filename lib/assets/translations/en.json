@@ -5,5 +5,8 @@
     "myQR":"QR",
     "searchword": "search...",
     "details": "Details",
-    "description": "Description"
+    "description": "Description",
+    "save": "Save",
+    "play": "Play",
+    "pause": "Pause"
 }

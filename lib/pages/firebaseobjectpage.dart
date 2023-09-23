@@ -9,6 +9,7 @@ import 'package:mausoleum/api/yandexmap/map_controls_page.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:mausoleum/api/dropdawn_flag/dropdawn_flag.dart';
 import 'package:path/path.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 class ObjectFirebasePage extends StatefulWidget {
   final String selectedKey; // Добавьте параметр для выбранного ключа
@@ -60,7 +61,7 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
               child: ListView(
                 children: <Widget>[
                   Container(
-                    height: MediaQuery.of(context).size.height - 163,
+                    height: MediaQuery.of(context).size.height - 125,
                     child: ListView(
                       children: <Widget>[
                         MyPhotoCont(selectedKey: widget.selectedKey),
@@ -71,6 +72,7 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
                             //MyPhotoCont(),
                           ],
                         ),
+                        MusicPlayerWidget(),
                         MyOverviews(selectedKey: widget.selectedKey),
                       ],
                     ),
@@ -173,6 +175,145 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       ),
+    );
+  }
+}
+
+class MusicPlayerWidget extends StatefulWidget {
+  @override
+  _MusicPlayerWidgetState createState() => _MusicPlayerWidgetState();
+}
+
+class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
+  AudioPlayer audioPlayer = AudioPlayer();
+  String audioUrl =
+      'https://example.com/your_audio_file.mp3'; // Укажите URL вашей аудиозаписи
+
+  bool isPlaying = false;
+  double currentPosition = 0.0;
+  double totalDuration = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    audioPlayer.onPlayerStateChanged.listen((state) {
+      if (state == audioPlayer) {
+        setState(() {
+          isPlaying = true;
+        });
+      } else {
+        setState(() {
+          isPlaying = false;
+        });
+      }
+    });
+
+    audioPlayer.onDurationChanged.listen((Duration duration) {
+      setState(() {
+        totalDuration = duration.inMilliseconds.toDouble();
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    audioPlayer.dispose();
+    super.dispose();
+  }
+
+  void playMusic() async {
+    await audioPlayer.play;
+  }
+
+  void pauseMusic() async {
+    await audioPlayer.pause();
+  }
+
+  void seekTo(double milliseconds) {
+    Duration newPosition = Duration(milliseconds: milliseconds.toInt());
+    audioPlayer.seek(newPosition);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Container(
+          padding: EdgeInsets.only(
+            bottom: 0,
+          ),
+          decoration: BoxDecoration(
+            border: Border(
+              top: BorderSide(
+                color: Colors.green, // Цвет верхней границы
+                width: 1.0, // Ширина верхней границы
+              ),
+            ),
+          ),
+          child: Column(children: [
+            SliderTheme(
+              data: SliderTheme.of(context).copyWith(
+                trackHeight: 7.0, // Уменьшаем высоту ползунка
+                activeTrackColor: Colors
+                    .green, // Устанавливаем зеленый цвет для активной части
+              ),
+              child: Slider(
+                value: currentPosition,
+                min: 0,
+                max: totalDuration,
+                onChanged: (double value) {
+                  seekTo(value);
+                },
+              ),
+            )
+          ]),
+        ),
+        Container(
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(
+                color: Colors.green, // Цвет верхней границы
+                width: 1.0,
+              ),
+            ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  // Добавьте функциональность для второй кнопки
+                },
+                child: Text("save".tr()),
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.circular(10), // Настройте форму кнопки
+                  ),
+                ),
+              ),
+              SizedBox(width: 25),
+              ElevatedButton(
+                onPressed: () {
+                  if (isPlaying) {
+                    pauseMusic();
+                  } else {
+                    playMusic();
+                  }
+                },
+                child: Text(isPlaying ? "pause".tr() : "play".tr()),
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.circular(10), // Настройте форму кнопки
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
@@ -785,8 +926,8 @@ class _MyTextContState extends State<MyTextCont> {
                         //decoration: BoxDecoration(color: Colors.red),
                         padding: const EdgeInsets.only(
                           left: 0,
-                          bottom: 0,
-                          top: 0,
+                          bottom: 5,
+                          top: 5,
                           right: 0,
                         ),
                         child: Row(children: [

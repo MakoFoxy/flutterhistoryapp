@@ -5,5 +5,8 @@
     "myQR":"QR",
     "searchword": "пойск...",
     "details": "Подробнее",
-    "description": "Описание"
+    "description": "Описание",
+    "save": "Скачать",
+    "play": "Воспроизвести",
+    "pause": "Пауза"
 }
