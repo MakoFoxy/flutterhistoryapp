@@ -57,7 +57,8 @@ class MapControlsExampleState extends State<MapControlsExample> {
 
   int? poiLimit;
 
-  final String style = '''
+  final String style =
+      '''
     [
       {
         "tags": {
@@ -78,99 +79,103 @@ class MapControlsExampleState extends State<MapControlsExample> {
   @override
   Widget build(BuildContext context) {
     return Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Expanded(
-              child: YandexMap(
-            nightModeEnabled: nightModeEnabled,
-            poiLimit: poiLimit,
-            mapObjects: mapObjects,
-            onMapCreated: (YandexMapController yandexMapController) async {
-              controller = yandexMapController;
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        Expanded(
+            child: YandexMap(
+          nightModeEnabled: nightModeEnabled,
+          poiLimit: poiLimit,
+          mapObjects: mapObjects,
+          onMapCreated: (YandexMapController yandexMapController) async {
+            controller = yandexMapController;
 
-              final cameraPosition = await controller.getCameraPosition();
-              final minZoom = await controller.getMinZoom();
-              final maxZoom = await controller.getMaxZoom();
+            final cameraPosition = await controller.getCameraPosition();
+            final minZoom = await controller.getMinZoom();
+            final maxZoom = await controller.getMaxZoom();
 
-              print('Camera position: $cameraPosition');
-              print('Min zoom: $minZoom, Max zoom: $maxZoom');
-            },
-            onMapTap: (Point point) async {
-              print('Tapped map at $point');
+            print('Camera position: $cameraPosition');
+            print('Min zoom: $minZoom, Max zoom: $maxZoom');
+          },
+          onMapTap: (Point point) async {
+            print('Tapped map at $point');
 
-              await controller.deselectGeoObject();
-            },
-            onMapLongTap: (Point point) => print('Long tapped map at $point'),
-            onCameraPositionChanged: (CameraPosition cameraPosition,
-                CameraUpdateReason reason, bool finished) {
-              print('Camera position: $cameraPosition, Reason: $reason');
+            await controller.deselectGeoObject();
+          },
+          onMapLongTap: (Point point) => print('Long tapped map at $point'),
+          onCameraPositionChanged: (CameraPosition cameraPosition,
+              CameraUpdateReason reason, bool finished) {
+            print('Camera position: $cameraPosition, Reason: $reason');
 
-              if (finished) {
-                print('Camera position movement has been finished');
-              }
-            },
-            onObjectTap: (GeoObject geoObject) async {
-              print('Tapped object: ${geoObject.name}');
+            if (finished) {
+              print('Camera position movement has been finished');
+            }
+          },
+          onObjectTap: (GeoObject geoObject) async {
+            print('Tapped object: ${geoObject.name}');
 
-              if (geoObject.selectionMetadata != null) {
-                await controller.selectGeoObject(
-                    geoObject.selectionMetadata!.id,
-                    geoObject.selectionMetadata!.layerId);
-              }
-            },
-          )),
-          Container(
-            decoration: const BoxDecoration(
-              color: Colors.white,
+            if (geoObject.selectionMetadata != null) {
+              await controller.selectGeoObject(geoObject.selectionMetadata!.id,
+                  geoObject.selectionMetadata!.layerId);
+            }
+          },
+        )),
+        Container(
+          width: double.infinity,
+          decoration: const BoxDecoration(
+            color: Colors.white,
+          ),
+          child: SingleChildScrollView(
+            child: Table(
+              children: <TableRow>[
+                TableRow(
+                  children: <Widget>[
+                    Container(
+                      child: Column(
+                        children: [
+                          Container(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: () async {
+                                await controller.moveCamera(
+                                  CameraUpdate.newCameraPosition(
+                                    CameraPosition(target: _point),
+                                  ),
+                                  animation: animation,
+                                );
+                              },
+                              child: Icon(
+                                Icons.place, // Здесь выберите нужную иконку
+                                // Другие параметры для настройки иконки, такие как размер и цвет
+                              ),
+                            ),
+                          ),
+                          Container(
+                            width: double.infinity,
+                            child: ElevatedButton.icon(
+                              onPressed: () async {
+                                setState(() {
+                                  nightModeEnabled = !nightModeEnabled;
+                                });
+                              },
+                              icon: Icon(
+                                Icons
+                                    .mode_night, // Здесь выберите нужную иконку
+                                // Другие параметры для настройки иконки, такие как размер и цвет
+                              ),
+                              label: SizedBox.shrink(), // Текст кнопки
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-            child: SingleChildScrollView(
-              child: Table(
-                children: <TableRow>[
-                  TableRow(
-                    children: <Widget>[
-                      ControlButton(
-                        onPressed: () async {
-                          await controller.moveCamera(
-                            CameraUpdate.newCameraPosition(
-                                CameraPosition(target: _point)),
-                            animation: animation,
-                          );
-                        },
-                        title: 'My place',
-                      ),
-                      ControlButton(
-                        onPressed: () async {
-                          setState(() {
-                            nightModeEnabled = !nightModeEnabled;
-                          });
-                        },
-                        title: 'Night mode: ${_enabledText(nightModeEnabled)}',
-                      ),
-                    ],
-                  ),
-                  TableRow(
-                    children: <Widget>[
-                      ControlButton(
-                        onPressed: () async {
-                          await controller.moveCamera(CameraUpdate.zoomIn(),
-                              animation: animation);
-                        },
-                        title: 'Zoom in',
-                      ),
-                      ControlButton(
-                        onPressed: () async {
-                          await controller.moveCamera(CameraUpdate.zoomOut(),
-                              animation: animation);
-                        },
-                        title: 'Zoom out',
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          )
-        ]);
+          ),
+        ),
+      ],
+    );
   }
 }
