@@ -145,8 +145,7 @@ class MapControlsExampleState extends State<MapControlsExample> {
                                 );
                               },
                               child: Icon(
-                                Icons.place, // Здесь выберите нужную иконку
-                                // Другие параметры для настройки иконки, такие как размер и цвет
+                                Icons.place, 
                               ),
                             ),
                           ),
