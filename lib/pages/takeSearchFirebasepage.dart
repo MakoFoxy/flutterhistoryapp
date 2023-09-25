@@ -23,6 +23,14 @@ class _ApptakeSearchPage extends State<takeSearchFirebasePage> {
   int _backPressCount = 0;
   final whiteTexstStyle = TextStyle(color: Colors.white, fontSize: 24);
 
+  List<dynamic> onResultListChanged = [];
+
+  void handleResultListChanged(List<dynamic> resultList) {
+    setState(() {
+      onResultListChanged = resultList;
+    });
+  }
+
   String imageUrl = 'lib/assets/images/backgroundImages.jpg';
   @override
   Widget build(BuildContext context) {
@@ -46,6 +54,15 @@ class _ApptakeSearchPage extends State<takeSearchFirebasePage> {
         }
       },
       child: Scaffold(
+        appBar: PreferredSize(
+          preferredSize:
+              Size.fromHeight(kToolbarHeight), // Set your preferred height here
+          child: MyAppBar(
+            onResultListChanged: handleResultListChanged,
+            mykeywordpage: widget.mykeyword,
+            takekeywordTextpage: widget.takekeywordText,
+          ), // Use your custom app bar
+        ),
         body: SafeArea(
           child: DefaultTextStyle.merge(
             style: whiteTexstStyle,
@@ -66,30 +83,30 @@ class _ApptakeSearchPage extends State<takeSearchFirebasePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                     ),
                   ),
-                  AppBar(
-                    elevation: 0,
-                    backgroundColor: Color.fromARGB(255, 83, 112, 85),
-                    title: Text(
-                      'mytitlepage'.tr(),
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: Color.fromARGB(255, 184, 182, 156),
-                      ),
-                    ),
-                    actions: [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 20),
-                        child: DropdownFlag(
-                          changedLanguage: (value) {
-                            setState(() {
-                              context.setLocale(Locale((value)));
-                            });
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
+                  // AppBar(
+                  //   elevation: 0,
+                  //   backgroundColor: Color.fromARGB(255, 83, 112, 85),
+                  //   title: Text(
+                  //     'mytitlepage'.tr(),
+                  //     style: TextStyle(
+                  //       fontSize: 18,
+                  //       fontWeight: FontWeight.w600,
+                  //       color: Color.fromARGB(255, 184, 182, 156),
+                  //     ),
+                  //   ),
+                  //   actions: [
+                  //     Padding(
+                  //       padding: const EdgeInsets.only(right: 20),
+                  //       child: DropdownFlag(
+                  //         changedLanguage: (value) {
+                  //           setState(() {
+                  //             context.setLocale(Locale((value)));
+                  //           });
+                  //         },
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
                   Container(
                     height: MediaQuery.of(context).size.height - 145,
                     padding: const EdgeInsets.only(left: 0, right: 0),
@@ -100,12 +117,7 @@ class _ApptakeSearchPage extends State<takeSearchFirebasePage> {
                       ),
                     ),
                     child: MyTakePage(
-                      mykeywordpage: widget.mykeyword,
-                      takekeywordTextpage: widget.takekeywordText,
-                      backgroundImage: DecorationImage(
-                        image: AssetImage(imageUrl),
-                        fit: BoxFit.cover,
-                      ),
+                      resultListHome: onResultListChanged,
                     ),
                   ),
                   Container(
@@ -122,14 +134,87 @@ class _ApptakeSearchPage extends State<takeSearchFirebasePage> {
   }
 }
 
-class MyTakePage extends StatefulWidget {
+class MyAppBar extends StatefulWidget {
+  final ValueChanged<List<dynamic>> onResultListChanged;
   String mykeywordpage;
   TextEditingController takekeywordTextpage;
-  final DecorationImage backgroundImage;
 
-  MyTakePage(
-      {required this.backgroundImage, required this.mykeywordpage, required this.takekeywordTextpage, Key? key})
+  MyAppBar(
+      {required this.mykeywordpage,
+      required this.takekeywordTextpage,
+      required this.onResultListChanged,
+      Key? key})
       : super(key: key);
+
+  @override
+  State<MyAppBar> createState() => _MyAppBarState();
+}
+
+class _MyAppBarState extends State<MyAppBar> {
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      iconTheme: IconThemeData(color: Colors.grey),
+      backgroundColor: Colors.white,
+      automaticallyImplyLeading: false,
+      actions: <Widget>[
+        SizedBox(
+          width: 10, // Устанавливаем отступ сверху
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 0),
+          child: SizedBox(
+            width: 160,
+            child: FutureBuilder(
+              builder: (context, snapshot) {
+                return FirebaseSearch(
+                  onResultListChanged: widget.onResultListChanged,
+                  mykeywordpagenow: widget.mykeywordpage,
+                  keywordText: widget.takekeywordTextpage,
+                );
+              },
+              future: Future.delayed(const Duration(seconds: 1)),
+            ),
+          ),
+        ),
+        IconButton(
+          padding: const EdgeInsets.only(left: 0),
+          onPressed: () {},
+          icon: Icon(Icons.bookmark_add),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(right: 10),
+          child: DropdownFlag(
+            changedLanguage: (value) {
+              setState(() {
+                context.setLocale(Locale((value)));
+              });
+            },
+          ),
+        ),
+      ],
+      leading: Builder(
+        builder: (context) {
+          return Padding(
+            padding: const EdgeInsets.only(
+                right: 20.0), // Устанавливаем отступ слева
+            child: IconButton(
+              icon: Icon(Icons.menu),
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class MyTakePage extends StatefulWidget {
+  final List<dynamic> resultListHome;
+
+  MyTakePage({required this.resultListHome, Key? key}) : super(key: key);
   @override
   MyTakePageState createState() => MyTakePageState();
 }
@@ -147,22 +232,15 @@ class MyTakePageState extends State<MyTakePage> {
       body: Stack(
         children: [
           Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('lib/assets/images/backgroundImages.jpg'),
-                fit: BoxFit.cover,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height -
+                    0, // appBarHeight - это высота вашего AppBar
               ),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5),
-              child: FutureBuilder(
-                builder: (context, snapshot) {
-                  return FirebaseSearch(
-                    mykeywordpagenow: widget.mykeywordpage,
-                    keywordText: widget.takekeywordTextpage,
-                  );
-                },
-                future: Future.delayed(const Duration(seconds: 1)),
+              child: Column(
+                children: [
+                  streamBuildHome(resultList: widget.resultListHome),
+                ],
               ),
             ),
           ),
@@ -267,10 +345,16 @@ class MyTakePageState extends State<MyTakePage> {
 }
 
 class FirebaseSearch extends StatefulWidget {
+  final ValueChanged<List<dynamic>>
+      onResultListChanged; // Изменили тип на ValueChanged
+
   String mykeywordpagenow;
   TextEditingController keywordText; // Добавьте это поле
   FirebaseSearch(
-      {required this.mykeywordpagenow, required this.keywordText, Key? key})
+      {required this.mykeywordpagenow,
+      required this.keywordText,
+      required this.onResultListChanged,
+      Key? key})
       : super(key: key);
 
   // const FirebaseSearch({Key? key}) : super(key: key);
@@ -320,6 +404,8 @@ class FirebaseSearchWidget extends State<FirebaseSearch>
     setState(() {
       resultList = showRes;
     });
+
+    widget.onResultListChanged(resultList);
   }
 
   getClientStream() async {
@@ -410,19 +496,19 @@ class FirebaseSearchWidget extends State<FirebaseSearch>
           ),
         ),
         // Mausoleum(),
-        SingleChildScrollView(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              maxHeight: MediaQuery.of(context).size.height -
-                  228, // appBarHeight - это высота вашего AppBar
-            ),
-            child: ListView(
-              children: [
-                streamBuild(resultList: resultList),
-              ],
-            ),
-          ),
-        ),
+        // SingleChildScrollView(
+        //   child: ConstrainedBox(
+        //     constraints: BoxConstraints(
+        //       maxHeight: MediaQuery.of(context).size.height -
+        //           228, // appBarHeight - это высота вашего AppBar
+        //     ),
+        //     child: ListView(
+        //       children: [
+        //         streamBuild(resultList: resultList),
+        //       ],
+        //     ),
+        //   ),
+        // ),
       ],
     );
   }
@@ -546,6 +632,186 @@ class streamBuild extends StatelessWidget {
             }).toList(),
           );
         }
+      },
+    );
+  }
+}
+
+class streamBuildHome extends StatelessWidget {
+  List<dynamic> resultList;
+
+  streamBuildHome({
+    required this.resultList,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    late Stream<QuerySnapshot<Map<String, dynamic>>> datastream;
+    if (Localizations.localeOf(context).languageCode == 'kk') {
+      datastream = FirebaseFirestore.instance.collection('datakz').snapshots();
+    } else if (Localizations.localeOf(context).languageCode == 'ru') {
+      datastream = FirebaseFirestore.instance.collection('dataru').snapshots();
+    } else if (Localizations.localeOf(context).languageCode == 'en') {
+      datastream = FirebaseFirestore.instance.collection('dataen').snapshots();
+    }
+
+    return StreamBuilder<QuerySnapshot>(
+      stream: datastream,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator();
+        }
+        if (snapshot.hasError) {
+          return Text('Error');
+        }
+        if (!snapshot.hasData || snapshot.data == null) {
+          return Text('No data');
+        }
+
+        if (resultList != "") {
+          return Container(
+            decoration: BoxDecoration(
+              border: Border.all(
+                  color: Colors.greenAccent), // Устанавливаем красную границу
+            ),
+            child: Column(
+              children: resultList.map((data) {
+                final doc = data.data() as Map<String, dynamic>;
+                return Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                        color: Colors.green), // Устанавливаем красную границу
+                  ),
+                  child: Column(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.only(
+                          left: 10,
+                          top: 0,
+                          bottom: 0,
+                          right: 0,
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              // decoration: BoxDecoration(
+                              //   border: Border.all(
+                              //     color: Colors.red,
+                              //   ),
+                              // ),
+                              child: Image.asset(
+                                'lib/assets/images/mavzoley_yasavi.jpg',
+                                width: 150,
+                                height: 120,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            SizedBox(width: 10.0),
+                            Expanded(
+                              // Используем Expanded для текста и кнопки
+                              child: Container(
+                                padding: const EdgeInsets.only(
+                                  left: 0,
+                                  top: 0,
+                                  right: 0,
+                                  bottom: 0,
+                                ),
+                                // decoration: BoxDecoration(
+                                //   border: Border.all(
+                                //     color: Colors.red,
+                                //   ),
+                                // ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment
+                                      .center, // Выравнивание текста по левому краю
+                                  children: [
+                                    Text(
+                                      doc['title'],
+                                      style: TextStyle(
+                                        fontSize: 18.0,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      softWrap: true,
+                                      //overflow: TextOverflow.ellipsis,
+                                    ),
+                                    SizedBox(
+                                      height: 43,
+                                    ),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                ObjectFirebasePage(
+                                              selectedKey: doc['id'],
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        padding: EdgeInsets.all(0),
+                                      ),
+                                      child: Container(
+                                        width: double
+                                            .infinity, // Разрешаем кнопке занимать всю ширину
+                                        alignment: Alignment
+                                            .topCenter, // Выравнивание текста по центру
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 8,
+                                            horizontal:
+                                                0), // Отступы для текста кнопки
+                                        child: Text(
+                                          "details".tr(),
+                                          style: TextStyle(
+                                            fontSize: 14.0,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.only(
+                                left: 0,
+                                bottom: 10,
+                                top: 0,
+                                right: 10,
+                              ),
+                              height: 25,
+                              width: 25,
+                              // decoration: BoxDecoration(
+                              //   border: Border.all(
+                              //       color: Colors
+                              //           .red), // Устанавливаем красную границу
+                              // ),
+                              child: IconButton(
+                                padding: const EdgeInsets.only(
+                                  left: 0,
+                                  bottom: 10,
+                                  top: 0,
+                                  right: 10,
+                                ),
+                                onPressed: () {},
+                                icon: Icon(Icons.bookmark_add),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }).toList(), // Convert the mapped items to a list
+            ),
+          );
+        }
+        return Container();
       },
     );
   }
