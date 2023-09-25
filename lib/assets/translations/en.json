@@ -8,5 +8,6 @@
     "description": "Description",
     "save": "Save",
     "play": "Play",
-    "pause": "Pause"
+    "pause": "Pause",
+    "qr-scanner": "Scan the qr code"
 }

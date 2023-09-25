@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:mausoleum/pages/qroverlay.dart';
 import 'package:mausoleum/pages/qrobjectpage.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 const bgColor = Colors.white;
 
@@ -34,7 +35,7 @@ class _QrScannerState extends State<QrScanner> {
     return Scaffold(
       backgroundColor: bgColor,
       appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.black87),
+        iconTheme: IconThemeData(color: Colors.white),
         centerTitle: true,
         title: const Text(
           "QR Scanner",
@@ -55,7 +56,7 @@ class _QrScannerState extends State<QrScanner> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: const [
                   Text(
-                    "QR кодын сканерлеңіз",
+                    "use QR code",
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 18,
@@ -66,40 +67,62 @@ class _QrScannerState extends State<QrScanner> {
                 ],
               ),
             ),
-            Stack(
-              children: [
-                SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height - 250,
-                  child: MobileScanner(
-                    controller: MobileScannerController(
-                      detectionSpeed: DetectionSpeed.normal,
-                      facing: CameraFacing.back,
-                      torchEnabled: false,
-                      autoStart: true,
+            SizedBox(
+              height: 10,
+            ),
+            SizedBox(
+              width: double
+                  .infinity, // Установите ширину по максимальной доступной ширине
+              height: MediaQuery.of(context).size.height - 310,
+              child: Stack(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: 15.0,
+                        vertical:
+                            0), // Установите необходимые значения отступов
+                    child: SizedBox(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(
+                              16.0), // Здесь устанавливаем радиус скругления углов
+                          border: Border.all(
+                            color: Colors.white, // Цвет рамки
+                            width: 2.0, // Ширина рамки
+                          ),
+                        ),
+                        child: MobileScanner(
+                          controller: MobileScannerController(
+                            detectionSpeed: DetectionSpeed.normal,
+                            facing: CameraFacing.back,
+                            torchEnabled: false,
+                            autoStart: true,
+                          ),
+                          onDetect: (capture) {
+                            //closeScreen();
+                            final List<Barcode> barcodes = capture.barcodes;
+                            for (final barcode in barcodes) {
+                              if (isScanComplated == false &&
+                                  selectedKey != barcode.rawValue) {
+                                selectedKey = barcode.rawValue ?? '---';
+                                isScanComplated = true;
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        QRobjectpage(selectedKey: selectedKey),
+                                  ),
+                                );
+                              }
+                            }
+                          },
+                        ),
+                      ),
                     ),
-                    onDetect: (capture) {
-                      //closeScreen();
-                      final List<Barcode> barcodes = capture.barcodes;
-                      for (final barcode in barcodes) {
-                        if (isScanComplated == false &&
-                            selectedKey != barcode.rawValue) {
-                          selectedKey = barcode.rawValue ?? '---';
-                          isScanComplated = true;
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  QRobjectpage(selectedKey: selectedKey),
-                            ),
-                          );
-                        }
-                      }
-                    },
                   ),
-                ),
-                const QRScannerOverlay(overlayColour: bgColor),
-              ],
+                  const QRScannerOverlay(overlayColour: bgColor),
+                ],
+              ),
             ),
             SizedBox(
               height: MediaQuery.of(context).size.height / 6,
