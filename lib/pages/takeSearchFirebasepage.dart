@@ -109,7 +109,7 @@ class _ApptakeSearchPage extends State<takeSearchFirebasePage> {
                   // ),
                   Container(
                     height: MediaQuery.of(context).size.height - 126,
-                    padding: const EdgeInsets.only(left: 0, right: 0),              
+                    padding: const EdgeInsets.only(left: 0, right: 0),
                     child: MyTakePage(
                       resultListHome: onResultListChanged,
                     ),
@@ -258,21 +258,6 @@ class MyTakePageState extends State<MyTakePage> {
             ),
           ),
           Positioned(
-            right: 120,
-            bottom: 0,
-            child: FloatingActionButton(
-              onPressed: () async {
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => QrScanner(),
-                  ),
-                );
-              },
-              child: const Icon(Icons.qr_code_scanner),
-            ),
-          ),
-          Positioned(
             left: 20,
             bottom: 0,
             child: FloatingActionButton(
@@ -311,25 +296,6 @@ class MyTakePageState extends State<MyTakePage> {
                 });
               },
               child: const Icon(Icons.delete),
-            ),
-          ),
-          Positioned(
-            right: 80,
-            bottom: 0,
-            child: FloatingActionButton(
-              onPressed: () async {
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => MapControlsPage(
-                      id: "Қожа Ахмет Ясауи кесенесі",
-                      selectedX: 43.29785383147346,
-                      selectedY: 68.27119119202341,
-                    ),
-                  ),
-                );
-              },
-              child: const Icon(Icons.map),
             ),
           ),
         ],
