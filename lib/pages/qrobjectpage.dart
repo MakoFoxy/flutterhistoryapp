@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:mausoleum/pages/homepage.dart';
-import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mausoleum/pages/editFirebasePages.dart';
 import 'package:mausoleum/pages/takeSearchFirebasepage.dart';
@@ -8,14 +7,12 @@ import 'package:mausoleum/pages/qrscanner.dart';
 import 'package:mausoleum/api/yandexmap/map_controls_page.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:mausoleum/api/dropdawn_flag/dropdawn_flag.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 class QRobjectpage extends StatefulWidget {
   final String selectedKey; // Добавьте параметр для выбранного ключа
-  final Function() closeScreen;
 
   QRobjectpage({
-    super.key,
-    required this.closeScreen,
     required this.selectedKey,
   });
 
@@ -50,44 +47,23 @@ class QRobjectpageState extends State<QRobjectpage> {
         }
       },
       child: Scaffold(
+        appBar: PreferredSize(
+          preferredSize:
+              Size.fromHeight(kToolbarHeight), // Set your preferred height here
+          child: MyAppBar(), // Use your custom app bar
+        ),
         body: SafeArea(
           child: DefaultTextStyle(
             style: whiteTextStyle,
             child: Container(
-              color: Colors.amber,
+              color: Colors.white,
               child: ListView(
                 children: <Widget>[
-                  AppBar(
-                    elevation: 0,
-                    backgroundColor: Color.fromARGB(255, 83, 112, 85),
-                    title: Text(
-                      'mytitlepage'.tr(),
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: Color.fromARGB(255, 184, 182, 156),
-                      ),
-                    ),
-                    actions: [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 20),
-                        child: DropdownFlag(
-                          changedLanguage: (value) {
-                            setState(() {
-                              currentSelectedKey =
-                                  value; // Обновляем текущий выбранный ключ
-                              context.setLocale(Locale((value)));
-                            });
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                  mySearch(),
                   Container(
-                    height: MediaQuery.of(context).size.height - 163,
+                    height: MediaQuery.of(context).size.height - 125,
                     child: ListView(
                       children: <Widget>[
+                        MyPhotoCont(selectedKey: widget.selectedKey),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
@@ -95,11 +71,11 @@ class QRobjectpageState extends State<QRobjectpage> {
                             //MyPhotoCont(),
                           ],
                         ),
-                        MyPhotoCont(selectedKey: widget.selectedKey),
+                        MusicPlayerWidget(),
                         MyOverviews(selectedKey: widget.selectedKey),
                       ],
                     ),
-                  ),               
+                  ),
                   Container(
                     child: MenuTile(
                       selectedKey: widget.selectedKey,
@@ -114,7 +90,7 @@ class QRobjectpageState extends State<QRobjectpage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Padding(
-              padding: const EdgeInsets.only(left: 50.0, bottom: 0.0),
+              padding: const EdgeInsets.only(left: 0.0, bottom: 0.0),
               child: FloatingActionButton(
                 onPressed: () async {
                   late String keyforedit;
@@ -152,7 +128,6 @@ class QRobjectpageState extends State<QRobjectpage> {
                       ),
                     ),
                   );
-                  await widget.closeScreen();
                 },
                 mini:
                     true, // Установите mini: true для уменьшения размера кнопки
@@ -164,7 +139,7 @@ class QRobjectpageState extends State<QRobjectpage> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(right: 50.0, bottom: 0.0),
+              padding: const EdgeInsets.only(right: 0.0, bottom: 0.0),
               child: FloatingActionButton(
                 onPressed: () async {
                   Navigator.push(
@@ -213,6 +188,68 @@ class QRobjectpageState extends State<QRobjectpage> {
           ],
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      ),
+    );
+  }
+}
+
+class MyAppBar extends StatefulWidget {
+  @override
+  State<MyAppBar> createState() => _MyAppBarState();
+}
+
+class _MyAppBarState extends State<MyAppBar> {
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      iconTheme: IconThemeData(color: Colors.grey),
+      backgroundColor: Colors.white,
+      automaticallyImplyLeading: false,
+      actions: <Widget>[
+        SizedBox(
+          width: 10, // Устанавливаем отступ сверху
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 0),
+          child: SizedBox(
+            width: 160,
+            child: FutureBuilder(
+              builder: (context, snapshot) {
+                return mySearchQR();
+              },
+              future: Future.delayed(const Duration(seconds: 1)),
+            ),
+          ),
+        ),
+        IconButton(
+          padding: const EdgeInsets.only(left: 0),
+          onPressed: () {},
+          icon: Icon(Icons.bookmark_add),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(right: 10),
+          child: DropdownFlag(
+            changedLanguage: (value) {
+              setState(() {
+                context.setLocale(Locale((value)));
+              });
+            },
+          ),
+        ),
+      ],
+      leading: Builder(
+        builder: (context) {
+          return Padding(
+            padding: const EdgeInsets.only(
+                right: 20.0), // Устанавливаем отступ слева
+            child: IconButton(
+              icon: Icon(Icons.menu),
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+            ),
+          );
+        },
       ),
     );
   }
@@ -326,10 +363,10 @@ class MyOverviewsState extends State<MyOverviews> {
       discripWidgetsArr.add(discripWidgetsEmpt);
     }
 
-    print("discripWidgetsKz***************${discripWidgetsKz}");
-    print("discripWidgetsEn***************${discripWidgetsEn}");
-    print("discripWidgetsRu***************${discripWidgetsRu}");
-    print("discripWidgetsEmpt***************${discripWidgetsEmpt}");
+    print("discripWidgetsKz***${discripWidgetsKz}");
+    print("discripWidgetsEn***${discripWidgetsEn}");
+    print("discripWidgetsRu***${discripWidgetsRu}");
+    print("discripWidgetsEmpt***${discripWidgetsEmpt}");
     //print("********************\n${discripWidgetsEn.toString()}");
     print("discripWidgetsArr $discripWidgetsArr");
     print("discripWidgetsArr.length ${discripWidgetsArr.length}");
@@ -401,11 +438,40 @@ class MyOverviewsState extends State<MyOverviews> {
         print("discripWidgetsEmpty $discripWidgetsEmpty");
 
         return Container(
-          color: Colors.amber,
-          child: Text(
-            displayedText, // Make sure the value is not null
-            style: whiteTextStyle,
-            textAlign: TextAlign.justify,
+          child: Column(
+            children: [
+              Container(
+                alignment: Alignment.topLeft,
+                padding: const EdgeInsets.only(
+                  left: 10,
+                  bottom: 0,
+                  top: 10,
+                  right: 0,
+                ),
+                child: Text(
+                  "description".tr(),
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 14.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.only(
+                  left: 10,
+                  bottom: 0,
+                  top: 10,
+                  right: 10,
+                ),
+                color: Colors.white,
+                child: Text(
+                  displayedText, // Make sure the value is not null
+                  style: TextStyle(fontSize: 15, color: Colors.black),
+                  textAlign: TextAlign.justify,
+                ),
+              ),
+            ],
           ),
         );
       },
@@ -413,14 +479,14 @@ class MyOverviewsState extends State<MyOverviews> {
   }
 }
 
-class mySearch extends StatefulWidget {
+class mySearchQR extends StatefulWidget {
   @override
-  State<mySearch> createState() => _MySearchState();
+  State<mySearchQR> createState() => _MySearchState();
 }
 
-TextEditingController keyword = TextEditingController();
+class _MySearchState extends State<mySearchQR> {
+  TextEditingController keywordTextObj = TextEditingController();
 
-class _MySearchState extends State<mySearch> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -432,41 +498,40 @@ class _MySearchState extends State<mySearch> {
       ),
       child: Center(
         child: TextField(
-          controller: keyword,
+          controller: keywordTextObj,
           onSubmitted: (value) {
             setState(() {
-              // ignore: unrelated_type_equality_checks
-              keyword.text = value;
+              keywordTextObj.text = value;
             });
           },
           decoration: InputDecoration(
-            // prefixIcon: IconButton(
-            //   icon: const Icon(Icons.search),
-            //   onPressed: () {
-            //     // setState(() {
-            //     //   keywordAsyncFunction(keyword.text);
-            //     // });
-            //     Navigator.push(
-            //       context,
-            //       MaterialPageRoute(
-            //         builder: (context) {
-            //           if (keyword.text != '') {
-            //             return takeSearchFirebasePage(
-            //                 // resList: resList,
-            //                 mykeyword: keyword.text,
-            //                 takekeywordText: keywordTextObj);
-            //           } else {
-            //             return HomePage();
-            //           }
-            //         },
-            //       ),
-            //     );
-            //   },
-            // ),
+            prefixIcon: IconButton(
+              icon: const Icon(Icons.search),
+              onPressed: () {
+                // setState(() {
+                //   keywordAsyncFunction(keyword.text);
+                // });
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      if (keywordTextObj.text != '') {
+                        return takeSearchFirebasePage(
+                            // resList: resList,
+                            mykeyword: keywordTextObj.text,
+                            takekeywordText: keywordTextObj);
+                      } else {
+                        return HomePage();
+                      }
+                    },
+                  ),
+                );
+              },
+            ),
             suffixIcon: IconButton(
               icon: const Icon(Icons.clear),
               onPressed: () {
-                keyword.text = '';
+                keywordTextObj.text = '';
               },
             ),
             hintText: 'searchword'.tr(),
@@ -528,12 +593,8 @@ class _MyTextContState extends State<MyTextCont> {
       autodata = datafirebasekz[i].data() as Map<String, dynamic>;
       print(
           "datafirebasekz[i]['title']KZ from firebase ${datafirebasekz[i]['title']}");
-      print('QRwidget.selectedKey start ${widget.selectedKey}');
-      print('autokey start $autokey');
       if (widget.selectedKey == datafirebasekz[i]['id'] &&
           !titleWidgetsArr.contains(titleWidgetsKz)) {
-        print('QRwidget.selectedKey finish ${widget.selectedKey}');
-        print('autokey finish $autokey');
         titleWidgetsKz = datafirebasekz[i]['title'];
         titleWidgetsArr.add(titleWidgetsKz);
         break;
@@ -575,12 +636,12 @@ class _MyTextContState extends State<MyTextCont> {
       titleWidgetsArr.add(titleWidgetsEmpt);
     }
 
-    print("QRtitleWidgetsKz***${titleWidgetsKz}");
-    print("QRtitleWidgetsEn***${titleWidgetsEn}");
-    print("QRtitleWidgetsRu***${titleWidgetsRu}");
-    print("QRtitleWidgetsEmpt**${titleWidgetsEmpt}");
-    print("QRtitleWidgetsArr $titleWidgetsArr");
-    print("QRtitleWidgetsArr.length ${titleWidgetsArr.length}");
+    print("titleWidgetsKz***${titleWidgetsKz}");
+    print("titleWidgetsEn***${titleWidgetsEn}");
+    print("titleWidgetsRu***${titleWidgetsRu}");
+    print("titleWidgetsEmpt***${titleWidgetsEmpt}");
+    print("titleWidgetsArr $titleWidgetsArr");
+    print("titleWidgetsArr.length ${titleWidgetsArr.length}");
 
     return titleWidgetsArr;
   }
@@ -660,24 +721,259 @@ class _MyTextContState extends State<MyTextCont> {
         print("titleWidgetsEmpty $titleWidgetsEmpty");
 
         return Container(
-          width: 350,
-          alignment: Alignment.center,
-          color: Colors.amber,
-          child: Container(
-            margin:
-                const EdgeInsets.only(left: 0, right: 0, top: 10, bottom: 10),
-            color: Colors.amber,
-            child: Text(
-              titledisplayedText,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 20,
-                color: Colors.black,
-              ),
+          child: Padding(
+            padding: const EdgeInsets.only(left: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  child: Column(
+                    children: [
+                      Container(
+                        //decoration: BoxDecoration(color: Colors.green),
+                        // padding: const EdgeInsets.only(left: 5),
+                        alignment: Alignment.topLeft,
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Container(
+                                //decoration: BoxDecoration(color: Colors.red),
+                                padding: const EdgeInsets.only(
+                                  left: 0,
+                                  bottom: 0,
+                                  top: 0,
+                                  right: 0,
+                                ),
+                                child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment
+                                        .start, // Выровнять текст влево
+                                    children: [
+                                      Text(
+                                        titledisplayedText,
+                                        style: TextStyle(
+                                            fontSize: 20, color: Colors.black),
+                                      ),
+                                    ]),
+                              ),
+                            ),
+                            Container(
+                              // decoration: BoxDecoration(color: Colors.amber),
+                              padding: const EdgeInsets.only(
+                                left: 50,
+                                bottom: 15,
+                                top: 0,
+                                right: 0,
+                              ),
+                              child: Row(
+                                children: [
+                                  IconButton(
+                                    padding: const EdgeInsets.only(
+                                      left: 0,
+                                      bottom: 0,
+                                      top: 0,
+                                      right: 0,
+                                    ),
+                                    onPressed: () {},
+                                    icon: Icon(Icons.bookmark_add),
+                                  ),
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.share_outlined,
+                                      color: Colors.green,
+                                    ),
+                                    onPressed: () {
+                                      // Действие при нажатии на иконку "bookmark_add"
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        //decoration: BoxDecoration(color: Colors.red),
+                        padding: const EdgeInsets.only(
+                          left: 0,
+                          bottom: 5,
+                          top: 5,
+                          right: 0,
+                        ),
+                        child: Row(children: [
+                          Icon(
+                            Icons.star_border,
+                            color: Colors.green,
+                            size: 24,
+                          ),
+                          Icon(
+                            Icons.star_border,
+                            color: Colors.green,
+                            size: 24,
+                          ),
+                          Icon(
+                            Icons.star_border,
+                            color: Colors.green,
+                            size: 24,
+                          ),
+                          Icon(
+                            Icons.star_border,
+                            color: Colors.green,
+                            size: 24,
+                          ),
+                          Icon(
+                            Icons.star_border,
+                            color: Colors.green,
+                            size: 24,
+                          ),
+                        ]),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
         );
       },
+    );
+  }
+}
+
+class MusicPlayerWidget extends StatefulWidget {
+  @override
+  _MusicPlayerWidgetState createState() => _MusicPlayerWidgetState();
+}
+
+class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
+  AudioPlayer audioPlayer = AudioPlayer();
+  String audioUrl =
+      'https://example.com/your_audio_file.mp3'; // Укажите URL вашей аудиозаписи
+
+  bool isPlaying = false;
+  double currentPosition = 0.0;
+  double totalDuration = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    audioPlayer.onPlayerStateChanged.listen((state) {
+      if (state == audioPlayer) {
+        setState(() {
+          isPlaying = true;
+        });
+      } else {
+        setState(() {
+          isPlaying = false;
+        });
+      }
+    });
+
+    audioPlayer.onDurationChanged.listen((Duration duration) {
+      setState(() {
+        totalDuration = duration.inMilliseconds.toDouble();
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    audioPlayer.dispose();
+    super.dispose();
+  }
+
+  void playMusic() async {
+    await audioPlayer.play;
+  }
+
+  void pauseMusic() async {
+    await audioPlayer.pause();
+  }
+
+  void seekTo(double milliseconds) {
+    Duration newPosition = Duration(milliseconds: milliseconds.toInt());
+    audioPlayer.seek(newPosition);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Container(
+          padding: EdgeInsets.only(
+            bottom: 0,
+          ),
+          decoration: BoxDecoration(
+            border: Border(
+              top: BorderSide(
+                color: Colors.green, // Цвет верхней границы
+                width: 1.0, // Ширина верхней границы
+              ),
+            ),
+          ),
+          child: Column(children: [
+            SliderTheme(
+              data: SliderTheme.of(context).copyWith(
+                trackHeight: 7.0, // Уменьшаем высоту ползунка
+                activeTrackColor: Colors
+                    .green, // Устанавливаем зеленый цвет для активной части
+              ),
+              child: Slider(
+                value: currentPosition,
+                min: 0,
+                max: totalDuration,
+                onChanged: (double value) {
+                  seekTo(value);
+                },
+              ),
+            )
+          ]),
+        ),
+        Container(
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(
+                color: Colors.green, // Цвет верхней границы
+                width: 1.0,
+              ),
+            ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  // Добавьте функциональность для второй кнопки
+                },
+                child: Text("save".tr()),
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.circular(10), // Настройте форму кнопки
+                  ),
+                ),
+              ),
+              SizedBox(width: 25),
+              ElevatedButton(
+                onPressed: () {
+                  if (isPlaying) {
+                    pauseMusic();
+                  } else {
+                    playMusic();
+                  }
+                },
+                child: Text(isPlaying ? "pause".tr() : "play".tr()),
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.circular(10), // Настройте форму кнопки
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
@@ -700,6 +996,12 @@ class _MyPhotoContState extends State<MyPhotoCont> {
   String photoWidgetsEn = "";
   String photoWidgetsEmpt = "";
 
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   // Вызываем fetchKeysFirebase() только один раз при инициализации виджета
+  //   fetchKeysFirebasePhoto();
+  // }
   @override
   Future<List<String>> fetchKeysFirebasePhoto() async {
     List<String> arrlen = [];
@@ -728,7 +1030,7 @@ class _MyPhotoContState extends State<MyPhotoCont> {
       autodata = datafirebasekz[i].data() as Map<String, dynamic>;
       print(
           "datafirebasekz[i]['title']KZ from firebase ${datafirebasekz[i]['title']}");
-      if (widget.selectedKey == datafirebasekz[i]['id'] &&
+      if (widget.selectedKey == datafirebasekz[i]['title'] &&
           !photoWidgetsArr.contains(photoWidgetsKz)) {
         photoWidgetsKz = datafirebasekz[i]['filephotopath'];
         photoWidgetsArr.add(photoWidgetsKz);
@@ -743,7 +1045,7 @@ class _MyPhotoContState extends State<MyPhotoCont> {
       autodata = datafirebaseru[i].data() as Map<String, dynamic>;
       print(
           "datafirebaseru[i]['title']RU from firebase ${datafirebaseru[i]['title']}");
-      if (widget.selectedKey == datafirebaseru[i]['id'] &&
+      if (widget.selectedKey == datafirebaseru[i]['title'] &&
           !photoWidgetsArr.contains(photoWidgetsRu)) {
         photoWidgetsRu = datafirebaseru[i]['filephotopath'];
         photoWidgetsArr.add(photoWidgetsRu);
@@ -756,7 +1058,7 @@ class _MyPhotoContState extends State<MyPhotoCont> {
       autodata = datafirebaseen[i].data() as Map<String, dynamic>;
       print(
           "datafirebasekz[i]['title']EN from firebase ${datafirebaseen[i]['title']}");
-      if (widget.selectedKey == datafirebaseen[i]['id'] &&
+      if (widget.selectedKey == datafirebaseen[i]['title'] &&
           !photoWidgetsArr.contains(photoWidgetsEn)) {
         photoWidgetsEn = datafirebaseen[i]['filephotopath'];
         photoWidgetsArr.add(photoWidgetsEn);
@@ -772,10 +1074,10 @@ class _MyPhotoContState extends State<MyPhotoCont> {
       photoWidgetsArr.add(photoWidgetsEmpt);
     }
 
-    print("photoWidgetsKz***************${photoWidgetsKz}");
-    print("photoWidgetsEn***************${photoWidgetsEn}");
-    print("photoWidgetsRu***************${photoWidgetsRu}");
-    print("photoWidgetsEmpt***************${photoWidgetsEmpt}");
+    print("photoWidgetsKz***${photoWidgetsKz}");
+    print("photoWidgetsEn***${photoWidgetsEn}");
+    print("photoWidgetsRu***${photoWidgetsRu}");
+    print("photoWidgetsEmpt***${photoWidgetsEmpt}");
     print("photoWidgetsArr $photoWidgetsArr");
     print("photoWidgetsArr.length ${photoWidgetsArr.length}");
 
@@ -798,12 +1100,11 @@ class _MyPhotoContState extends State<MyPhotoCont> {
 
         // If data is loaded successfully, display it
         final List<String> photoWidgetsArr = snapshot.data ?? [];
-        print("*******************<=>photoWidgetsArr $photoWidgetsArr");
+        print("***<=>photoWidgetsArr $photoWidgetsArr");
 
-        print(
-            "*******************<=>photoWidgetsArr.length ${photoWidgetsArr.length}");
+        print("***<=>photoWidgetsArr.length ${photoWidgetsArr.length}");
 
-        print("*******************<=>widget.selectedKey ${widget.selectedKey}");
+        print("***<=>widget.selectedKey ${widget.selectedKey}");
 
         String photoWidgetsKaz = "";
         String photoWidgetsRus = "";
@@ -825,7 +1126,7 @@ class _MyPhotoContState extends State<MyPhotoCont> {
           } else {
             photoWidgetsEmpty = photoWidgetsEmpty + element;
           }
-          print("*******************<=>element $element");
+          print("***<=>element $element");
         });
 
         //photoWidgetsArr.clear();
@@ -857,25 +1158,28 @@ class _MyPhotoContState extends State<MyPhotoCont> {
         print("photoWidgetsEmpty $photoWidgetsEmpty");
 
         print(photoDisplayed);
-        return Container(
-          height: 150,
-          width: 340,
-          child: Card(
-            margin:
-                const EdgeInsets.only(left: 0, right: 0, top: 0, bottom: 10),
-            elevation: 5,
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(0),
-                image: DecorationImage(
-                  image: AssetImage('lib/assets/images/mavzoley_yasavi.jpg'),
-                  fit: BoxFit.cover,
+        return Padding(
+          padding: EdgeInsets.only(top: 0),
+          child: Container(
+            height: 160,
+            width: 340,
+            child: Card(
+              margin:
+                  const EdgeInsets.only(left: 0, right: 0, top: 0, bottom: 10),
+              elevation: 5,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(0),
+                  image: DecorationImage(
+                    image: AssetImage('lib/assets/images/mavzoley_yasavi.jpg'),
+                    fit: BoxFit.cover,
+                  ),
                 ),
+                // child: Image.file(
+                //   File(photoDisplayed),
+                //   fit: BoxFit.cover,
+                // ),
               ),
-              // child: Image.file(
-              //   File(photoDisplayed),
-              //   fit: BoxFit.cover,
-              // ),
             ),
           ),
         );

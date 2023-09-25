@@ -13,13 +13,15 @@ class QrScanner extends StatefulWidget {
 }
 
 class _QrScannerState extends State<QrScanner> {
+  String selectedKey = '';
   bool isScanComplated = false;
   bool isFlashOn = false;
   bool isFrontCamera = false;
   MobileScannerController controller = MobileScannerController();
-  void closeScreen() {
-    isScanComplated = false;
-  }
+
+  // void closeScreen() {
+  //   isScanComplated = false;
+  // }
 
   @override
   void dispose() {
@@ -31,22 +33,7 @@ class _QrScannerState extends State<QrScanner> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bgColor,
-      // drawer: const Drawer(),
       appBar: AppBar(
-        actions: [
-          IconButton(
-            onPressed: () {
-              setState(() {
-                isFlashOn = !isFlashOn;
-              });
-              controller.toggleTorch();
-            },
-            icon: Icon(
-              Icons.flash_on,
-              color: isFlashOn ? Colors.blue : Colors.grey,
-            ),
-          ),
-        ],
         iconTheme: IconThemeData(color: Colors.black87),
         centerTitle: true,
         title: const Text(
@@ -82,37 +69,36 @@ class _QrScannerState extends State<QrScanner> {
             Stack(
               children: [
                 SizedBox(
-                  width: MediaQuery.of(context).size.width, // Ширина экрана
-                  height:
-                      MediaQuery.of(context).size.height - 250, // Высота экрана
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height - 250,
                   child: MobileScanner(
-                    // controller: controller,
                     controller: MobileScannerController(
                       detectionSpeed: DetectionSpeed.normal,
                       facing: CameraFacing.back,
                       torchEnabled: false,
                       autoStart: true,
                     ),
-                    // allowDuplicates: true,
                     onDetect: (capture) {
+                      //closeScreen();
                       final List<Barcode> barcodes = capture.barcodes;
                       for (final barcode in barcodes) {
-                        if (!isScanComplated) {
-                          String code = barcode.rawValue ?? '---';
+                        if (isScanComplated == false &&
+                            selectedKey != barcode.rawValue) {
+                          selectedKey = barcode.rawValue ?? '---';
+                          isScanComplated = true;
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => QRobjectpage(
-                                  closeScreen: closeScreen, selectedKey: code),
+                              builder: (context) =>
+                                  QRobjectpage(selectedKey: selectedKey),
                             ),
                           );
-                          isScanComplated = true;
                         }
                       }
-                      const QRScannerOverlay(overlayColour: bgColor);
                     },
                   ),
-                )
+                ),
+                const QRScannerOverlay(overlayColour: bgColor),
               ],
             ),
             SizedBox(
