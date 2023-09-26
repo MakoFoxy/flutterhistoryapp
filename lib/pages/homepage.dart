@@ -614,67 +614,7 @@ class HomePageState extends State<MyHomePage> {
             ),
           ],
         ),
-      ),
-      floatingActionButton: Stack(
-        children: [
-          Positioned(
-            right: 0,
-            bottom: 0,
-            child: FloatingActionButton(
-              onPressed: () async {
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => CreateHistoryPost(),
-                  ),
-                );
-              },
-              child: const Icon(Icons.create),
-            ),
-          ),
-          Positioned(
-            left: 20,
-            bottom: 0,
-            child: FloatingActionButton(
-              onPressed: () async {
-                var collRefkz = FirebaseFirestore.instance.collection('datakz');
-                var collRefru = FirebaseFirestore.instance.collection('dataru');
-                var collRefen = FirebaseFirestore.instance.collection('dataen');
-
-                QuerySnapshot querySnapshotkz = await collRefkz.get();
-                QuerySnapshot querySnapshotru = await collRefru.get();
-                QuerySnapshot querySnapshoten = await collRefen.get();
-
-                List<QueryDocumentSnapshot> docskz = querySnapshotkz.docs;
-                List<QueryDocumentSnapshot> docsru = querySnapshotru.docs;
-                List<QueryDocumentSnapshot> docsen = querySnapshoten.docs;
-
-                List<String> autokey = [];
-                for (QueryDocumentSnapshot doc in docskz) {
-                  autokey.add(doc.id);
-                }
-                for (QueryDocumentSnapshot doc in docsru) {
-                  autokey.add(doc.id);
-                }
-                for (QueryDocumentSnapshot doc in docsen) {
-                  autokey.add(doc.id);
-                }
-
-                autokey.forEach((element) {
-                  collRefkz.doc(element).delete();
-                });
-                autokey.forEach((element) {
-                  collRefru.doc(element).delete();
-                });
-                autokey.forEach((element) {
-                  collRefen.doc(element).delete();
-                });
-              },
-              child: const Icon(Icons.delete),
-            ),
-          ),
-        ],
-      ),
+      ),      
     );
   }
 }
