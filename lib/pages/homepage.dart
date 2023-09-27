@@ -7,6 +7,7 @@ import 'package:mausoleum/api/yandexmap/map_controls_page.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:mausoleum/api/dropdawn_flag/dropdawn_flag.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/services.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -392,165 +393,171 @@ class streamBuildHome extends StatelessWidget {
     } else if (Localizations.localeOf(context).languageCode == 'en') {
       datastream = FirebaseFirestore.instance.collection('dataen').snapshots();
     }
+    return WillPopScope(
+      onWillPop: () async {
+        // Выход из приложения при нажатии кнопки "назад"
+        SystemNavigator.pop();
+        return true; // Возвращаем true, чтобы разрешить выход из приложения
+      },
+      child: StreamBuilder<QuerySnapshot>(
+        stream: datastream,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return CircularProgressIndicator();
+          }
+          if (snapshot.hasError) {
+            return Text('Error');
+          }
+          if (!snapshot.hasData || snapshot.data == null) {
+            return Text('No data');
+          }
 
-    return StreamBuilder<QuerySnapshot>(
-      stream: datastream,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
-        }
-        if (snapshot.hasError) {
-          return Text('Error');
-        }
-        if (!snapshot.hasData || snapshot.data == null) {
-          return Text('No data');
-        }
-
-        if (resultList != "") {
-          return Container(
-            decoration: BoxDecoration(
-              border: Border.all(
-                  color: Colors.greenAccent), // Устанавливаем красную границу
-            ),
-            child: Column(
-              children: resultList.map((data) {
-                final doc = data.data() as Map<String, dynamic>;
-                return Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                        color: Colors.green), // Устанавливаем красную границу
-                  ),
-                  child: Column(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.only(
-                          left: 10,
-                          top: 0,
-                          bottom: 0,
-                          right: 0,
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              // decoration: BoxDecoration(
-                              //   border: Border.all(
-                              //     color: Colors.red,
-                              //   ),
-                              // ),
-                              child: Image.asset(
-                                'lib/assets/images/mavzoley_yasavi.jpg',
-                                width: 150,
-                                height: 120,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            SizedBox(width: 10.0),
-                            Expanded(
-                              // Используем Expanded для текста и кнопки
-                              child: Container(
-                                padding: const EdgeInsets.only(
-                                  left: 0,
-                                  top: 0,
-                                  right: 0,
-                                  bottom: 0,
-                                ),
+          if (resultList != "") {
+            return Container(
+              decoration: BoxDecoration(
+                border: Border.all(
+                    color: Colors.greenAccent), // Устанавливаем красную границу
+              ),
+              child: Column(
+                children: resultList.map((data) {
+                  final doc = data.data() as Map<String, dynamic>;
+                  return Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                          color: Colors.green), // Устанавливаем красную границу
+                    ),
+                    child: Column(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.only(
+                            left: 10,
+                            top: 0,
+                            bottom: 0,
+                            right: 0,
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
                                 // decoration: BoxDecoration(
                                 //   border: Border.all(
                                 //     color: Colors.red,
                                 //   ),
                                 // ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment
-                                      .center, // Выравнивание текста по левому краю
-                                  children: [
-                                    Text(
-                                      doc['title'],
-                                      style: TextStyle(
-                                        fontSize: 18.0,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
+                                child: Image.asset(
+                                  'lib/assets/images/mavzoley_yasavi.jpg',
+                                  width: 150,
+                                  height: 120,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              SizedBox(width: 10.0),
+                              Expanded(
+                                // Используем Expanded для текста и кнопки
+                                child: Container(
+                                  padding: const EdgeInsets.only(
+                                    left: 0,
+                                    top: 0,
+                                    right: 0,
+                                    bottom: 0,
+                                  ),
+                                  // decoration: BoxDecoration(
+                                  //   border: Border.all(
+                                  //     color: Colors.red,
+                                  //   ),
+                                  // ),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment
+                                        .center, // Выравнивание текста по левому краю
+                                    children: [
+                                      Text(
+                                        doc['title'],
+                                        style: TextStyle(
+                                          fontSize: 18.0,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        softWrap: true,
+                                        //overflow: TextOverflow.ellipsis,
                                       ),
-                                      softWrap: true,
-                                      //overflow: TextOverflow.ellipsis,
-                                    ),
-                                    SizedBox(
-                                      height: 43,
-                                    ),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                ObjectFirebasePage(
-                                              selectedKey: doc['id'],
+                                      SizedBox(
+                                        height: 43,
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ObjectFirebasePage(
+                                                selectedKey: doc['id'],
+                                              ),
                                             ),
-                                          ),
-                                        );
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        padding: EdgeInsets.all(0),
-                                      ),
-                                      child: Container(
-                                        width: double
-                                            .infinity, // Разрешаем кнопке занимать всю ширину
-                                        alignment: Alignment
-                                            .topCenter, // Выравнивание текста по центру
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 8,
-                                            horizontal:
-                                                0), // Отступы для текста кнопки
-                                        child: Text(
-                                          "details".tr(),
-                                          style: TextStyle(
-                                            fontSize: 14.0,
-                                            fontWeight: FontWeight.bold,
+                                          );
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          padding: EdgeInsets.all(0),
+                                        ),
+                                        child: Container(
+                                          width: double
+                                              .infinity, // Разрешаем кнопке занимать всю ширину
+                                          alignment: Alignment
+                                              .topCenter, // Выравнивание текста по центру
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 8,
+                                              horizontal:
+                                                  0), // Отступы для текста кнопки
+                                          child: Text(
+                                            "details".tr(),
+                                            style: TextStyle(
+                                              fontSize: 14.0,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.only(
-                                left: 0,
-                                bottom: 10,
-                                top: 0,
-                                right: 10,
-                              ),
-                              height: 25,
-                              width: 25,
-                              // decoration: BoxDecoration(
-                              //   border: Border.all(
-                              //       color: Colors
-                              //           .red), // Устанавливаем красную границу
-                              // ),
-                              child: IconButton(
+                              Container(
                                 padding: const EdgeInsets.only(
                                   left: 0,
                                   bottom: 10,
                                   top: 0,
                                   right: 10,
                                 ),
-                                onPressed: () {},
-                                icon: Icon(Icons.bookmark_add),
+                                height: 25,
+                                width: 25,
+                                // decoration: BoxDecoration(
+                                //   border: Border.all(
+                                //       color: Colors
+                                //           .red), // Устанавливаем красную границу
+                                // ),
+                                child: IconButton(
+                                  padding: const EdgeInsets.only(
+                                    left: 0,
+                                    bottom: 10,
+                                    top: 0,
+                                    right: 10,
+                                  ),
+                                  onPressed: () {},
+                                  icon: Icon(Icons.bookmark_add),
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                );
-              }).toList(), // Convert the mapped items to a list
-            ),
-          );
-        }
-        return Container();
-      },
+                      ],
+                    ),
+                  );
+                }).toList(), // Convert the mapped items to a list
+              ),
+            );
+          }
+          return Container();
+        },
+      ),
     );
   }
 }

@@ -1,4 +1,4 @@
-package com.example.flutter_application_2
+package com.hodgaahmedturkistanmausoleum.mausoleumhodgaahmed
 
 import androidx.annotation.NonNull
 import io.flutter.embedding.android.FlutterActivity

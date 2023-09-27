@@ -8,6 +8,7 @@ import 'package:mausoleum/api/yandexmap/map_controls_page.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:mausoleum/api/dropdawn_flag/dropdawn_flag.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'dart:io';
 
 class QRobjectpage extends StatefulWidget {
   final String selectedKey; // Добавьте параметр для выбранного ключа
@@ -37,6 +38,7 @@ class QRobjectpageState extends State<QRobjectpage> {
           );
           return false;
         } else {
+          // exit(0);
           // Переход на домашнюю страницу и сброс счетчика
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
@@ -488,6 +490,12 @@ class _MySearchState extends State<mySearchQR> {
   TextEditingController keywordTextObj = TextEditingController();
 
   @override
+  void dispose() {
+    keywordTextObj.dispose();
+    super.dispose(); // Вызываем суперклассовый метод dispose
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
@@ -506,28 +514,29 @@ class _MySearchState extends State<mySearchQR> {
           },
           decoration: InputDecoration(
             prefixIcon: IconButton(
-              icon: const Icon(Icons.search),
-              onPressed: () {
-                // setState(() {
-                //   keywordAsyncFunction(keyword.text);
-                // });
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) {
-                      if (keywordTextObj.text != '') {
-                        return takeSearchFirebasePage(
-                            // resList: resList,
-                            mykeyword: keywordTextObj.text,
-                            takekeywordText: keywordTextObj);
-                      } else {
-                        return HomePage();
-                      }
-                    },
-                  ),
-                );
-              },
-            ),
+                icon: const Icon(Icons.search),
+                onPressed: () {
+                  // setState(() {
+                  //   keywordAsyncFunction(keyword.text);
+                  // });
+                  if (keywordTextObj != null) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          if (keywordTextObj.text.isNotEmpty) {
+                            return takeSearchFirebasePage(
+                                // resList: resList,
+                                mykeyword: keywordTextObj.text,
+                                takekeywordText: keywordTextObj);
+                          } else {
+                            return HomePage();
+                          }
+                        },
+                      ),
+                    );
+                  }
+                }),
             suffixIcon: IconButton(
               icon: const Icon(Icons.clear),
               onPressed: () {

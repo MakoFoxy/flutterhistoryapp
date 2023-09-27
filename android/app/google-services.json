@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:734178320042:android:1f12e3d764300d9b8f7ad3",
+        "mobilesdk_app_id": "1:734178320042:android:fddee1ae50fe7a568f7ad3",
         "android_client_info": {
-          "package_name": "com.example.flutter_application_2"
+          "package_name": "com.hodgaahmedturkistanmausoleum.mausoleumhodgaahmed"
         }
       },
       "oauth_client": [

@@ -38,6 +38,7 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
           );
           return false;
         } else {
+          //exit(0);
           // Переход на домашнюю страницу и сброс счетчика
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
@@ -605,7 +606,6 @@ class _MyAppBarState extends State<MyAppBar> {
 }
 
 class mySearch extends StatefulWidget {
-  
   @override
   State<mySearch> createState() => _MySearchState();
 }
@@ -613,11 +613,11 @@ class mySearch extends StatefulWidget {
 class _MySearchState extends State<mySearch> {
   TextEditingController keywordTextObj = TextEditingController();
 
-  // @override
-  // void dispose() {
-  //   super.dispose(); // Вызываем суперклассовый метод dispose
-  //   keywordTextObj.dispose();
-  // }
+  @override
+  void dispose() {
+    keywordTextObj.dispose();
+    super.dispose(); // Вызываем суперклассовый метод dispose
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -638,28 +638,29 @@ class _MySearchState extends State<mySearch> {
           },
           decoration: InputDecoration(
             prefixIcon: IconButton(
-              icon: const Icon(Icons.search),
-              onPressed: () {
-                // setState(() {
-                //   keywordAsyncFunction(keyword.text);
-                // });
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) {
-                      if (keywordTextObj.text != '') {
-                        return takeSearchFirebasePage(
-                            // resList: resList,
-                            mykeyword: keywordTextObj.text,
-                            takekeywordText: keywordTextObj);
-                      } else {
-                        return HomePage();
-                      }
-                    },
-                  ),
-                );
-              },
-            ),
+                icon: const Icon(Icons.search),
+                onPressed: () {
+                  // setState(() {
+                  //   keywordAsyncFunction(keyword.text);
+                  // });
+                  if (keywordTextObj != null) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          if (keywordTextObj.text.isNotEmpty) {
+                            return takeSearchFirebasePage(
+                                // resList: resList,
+                                mykeyword: keywordTextObj.text,
+                                takekeywordText: keywordTextObj);
+                          } else {
+                            return HomePage();
+                          }
+                        },
+                      ),
+                    );
+                  }
+                }),
             suffixIcon: IconButton(
               icon: const Icon(Icons.clear),
               onPressed: () {
