@@ -418,140 +418,144 @@ class streamBuildHome extends StatelessWidget {
                 border: Border.all(
                     color: Colors.greenAccent), // Устанавливаем красную границу
               ),
-              child: Column(
-                children: resultList.map((data) {
-                  final doc = data.data() as Map<String, dynamic>;
-                  return Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                          color: Colors.green), // Устанавливаем красную границу
-                    ),
-                    child: Column(
-                      children: [
-                        Container(
-                          padding: EdgeInsets.only(
-                            left: 10,
-                            top: 0,
-                            bottom: 0,
-                            right: 0,
-                          ),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                // decoration: BoxDecoration(
-                                //   border: Border.all(
-                                //     color: Colors.red,
-                                //   ),
-                                // ),
-                                child: Image.asset(
-                                  'lib/assets/images/mavzoley_yasavi.jpg',
-                                  width: 150,
-                                  height: 120,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                              SizedBox(width: 10.0),
-                              Expanded(
-                                // Используем Expanded для текста и кнопки
-                                child: Container(
-                                  padding: const EdgeInsets.only(
-                                    left: 0,
-                                    top: 0,
-                                    right: 0,
-                                    bottom: 0,
-                                  ),
+              child: MediaQuery(
+                data: MediaQuery.of(context),
+                child: Column(
+                  children: resultList.map((data) {
+                    final doc = data.data() as Map<String, dynamic>;
+                    return Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                            color:
+                                Colors.green), // Устанавливаем красную границу
+                      ),
+                      child: Column(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.only(
+                              left: 10,
+                              top: 0,
+                              bottom: 0,
+                              right: 0,
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
                                   // decoration: BoxDecoration(
                                   //   border: Border.all(
                                   //     color: Colors.red,
                                   //   ),
                                   // ),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment
-                                        .center, // Выравнивание текста по левому краю
-                                    children: [
-                                      Text(
-                                        doc['title'],
-                                        style: TextStyle(
-                                          fontSize: 18.0,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.bold,
+                                  child: Image.asset(
+                                    'lib/assets/images/mavzoley_yasavi.jpg',
+                                    width: 150,
+                                    height: 120,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                SizedBox(width: 10.0),
+                                Expanded(
+                                  // Используем Expanded для текста и кнопки
+                                  child: Container(
+                                    padding: const EdgeInsets.only(
+                                      left: 0,
+                                      top: 0,
+                                      right: 0,
+                                      bottom: 0,
+                                    ),
+                                    // decoration: BoxDecoration(
+                                    //   border: Border.all(
+                                    //     color: Colors.red,
+                                    //   ),
+                                    // ),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment
+                                          .center, // Выравнивание текста по левому краю
+                                      children: [
+                                        Text(
+                                          doc['title'],
+                                          style: TextStyle(
+                                            fontSize: 18.0,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          softWrap: true,
+                                          //overflow: TextOverflow.ellipsis,
                                         ),
-                                        softWrap: true,
-                                        //overflow: TextOverflow.ellipsis,
-                                      ),
-                                      SizedBox(
-                                        height: 43,
-                                      ),
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  ObjectFirebasePage(
-                                                selectedKey: doc['id'],
+                                        SizedBox(
+                                          height: 43,
+                                        ),
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ObjectFirebasePage(
+                                                  selectedKey: doc['id'],
+                                                ),
                                               ),
-                                            ),
-                                          );
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          padding: EdgeInsets.all(0),
-                                        ),
-                                        child: Container(
-                                          width: double
-                                              .infinity, // Разрешаем кнопке занимать всю ширину
-                                          alignment: Alignment
-                                              .topCenter, // Выравнивание текста по центру
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 8,
-                                              horizontal:
-                                                  0), // Отступы для текста кнопки
-                                          child: Text(
-                                            "details".tr(),
-                                            style: TextStyle(
-                                              fontSize: 14.0,
-                                              fontWeight: FontWeight.bold,
+                                            );
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            padding: EdgeInsets.all(0),
+                                          ),
+                                          child: Container(
+                                            width: double
+                                                .infinity, // Разрешаем кнопке занимать всю ширину
+                                            alignment: Alignment
+                                                .topCenter, // Выравнивание текста по центру
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 8,
+                                                horizontal:
+                                                    0), // Отступы для текста кнопки
+                                            child: Text(
+                                              "details".tr(),
+                                              style: TextStyle(
+                                                fontSize: 14.0,
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Container(
-                                padding: const EdgeInsets.only(
-                                  left: 0,
-                                  bottom: 10,
-                                  top: 0,
-                                  right: 10,
-                                ),
-                                height: 25,
-                                width: 25,
-                                // decoration: BoxDecoration(
-                                //   border: Border.all(
-                                //       color: Colors
-                                //           .red), // Устанавливаем красную границу
-                                // ),
-                                child: IconButton(
+                                Container(
                                   padding: const EdgeInsets.only(
                                     left: 0,
                                     bottom: 10,
                                     top: 0,
                                     right: 10,
                                   ),
-                                  onPressed: () {},
-                                  icon: Icon(Icons.bookmark_add),
+                                  height: 25,
+                                  width: 25,
+                                  // decoration: BoxDecoration(
+                                  //   border: Border.all(
+                                  //       color: Colors
+                                  //           .red), // Устанавливаем красную границу
+                                  // ),
+                                  child: IconButton(
+                                    padding: const EdgeInsets.only(
+                                      left: 0,
+                                      bottom: 10,
+                                      top: 0,
+                                      right: 10,
+                                    ),
+                                    onPressed: () {},
+                                    icon: Icon(Icons.bookmark_add),
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  );
-                }).toList(), // Convert the mapped items to a list
+                        ],
+                      ),
+                    );
+                  }).toList(), // Convert the mapped items to a list
+                ),
               ),
             );
           }
@@ -609,8 +613,8 @@ class HomePageState extends State<MyHomePage> {
             Container(
               child: ConstrainedBox(
                 constraints: BoxConstraints(
-                  maxHeight: MediaQuery.of(context).size.height -
-                      0, // appBarHeight - это высота вашего AppBar
+                  maxHeight: MediaQuery.of(context).size.height +
+                      16000, // appBarHeight - это высота вашего AppBar
                 ),
                 child: Column(
                   children: [
