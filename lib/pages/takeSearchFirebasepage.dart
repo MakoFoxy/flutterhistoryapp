@@ -159,7 +159,7 @@ class _MyAppBarState extends State<MyAppBar> {
         Padding(
           padding: const EdgeInsets.only(left: 0),
           child: SizedBox(
-            width: 160,
+            width: 230,
             child: FutureBuilder(
               builder: (context, snapshot) {
                 return FirebaseSearch(
@@ -172,11 +172,11 @@ class _MyAppBarState extends State<MyAppBar> {
             ),
           ),
         ),
-        IconButton(
-          padding: const EdgeInsets.only(left: 0),
-          onPressed: () {},
-          icon: Icon(Icons.bookmark_add),
-        ),
+        // IconButton(
+        //   padding: const EdgeInsets.only(left: 0),
+        //   onPressed: () {},
+        //   icon: Icon(Icons.bookmark_add),
+        // ),
         Padding(
           padding: const EdgeInsets.only(right: 10),
           child: DropdownFlag(
@@ -188,20 +188,20 @@ class _MyAppBarState extends State<MyAppBar> {
           ),
         ),
       ],
-      leading: Builder(
-        builder: (context) {
-          return Padding(
-            padding: const EdgeInsets.only(
-                right: 20.0), // Устанавливаем отступ слева
-            child: IconButton(
-              icon: Icon(Icons.menu),
-              onPressed: () {
-                Scaffold.of(context).openDrawer();
-              },
-            ),
-          );
-        },
-      ),
+      // leading: Builder(
+      //   builder: (context) {
+      //     return Padding(
+      //       padding: const EdgeInsets.only(
+      //           right: 20.0), // Устанавливаем отступ слева
+      //       child: IconButton(
+      //         icon: Icon(Icons.menu),
+      //         onPressed: () {
+      //           Scaffold.of(context).openDrawer();
+      //         },
+      //       ),
+      //     );
+      //   },
+      // ),
     );
   }
 }
@@ -224,83 +224,85 @@ class MyTakePageState extends State<MyTakePage> {
       fontSize: 25,
     ); // Обновленный размер текста
     return Scaffold(
-      body: Stack(
-        children: [
-          Container(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                maxHeight: MediaQuery.of(context).size.height -
-                    0, // appBarHeight - это высота вашего AppBar
-              ),
-              child: Column(
-                children: [
-                  streamBuildHome(resultList: widget.resultListHome),
-                ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.of(context).size.height +
+                      16000, // appBarHeight - это высота вашего AppBar
+                ),
+                child: Column(
+                  children: [
+                    streamBuildHome(resultList: widget.resultListHome),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
+        // floatingActionButton: Stack(
+        //   children: [
+        //     Positioned(
+        //       right: 0,
+        //       bottom: 0,
+        //       child: FloatingActionButton(
+        //         onPressed: () async {
+        //           await Navigator.push(
+        //             context,
+        //             MaterialPageRoute(
+        //               builder: (context) => CreateHistoryPost(),
+        //             ),
+        //           );
+        //         },
+        //         child: const Icon(Icons.create),
+        //       ),
+        //     ),
+        //     Positioned(
+        //       left: 20,
+        //       bottom: 0,
+        //       child: FloatingActionButton(
+        //         onPressed: () async {
+        //           var collRefkz = FirebaseFirestore.instance.collection('datakz');
+        //           var collRefru = FirebaseFirestore.instance.collection('dataru');
+        //           var collRefen = FirebaseFirestore.instance.collection('dataen');
+
+        //           QuerySnapshot querySnapshotkz = await collRefkz.get();
+        //           QuerySnapshot querySnapshotru = await collRefru.get();
+        //           QuerySnapshot querySnapshoten = await collRefen.get();
+
+        //           List<QueryDocumentSnapshot> docskz = querySnapshotkz.docs;
+        //           List<QueryDocumentSnapshot> docsru = querySnapshotru.docs;
+        //           List<QueryDocumentSnapshot> docsen = querySnapshoten.docs;
+
+        //           List<String> autokey = [];
+        //           for (QueryDocumentSnapshot doc in docskz) {
+        //             autokey.add(doc.id);
+        //           }
+        //           for (QueryDocumentSnapshot doc in docsru) {
+        //             autokey.add(doc.id);
+        //           }
+        //           for (QueryDocumentSnapshot doc in docsen) {
+        //             autokey.add(doc.id);
+        //           }
+
+        //           autokey.forEach((element) {
+        //             collRefkz.doc(element).delete();
+        //           });
+        //           autokey.forEach((element) {
+        //             collRefru.doc(element).delete();
+        //           });
+        //           autokey.forEach((element) {
+        //             collRefen.doc(element).delete();
+        //           });
+        //         },
+        //         child: const Icon(Icons.delete),
+        //       ),
+        //     ),
+        //   ],
+        // ),
       ),
-      // floatingActionButton: Stack(
-      //   children: [
-      //     Positioned(
-      //       right: 0,
-      //       bottom: 0,
-      //       child: FloatingActionButton(
-      //         onPressed: () async {
-      //           await Navigator.push(
-      //             context,
-      //             MaterialPageRoute(
-      //               builder: (context) => CreateHistoryPost(),
-      //             ),
-      //           );
-      //         },
-      //         child: const Icon(Icons.create),
-      //       ),
-      //     ),
-      //     Positioned(
-      //       left: 20,
-      //       bottom: 0,
-      //       child: FloatingActionButton(
-      //         onPressed: () async {
-      //           var collRefkz = FirebaseFirestore.instance.collection('datakz');
-      //           var collRefru = FirebaseFirestore.instance.collection('dataru');
-      //           var collRefen = FirebaseFirestore.instance.collection('dataen');
-
-      //           QuerySnapshot querySnapshotkz = await collRefkz.get();
-      //           QuerySnapshot querySnapshotru = await collRefru.get();
-      //           QuerySnapshot querySnapshoten = await collRefen.get();
-
-      //           List<QueryDocumentSnapshot> docskz = querySnapshotkz.docs;
-      //           List<QueryDocumentSnapshot> docsru = querySnapshotru.docs;
-      //           List<QueryDocumentSnapshot> docsen = querySnapshoten.docs;
-
-      //           List<String> autokey = [];
-      //           for (QueryDocumentSnapshot doc in docskz) {
-      //             autokey.add(doc.id);
-      //           }
-      //           for (QueryDocumentSnapshot doc in docsru) {
-      //             autokey.add(doc.id);
-      //           }
-      //           for (QueryDocumentSnapshot doc in docsen) {
-      //             autokey.add(doc.id);
-      //           }
-
-      //           autokey.forEach((element) {
-      //             collRefkz.doc(element).delete();
-      //           });
-      //           autokey.forEach((element) {
-      //             collRefru.doc(element).delete();
-      //           });
-      //           autokey.forEach((element) {
-      //             collRefen.doc(element).delete();
-      //           });
-      //         },
-      //         child: const Icon(Icons.delete),
-      //       ),
-      //     ),
-      //   ],
-      // ),
     );
   }
 }
@@ -756,16 +758,16 @@ class streamBuildHome extends StatelessWidget {
                                 //       color: Colors
                                 //           .red), // Устанавливаем красную границу
                                 // ),
-                                child: IconButton(
-                                  padding: const EdgeInsets.only(
-                                    left: 0,
-                                    bottom: 10,
-                                    top: 0,
-                                    right: 10,
-                                  ),
-                                  onPressed: () {},
-                                  icon: Icon(Icons.bookmark_add),
-                                ),
+                                // child: IconButton(
+                                //   padding: const EdgeInsets.only(
+                                //     left: 0,
+                                //     bottom: 10,
+                                //     top: 0,
+                                //     right: 10,
+                                //   ),
+                                //   onPressed: () {},
+                                //   icon: Icon(Icons.bookmark_add),
+                                // ),
                               ),
                             ],
                           ),

@@ -279,40 +279,40 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
               ),
             ),
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  // Добавьте функциональность для второй кнопки
-                },
-                child: Text("save".tr()),
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(10), // Настройте форму кнопки
-                  ),
-                ),
-              ),
-              SizedBox(width: 25),
-              ElevatedButton(
-                onPressed: () {
-                  if (isPlaying) {
-                    pauseMusic();
-                  } else {
-                    playMusic();
-                  }
-                },
-                child: Text(isPlaying ? "pause".tr() : "play".tr()),
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(10), // Настройте форму кнопки
-                  ),
-                ),
-              ),
-            ],
-          ),
+          // child: Row(
+          //   mainAxisAlignment: MainAxisAlignment.center,
+          //   children: [
+          //     ElevatedButton(
+          //       onPressed: () {
+          //         // Добавьте функциональность для второй кнопки
+          //       },
+          //       child: Text("save".tr()),
+          //       style: ElevatedButton.styleFrom(
+          //         shape: RoundedRectangleBorder(
+          //           borderRadius:
+          //               BorderRadius.circular(10), // Настройте форму кнопки
+          //         ),
+          //       ),
+          //     ),
+          //     SizedBox(width: 25),
+          //     ElevatedButton(
+          //       onPressed: () {
+          //         if (isPlaying) {
+          //           pauseMusic();
+          //         } else {
+          //           playMusic();
+          //         }
+          //       },
+          //       child: Text(isPlaying ? "pause".tr() : "play".tr()),
+          //       style: ElevatedButton.styleFrom(
+          //         shape: RoundedRectangleBorder(
+          //           borderRadius:
+          //               BorderRadius.circular(10), // Настройте форму кнопки
+          //         ),
+          //       ),
+          //     ),
+          //   ],
+          // ),
         ),
       ],
     );
@@ -562,7 +562,7 @@ class _MyAppBarState extends State<MyAppBar> {
         Padding(
           padding: const EdgeInsets.only(left: 0),
           child: SizedBox(
-            width: 160,
+            width: 230,
             child: FutureBuilder(
               builder: (context, snapshot) {
                 return mySearch();
@@ -571,11 +571,11 @@ class _MyAppBarState extends State<MyAppBar> {
             ),
           ),
         ),
-        IconButton(
-          padding: const EdgeInsets.only(left: 0),
-          onPressed: () {},
-          icon: Icon(Icons.bookmark_add),
-        ),
+        // IconButton(
+        //   padding: const EdgeInsets.only(left: 0),
+        //   onPressed: () {},
+        //   icon: Icon(Icons.bookmark_add),
+        // ),
         Padding(
           padding: const EdgeInsets.only(right: 10),
           child: DropdownFlag(
@@ -587,20 +587,20 @@ class _MyAppBarState extends State<MyAppBar> {
           ),
         ),
       ],
-      leading: Builder(
-        builder: (context) {
-          return Padding(
-            padding: const EdgeInsets.only(
-                right: 20.0), // Устанавливаем отступ слева
-            child: IconButton(
-              icon: Icon(Icons.menu),
-              onPressed: () {
-                Scaffold.of(context).openDrawer();
-              },
-            ),
-          );
-        },
-      ),
+      // leading: Builder(
+      //   builder: (context) {
+      //     return Padding(
+      //       padding: const EdgeInsets.only(
+      //           right: 20.0), // Устанавливаем отступ слева
+      //       child: IconButton(
+      //         icon: Icon(Icons.menu),
+      //         onPressed: () {
+      //           Scaffold.of(context).openDrawer();
+      //         },
+      //       ),
+      //     );
+      //   },
+      // ),
     );
   }
 }
@@ -897,29 +897,29 @@ class _MyTextContState extends State<MyTextCont> {
                                 top: 0,
                                 right: 0,
                               ),
-                              child: Row(
-                                children: [
-                                  IconButton(
-                                    padding: const EdgeInsets.only(
-                                      left: 0,
-                                      bottom: 0,
-                                      top: 0,
-                                      right: 0,
-                                    ),
-                                    onPressed: () {},
-                                    icon: Icon(Icons.bookmark_add),
-                                  ),
-                                  IconButton(
-                                    icon: Icon(
-                                      Icons.share_outlined,
-                                      color: Colors.green,
-                                    ),
-                                    onPressed: () {
-                                      // Действие при нажатии на иконку "bookmark_add"
-                                    },
-                                  ),
-                                ],
-                              ),
+                              // child: Row(
+                              //   children: [
+                              //     IconButton(
+                              //       padding: const EdgeInsets.only(
+                              //         left: 0,
+                              //         bottom: 0,
+                              //         top: 0,
+                              //         right: 0,
+                              //       ),
+                              //       onPressed: () {},
+                              //       icon: Icon(Icons.bookmark_add),
+                              //     ),
+                              //     IconButton(
+                              //       icon: Icon(
+                              //         Icons.share_outlined,
+                              //         color: Colors.green,
+                              //       ),
+                              //       onPressed: () {
+                              //         // Действие при нажатии на иконку "bookmark_add"
+                              //       },
+                              //     ),
+                              //   ],
+                              // ),
                             ),
                           ],
                         ),

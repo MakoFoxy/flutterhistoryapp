@@ -12,12 +12,16 @@ class CreateHistoryPost extends StatefulWidget {
 class _CreateHistoryPostState extends State<CreateHistoryPost> {
   PlatformFile? pickedFile;
   UploadTask? uploadTask;
-  String myimageUrl = "";
+  String myImageUrl = "";
+
+  PlatformFile? pickedAudioFile;
+  UploadTask? uploadAudioTask;
+  String myAudioUrl = "";
 
   Future selectFile() async {
     final FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['pdf', 'doc', 'jpg', 'jpeg', 'png'],
+      allowedExtensions: ['pdf', 'doc', 'jpg', 'jpeg', 'png', 'mp3'],
       initialDirectory: '/storage/emulated/0/Download',
     );
 
@@ -45,11 +49,50 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
     print('Upload snapshot $snapshot');
 
     final urlDownload = await snapshot.ref.getDownloadURL();
-    myimageUrl = urlDownload;
+    myImageUrl = urlDownload;
     print('Download Link $urlDownload');
 
     setState(() {
       uploadTask = null;
+    });
+  }
+
+  Future selectAudioFile() async {
+    final FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['mp3'],
+      initialDirectory: '/storage/emulated/0/Download',
+    );
+
+    final fileres = await FilePicker.platform.pickFiles();
+    if (fileres == null) return;
+
+    setState(() {
+      pickedAudioFile = fileres.files.first;
+    });
+
+    print("result $result");
+    print("pickedAudioFile $pickedAudioFile");
+  }
+
+  Future uploadAudioFile() async {
+    final path = 'files/${pickedAudioFile!.path!}';
+    final fileupload = File(pickedAudioFile!.path!);
+
+    final ref = FirebaseStorage.instance.ref().child(path);
+    setState(() {
+      uploadAudioTask = ref.putFile(fileupload);
+    });
+    print('Upload uploadTask $uploadAudioTask');
+    final snapshot = await uploadAudioTask!.whenComplete(() {});
+    print('Upload snapshot $snapshot');
+
+    final urlAudioDownload = await snapshot.ref.getDownloadURL();
+    myAudioUrl = urlAudioDownload;
+    print('Download Link $urlAudioDownload');
+
+    setState(() {
+      uploadAudioTask = null;
     });
   }
 
@@ -263,7 +306,7 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
                     vertical: 10), // или любые другие отступы
                 child: ElevatedButton(
                   onPressed: selectFile,
-                  child: Text('Фотофайлды таңдаңыз'),
+                  child: Text('Select Photo'),
                 ),
               ),
               Container(
@@ -271,11 +314,46 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
                     vertical: 10), // или любые другие отступы
                 child: ElevatedButton(
                   onPressed: uploadFile,
-                  child: Text('Фотофайлды жүктеу'),
+                  child: Text('Upload Photo'),
                 ),
               ),
               const SizedBox(
                 height: 32,
+              ),
+              Column(
+                children: [
+                  if (pickedAudioFile != null)
+                    Container(
+                      color: Colors.green[200],
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: 200,
+                            height: 200,
+                            color: Colors.green[200],
+                            child: Text(pickedAudioFile!.path!),
+                          ),
+                        ],
+                      ),
+                    ),
+                ],
+              ),
+              Container(
+                margin: const EdgeInsets.symmetric(
+                    vertical: 10), // или любые другие отступы
+                child: ElevatedButton(
+                  onPressed: selectAudioFile,
+                  child: Text('Select Audio'),
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.symmetric(
+                    vertical: 10), // или любые другие отступы
+                child: ElevatedButton(
+                  onPressed: uploadAudioFile,
+                  child: Text('Upload Audio'),
+                ),
               ),
               buildProgress(),
               Container(
@@ -301,7 +379,8 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
                       'description': teDescriptionKz.text,
                       'xCoordinate': xCoordinateInt,
                       'yCoordinate': yCoordinateInt,
-                      'filephotopath': myimageUrl,
+                      'filephotopath': myImageUrl,
+                      'fileaudiopath': myAudioUrl,
                     };
                     Map<String, dynamic> dataru = {
                       'id': id.text,
@@ -309,7 +388,8 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
                       'description': teDescriptionRu.text,
                       'xCoordinate': xCoordinateInt,
                       'yCoordinate': yCoordinateInt,
-                      'filephotopath': myimageUrl,
+                      'filephotopath': myImageUrl,
+                      'fileaudiopath': myAudioUrl,
                     };
                     Map<String, dynamic> dataen = {
                       'id': id.text,
@@ -317,7 +397,8 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
                       'description': teDescriptionEn.text,
                       'xCoordinate': xCoordinateInt,
                       'yCoordinate': yCoordinateInt,
-                      'filephotopath': myimageUrl,
+                      'filephotopath': myImageUrl,
+                      'fileaudiopath': myAudioUrl,
                     };
 
                     DocumentReference docRefKz = await collRefKz.add(datakz);
@@ -344,8 +425,7 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
 
                     Navigator.pop(context);
                   },
-                  child:
-                      const Text('Тарихи объектіні мәліметтер базасына сақтау'),
+                  child: const Text('Save data in database'),
                 ),
               ),
             ],

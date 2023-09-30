@@ -91,7 +91,7 @@ class _MyAppBarState extends State<MyAppBar> {
         Padding(
           padding: const EdgeInsets.only(left: 0),
           child: SizedBox(
-            width: 160,
+            width: 230,
             child: FutureBuilder(
               builder: (context, snapshot) {
                 return FirebaseSearch(
@@ -102,11 +102,11 @@ class _MyAppBarState extends State<MyAppBar> {
             ),
           ),
         ),
-        IconButton(
-          padding: const EdgeInsets.only(left: 0),
-          onPressed: () {},
-          icon: Icon(Icons.bookmark_add),
-        ),
+        // IconButton(
+        //   padding: const EdgeInsets.only(left: 0),
+        //   onPressed: () {},
+        //   icon: Icon(Icons.bookmark_add),
+        // ),
         Padding(
           padding: const EdgeInsets.only(right: 10),
           child: DropdownFlag(
@@ -118,20 +118,20 @@ class _MyAppBarState extends State<MyAppBar> {
           ),
         ),
       ],
-      leading: Builder(
-        builder: (context) {
-          return Padding(
-            padding: const EdgeInsets.only(
-                right: 20.0), // Устанавливаем отступ слева
-            child: IconButton(
-              icon: Icon(Icons.menu),
-              onPressed: () {
-                Scaffold.of(context).openDrawer();
-              },
-            ),
-          );
-        },
-      ),
+      // leading: Builder(
+      //   builder: (context) {
+      //     return Padding(
+      //       padding: const EdgeInsets.only(
+      //           right: 20.0), // Устанавливаем отступ слева
+      //       child: IconButton(
+      //         icon: Icon(Icons.menu),
+      //         onPressed: () {
+      //           Scaffold.of(context).openDrawer();
+      //         },
+      //       ),
+      //     );
+      //   },
+      // ),
     );
   }
 }
@@ -418,144 +418,140 @@ class streamBuildHome extends StatelessWidget {
                 border: Border.all(
                     color: Colors.greenAccent), // Устанавливаем красную границу
               ),
-              child: MediaQuery(
-                data: MediaQuery.of(context),
-                child: Column(
-                  children: resultList.map((data) {
-                    final doc = data.data() as Map<String, dynamic>;
-                    return Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                            color:
-                                Colors.green), // Устанавливаем красную границу
-                      ),
-                      child: Column(
-                        children: [
-                          Container(
-                            padding: EdgeInsets.only(
-                              left: 10,
-                              top: 0,
-                              bottom: 0,
-                              right: 0,
-                            ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
+              child: Column(
+                children: resultList.map((data) {
+                  final doc = data.data() as Map<String, dynamic>;
+                  return Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                          color: Colors.green), // Устанавливаем красную границу
+                    ),
+                    child: Column(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.only(
+                            left: 10,
+                            top: 0,
+                            bottom: 0,
+                            right: 0,
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                // decoration: BoxDecoration(
+                                //   border: Border.all(
+                                //     color: Colors.red,
+                                //   ),
+                                // ),
+                                child: Image.asset(
+                                  'lib/assets/images/mavzoley_yasavi.jpg',
+                                  width: 150,
+                                  height: 120,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              SizedBox(width: 10.0),
+                              Expanded(
+                                // Используем Expanded для текста и кнопки
+                                child: Container(
+                                  padding: const EdgeInsets.only(
+                                    left: 0,
+                                    top: 0,
+                                    right: 0,
+                                    bottom: 0,
+                                  ),
                                   // decoration: BoxDecoration(
                                   //   border: Border.all(
                                   //     color: Colors.red,
                                   //   ),
                                   // ),
-                                  child: Image.asset(
-                                    'lib/assets/images/mavzoley_yasavi.jpg',
-                                    width: 150,
-                                    height: 120,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                SizedBox(width: 10.0),
-                                Expanded(
-                                  // Используем Expanded для текста и кнопки
-                                  child: Container(
-                                    padding: const EdgeInsets.only(
-                                      left: 0,
-                                      top: 0,
-                                      right: 0,
-                                      bottom: 0,
-                                    ),
-                                    // decoration: BoxDecoration(
-                                    //   border: Border.all(
-                                    //     color: Colors.red,
-                                    //   ),
-                                    // ),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment
-                                          .center, // Выравнивание текста по левому краю
-                                      children: [
-                                        Text(
-                                          doc['title'],
-                                          style: TextStyle(
-                                            fontSize: 18.0,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                          softWrap: true,
-                                          //overflow: TextOverflow.ellipsis,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment
+                                        .center, // Выравнивание текста по левому краю
+                                    children: [
+                                      Text(
+                                        doc['title'],
+                                        style: TextStyle(
+                                          fontSize: 18.0,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
                                         ),
-                                        SizedBox(
-                                          height: 43,
+                                        softWrap: true,
+                                        //overflow: TextOverflow.ellipsis,
+                                      ),
+                                      SizedBox(
+                                        height: 43,
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ObjectFirebasePage(
+                                                selectedKey: doc['id'],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          padding: EdgeInsets.all(0),
                                         ),
-                                        ElevatedButton(
-                                          onPressed: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    ObjectFirebasePage(
-                                                  selectedKey: doc['id'],
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            padding: EdgeInsets.all(0),
-                                          ),
-                                          child: Container(
-                                            width: double
-                                                .infinity, // Разрешаем кнопке занимать всю ширину
-                                            alignment: Alignment
-                                                .topCenter, // Выравнивание текста по центру
-                                            padding: EdgeInsets.symmetric(
-                                                vertical: 8,
-                                                horizontal:
-                                                    0), // Отступы для текста кнопки
-                                            child: Text(
-                                              "details".tr(),
-                                              style: TextStyle(
-                                                fontSize: 14.0,
-                                                fontWeight: FontWeight.bold,
-                                              ),
+                                        child: Container(
+                                          width: double
+                                              .infinity, // Разрешаем кнопке занимать всю ширину
+                                          alignment: Alignment
+                                              .topCenter, // Выравнивание текста по центру
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 8,
+                                              horizontal:
+                                                  0), // Отступы для текста кнопки
+                                          child: Text(
+                                            "details".tr(),
+                                            style: TextStyle(
+                                              fontSize: 14.0,
+                                              fontWeight: FontWeight.bold,
                                             ),
                                           ),
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                Container(
-                                  padding: const EdgeInsets.only(
-                                    left: 0,
-                                    bottom: 10,
-                                    top: 0,
-                                    right: 10,
-                                  ),
-                                  height: 25,
-                                  width: 25,
-                                  // decoration: BoxDecoration(
-                                  //   border: Border.all(
-                                  //       color: Colors
-                                  //           .red), // Устанавливаем красную границу
-                                  // ),
-                                  child: IconButton(
-                                    padding: const EdgeInsets.only(
-                                      left: 0,
-                                      bottom: 10,
-                                      top: 0,
-                                      right: 10,
-                                    ),
-                                    onPressed: () {},
-                                    icon: Icon(Icons.bookmark_add),
-                                  ),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.only(
+                                  left: 0,
+                                  bottom: 10,
+                                  top: 0,
+                                  right: 10,
                                 ),
-                              ],
-                            ),
+                                height: 25,
+                                width: 25,
+                                // decoration: BoxDecoration(
+                                //   border: Border.all(
+                                //       color: Colors
+                                //           .red), // Устанавливаем красную границу
+                                // ),
+                                // child: IconButton(
+                                //   padding: const EdgeInsets.only(
+                                //     left: 0,
+                                //     bottom: 10,
+                                //     top: 0,
+                                //     right: 10,
+                                //   ),
+                                //   onPressed: () {},
+                                //   icon: Icon(Icons.bookmark_add),
+                                // ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    );
-                  }).toList(), // Convert the mapped items to a list
-                ),
+                        ),
+                      ],
+                    ),
+                  );
+                }).toList(), // Convert the mapped items to a list
               ),
             );
           }
@@ -626,66 +622,66 @@ class HomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      // floatingActionButton: Stack(
-      //   children: [
-      //     Positioned(
-      //       right: 0,
-      //       bottom: 0,
-      //       child: FloatingActionButton(
-      //         onPressed: () async {
-      //           await Navigator.push(
-      //             context,
-      //             MaterialPageRoute(
-      //               builder: (context) => CreateHistoryPost(),
-      //             ),
-      //           );
-      //         },
-      //         child: const Icon(Icons.create),
-      //       ),
-      //     ),
-      //     Positioned(
-      //       left: 20,
-      //       bottom: 0,
-      //       child: FloatingActionButton(
-      //         onPressed: () async {
-      //           var collRefkz = FirebaseFirestore.instance.collection('datakz');
-      //           var collRefru = FirebaseFirestore.instance.collection('dataru');
-      //           var collRefen = FirebaseFirestore.instance.collection('dataen');
+      floatingActionButton: Stack(
+        children: [
+          Positioned(
+            right: 0,
+            bottom: 0,
+            child: FloatingActionButton(
+              onPressed: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CreateHistoryPost(),
+                  ),
+                );
+              },
+              child: const Icon(Icons.create),
+            ),
+          ),
+          Positioned(
+            left: 20,
+            bottom: 0,
+            child: FloatingActionButton(
+              onPressed: () async {
+                var collRefkz = FirebaseFirestore.instance.collection('datakz');
+                var collRefru = FirebaseFirestore.instance.collection('dataru');
+                var collRefen = FirebaseFirestore.instance.collection('dataen');
 
-      //           QuerySnapshot querySnapshotkz = await collRefkz.get();
-      //           QuerySnapshot querySnapshotru = await collRefru.get();
-      //           QuerySnapshot querySnapshoten = await collRefen.get();
+                QuerySnapshot querySnapshotkz = await collRefkz.get();
+                QuerySnapshot querySnapshotru = await collRefru.get();
+                QuerySnapshot querySnapshoten = await collRefen.get();
 
-      //           List<QueryDocumentSnapshot> docskz = querySnapshotkz.docs;
-      //           List<QueryDocumentSnapshot> docsru = querySnapshotru.docs;
-      //           List<QueryDocumentSnapshot> docsen = querySnapshoten.docs;
+                List<QueryDocumentSnapshot> docskz = querySnapshotkz.docs;
+                List<QueryDocumentSnapshot> docsru = querySnapshotru.docs;
+                List<QueryDocumentSnapshot> docsen = querySnapshoten.docs;
 
-      //           List<String> autokey = [];
-      //           for (QueryDocumentSnapshot doc in docskz) {
-      //             autokey.add(doc.id);
-      //           }
-      //           for (QueryDocumentSnapshot doc in docsru) {
-      //             autokey.add(doc.id);
-      //           }
-      //           for (QueryDocumentSnapshot doc in docsen) {
-      //             autokey.add(doc.id);
-      //           }
+                List<String> autokey = [];
+                for (QueryDocumentSnapshot doc in docskz) {
+                  autokey.add(doc.id);
+                }
+                for (QueryDocumentSnapshot doc in docsru) {
+                  autokey.add(doc.id);
+                }
+                for (QueryDocumentSnapshot doc in docsen) {
+                  autokey.add(doc.id);
+                }
 
-      //           autokey.forEach((element) {
-      //             collRefkz.doc(element).delete();
-      //           });
-      //           autokey.forEach((element) {
-      //             collRefru.doc(element).delete();
-      //           });
-      //           autokey.forEach((element) {
-      //             collRefen.doc(element).delete();
-      //           });
-      //         },
-      //         child: const Icon(Icons.delete),
-      //       ),
-      //     ),
-      //   ],
-      // ),
+                autokey.forEach((element) {
+                  collRefkz.doc(element).delete();
+                });
+                autokey.forEach((element) {
+                  collRefru.doc(element).delete();
+                });
+                autokey.forEach((element) {
+                  collRefen.doc(element).delete();
+                });
+              },
+              child: const Icon(Icons.delete),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
