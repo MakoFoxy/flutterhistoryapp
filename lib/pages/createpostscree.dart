@@ -21,7 +21,7 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
   Future selectFile() async {
     final FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['pdf', 'doc', 'jpg', 'jpeg', 'png', 'mp3'],
+      allowedExtensions: ['pdf', 'doc', 'jpg', 'jpeg', 'png'],
       initialDirectory: '/storage/emulated/0/Download',
     );
 
@@ -40,17 +40,21 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
     final path = 'files/${pickedFile!.path!}';
     final fileupload = File(pickedFile!.path!);
 
-    final ref = FirebaseStorage.instance.ref().child(path);
+    final dataref = FirebaseStorage.instance.ref().child(path);
     setState(() {
-      uploadTask = ref.putFile(fileupload);
+      uploadTask = dataref.putFile(fileupload);
     });
     print('Upload uploadTask $uploadTask');
-    final snapshot = await uploadTask!.whenComplete(() {});
-    print('Upload snapshot $snapshot');
 
-    final urlDownload = await snapshot.ref.getDownloadURL();
-    myImageUrl = urlDownload;
-    print('Download Link $urlDownload');
+    try {
+      // final snapshot = await uploadTask!.whenComplete(() {});
+      // print('Upload snapshot $snapshot');
+      final urlDownload = await dataref.getDownloadURL();
+      myImageUrl = urlDownload;
+      print('Download Link $urlDownload');
+    } catch (error) {
+      print('Error uploading file: $error');
+    }
 
     setState(() {
       uploadTask = null;
@@ -79,18 +83,20 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
     final path = 'files/${pickedAudioFile!.path!}';
     final fileupload = File(pickedAudioFile!.path!);
 
-    final ref = FirebaseStorage.instance.ref().child(path);
+    final dataref = FirebaseStorage.instance.ref().child(path);
     setState(() {
-      uploadAudioTask = ref.putFile(fileupload);
+      uploadAudioTask = dataref.putFile(fileupload);
     });
     print('Upload uploadTask $uploadAudioTask');
-    final snapshot = await uploadAudioTask!.whenComplete(() {});
-    print('Upload snapshot $snapshot');
-
-    final urlAudioDownload = await snapshot.ref.getDownloadURL();
-    myAudioUrl = urlAudioDownload;
-    print('Download Link $urlAudioDownload');
-
+    try {
+      // final snapshot = await uploadAudioTask!.whenComplete(() {});
+      // print('Upload snapshot $snapshot');
+      final urlAudioDownload = await dataref.getDownloadURL();
+      myAudioUrl = urlAudioDownload;
+      print('Download Link $urlAudioDownload');
+    } catch (error) {
+      print('Error uploading file: $error');
+    }
     setState(() {
       uploadAudioTask = null;
     });
@@ -296,6 +302,7 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
                           //     height:
                           //         8), // Отступ между изображением и текстом
                           Text(pickedFile!.path!),
+                          Text('Image URL: $myImageUrl'),
                         ],
                       ),
                     ),
@@ -334,6 +341,7 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
                             color: Colors.green[200],
                             child: Text(pickedAudioFile!.path!),
                           ),
+                          Text('Audio URL: $myAudioUrl'),
                         ],
                       ),
                     ),

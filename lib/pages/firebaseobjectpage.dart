@@ -1023,9 +1023,8 @@ class _MyPhotoContState extends State<MyPhotoCont> {
       autokey = datafirebasekz[i].id;
       autodata = datafirebasekz[i].data() as Map<String, dynamic>;
       print(
-          "datafirebasekz[i]['title']KZ from firebase ${datafirebasekz[i]['title']}");
-      if (widget.selectedKey == datafirebasekz[i]['title'] &&
-          !photoWidgetsArr.contains(photoWidgetsKz)) {
+          "datafirebasekz[i]['photo']KZ from firebase ${datafirebasekz[i]['filephotopath']}");
+      if (widget.selectedKey == datafirebasekz[i]['id']) {
         photoWidgetsKz = datafirebasekz[i]['filephotopath'];
         photoWidgetsArr.add(photoWidgetsKz);
         break;
@@ -1038,9 +1037,8 @@ class _MyPhotoContState extends State<MyPhotoCont> {
       autokey = datafirebaseru[i].id;
       autodata = datafirebaseru[i].data() as Map<String, dynamic>;
       print(
-          "datafirebaseru[i]['title']RU from firebase ${datafirebaseru[i]['title']}");
-      if (widget.selectedKey == datafirebaseru[i]['title'] &&
-          !photoWidgetsArr.contains(photoWidgetsRu)) {
+          "datafirebaseru[i]['photo']RU from firebase ${datafirebaseru[i]['filephotopath']}");
+      if (widget.selectedKey == datafirebaseru[i]['id']) {
         photoWidgetsRu = datafirebaseru[i]['filephotopath'];
         photoWidgetsArr.add(photoWidgetsRu);
         break;
@@ -1051,9 +1049,8 @@ class _MyPhotoContState extends State<MyPhotoCont> {
       autokey = datafirebaseen[i].id;
       autodata = datafirebaseen[i].data() as Map<String, dynamic>;
       print(
-          "datafirebasekz[i]['title']EN from firebase ${datafirebaseen[i]['title']}");
-      if (widget.selectedKey == datafirebaseen[i]['title'] &&
-          !photoWidgetsArr.contains(photoWidgetsEn)) {
+          "datafirebaseen[i]['photo']EN from firebase ${datafirebaseen[i]['filephotopath']}");
+      if (widget.selectedKey == datafirebaseen[i]['id']) {
         photoWidgetsEn = datafirebaseen[i]['filephotopath'];
         photoWidgetsArr.add(photoWidgetsEn);
         break;
@@ -1111,19 +1108,23 @@ class _MyPhotoContState extends State<MyPhotoCont> {
         String currentLanguageen = 'en';
 
         photoWidgetsArr.forEach((element) {
+          print("***<=>elementphoto $element");
           if (photoWidgetsKz == element) {
             photoWidgetsKaz = photoWidgetsKaz + element;
-          } else if (photoWidgetsRu == element) {
-            photoWidgetsRus = photoWidgetsRus + element;
-          } else if (photoWidgetsEn == element) {
-            photoWidgetsEng = photoWidgetsEng + element;
-          } else {
-            photoWidgetsEmpty = photoWidgetsEmpty + element;
           }
-          print("***<=>element $element");
+          if (photoWidgetsRu == element) {
+            photoWidgetsRus = photoWidgetsRus + element;
+          }
+          if (photoWidgetsEn == element) {
+            photoWidgetsEng = photoWidgetsEng + element;
+          }
+          photoWidgetsEmpty = photoWidgetsEmpty + element;
+
+          print("***<=>elementphoto $element");
         });
 
-        //photoWidgetsArr.clear();
+        photoWidgetsArr.clear();
+        print("titleWidgetsArr.clear $photoWidgetsArr");
 
         if (Localizations.localeOf(context).languageCode == currentLanguagekz) {
           // fetchKeysFirebase();
@@ -1151,7 +1152,7 @@ class _MyPhotoContState extends State<MyPhotoCont> {
         print("photoWidgetsEng $photoWidgetsEng");
         print("photoWidgetsEmpty $photoWidgetsEmpty");
 
-        print(photoDisplayed);
+        print('photoDisplayed $photoDisplayed');
         return Padding(
           padding: EdgeInsets.only(top: 0),
           child: Container(
@@ -1161,18 +1162,18 @@ class _MyPhotoContState extends State<MyPhotoCont> {
               margin:
                   const EdgeInsets.only(left: 0, right: 0, top: 0, bottom: 10),
               elevation: 5,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(0),
-                  image: DecorationImage(
-                    image: AssetImage('lib/assets/images/mavzoley_yasavi.jpg'),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                // child: Image.file(
-                //   File(photoDisplayed),
-                //   fit: BoxFit.cover,
-                // ),
+              // child: Container(
+              //   decoration: BoxDecoration(
+              //     borderRadius: BorderRadius.circular(0),
+              //     image: DecorationImage(
+              //       image: AssetImage('lib/assets/images/mavzoley_yasavi.jpg'),
+              //       fit: BoxFit.cover,
+              //     ),
+              //   ),
+              // ),
+              child: Image.network(
+                photoDisplayed,
+                fit: BoxFit.cover,
               ),
             ),
           ),
