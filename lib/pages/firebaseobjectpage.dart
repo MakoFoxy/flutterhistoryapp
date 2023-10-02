@@ -9,7 +9,10 @@ import 'package:mausoleum/api/yandexmap/map_controls_page.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:mausoleum/api/dropdawn_flag/dropdawn_flag.dart';
 import 'package:path/path.dart';
-import 'package:audioplayers/audioplayers.dart';
+import 'package:on_audio_query/on_audio_query.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:rxdart/rxdart.dart';
+import 'package:mausoleum/pages/slider.dart';
 
 class ObjectFirebasePage extends StatefulWidget {
   final String selectedKey; // Добавьте параметр для выбранного ключа
@@ -73,7 +76,7 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
                             //MyPhotoCont(),
                           ],
                         ),
-                        MusicPlayerWidget(),
+                        MusicPlayerWidget(selectedKey: widget.selectedKey),
                         MyOverviews(selectedKey: widget.selectedKey),
                       ],
                     ),
@@ -181,142 +184,416 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
 }
 
 class MusicPlayerWidget extends StatefulWidget {
+  String selectedKey;
+
+  MusicPlayerWidget({
+    required this.selectedKey,
+  });
+
   @override
   _MusicPlayerWidgetState createState() => _MusicPlayerWidgetState();
 }
 
 class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
-  AudioPlayer audioPlayer = AudioPlayer();
-  String audioUrl =
-      'https://example.com/your_audio_file.mp3'; // Укажите URL вашей аудиозаписи
-
-  bool isPlaying = false;
-  double currentPosition = 0.0;
-  double totalDuration = 0.0;
+  List<String> audioWidgetsArr = [];
+  String audioWidgetsKz = "";
+  String audioWidgetsRu = "";
+  String audioWidgetsEn = "";
+  String audioWidgetsEmpt = "";
 
   @override
-  void initState() {
-    super.initState();
-    audioPlayer.onPlayerStateChanged.listen((state) {
-      if (state == audioPlayer) {
-        setState(() {
-          isPlaying = true;
-        });
-      } else {
-        setState(() {
-          isPlaying = false;
-        });
-      }
-    });
+  Future<List<String>> fetchKeysFirebaseAudio() async {
+    List<String> arrlen = [];
+    arrlen.add(widget.selectedKey);
+    print("widget.selectedKey from firebase ${arrlen.length}");
 
-    audioPlayer.onDurationChanged.listen((Duration duration) {
-      setState(() {
-        totalDuration = duration.inMilliseconds.toDouble();
-      });
-    });
+    List<QueryDocumentSnapshot<Map<String, dynamic>>>? datafirebasekz;
+    List<QueryDocumentSnapshot<Map<String, dynamic>>>? datafirebaseru;
+    List<QueryDocumentSnapshot<Map<String, dynamic>>>? datafirebaseen;
+    late QuerySnapshot<Map<String, dynamic>> datakz;
+    late QuerySnapshot<Map<String, dynamic>> dataru;
+    late QuerySnapshot<Map<String, dynamic>> dataen;
+    dataru = await FirebaseFirestore.instance.collection('dataru').get();
+    datakz = await FirebaseFirestore.instance.collection('datakz').get();
+    dataen = await FirebaseFirestore.instance.collection('dataen').get();
+
+    datafirebasekz = datakz.docs.toList();
+    datafirebaseru = dataru.docs.toList();
+    datafirebaseen = dataen.docs.toList();
+
+    late String autokey;
+    late Map<String, dynamic> autodata;
+
+    for (int i = 0; i < datafirebasekz.length; i++) {
+      autokey = datafirebasekz[i].id;
+      autodata = datafirebasekz[i].data() as Map<String, dynamic>;
+      print(
+          "datafirebasekz[i]['audio']KZ from firebase ${datafirebasekz[i]['fileaudiopath']}");
+      if (widget.selectedKey == datafirebasekz[i]['id']) {
+        audioWidgetsKz = datafirebasekz[i]['fileaudiopath'];
+        audioWidgetsArr.add(audioWidgetsKz);
+        break;
+      }
+    }
+
+    print("widget.selectedKey from firebase ${widget.selectedKey}");
+
+    for (int i = 0; i < datafirebaseru.length; i++) {
+      autokey = datafirebaseru[i].id;
+      autodata = datafirebaseru[i].data() as Map<String, dynamic>;
+      print(
+          "datafirebaseru[i]['audio']RU from firebase ${datafirebaseru[i]['fileaudiopath']}");
+      if (widget.selectedKey == datafirebaseru[i]['id']) {
+        audioWidgetsRu = datafirebaseru[i]['fileaudiopath'];
+        audioWidgetsArr.add(audioWidgetsRu);
+        break;
+      }
+    }
+
+    for (int i = 0; i < datafirebaseen.length; i++) {
+      autokey = datafirebaseen[i].id;
+      autodata = datafirebaseen[i].data() as Map<String, dynamic>;
+      print(
+          "datafirebaseen[i]['audio']EN from firebase ${datafirebaseen[i]['fileaudiopath']}");
+      if (widget.selectedKey == datafirebaseen[i]['id']) {
+        audioWidgetsEn = datafirebaseen[i]['fileaudiopath'];
+        audioWidgetsArr.add(audioWidgetsEn);
+        break;
+      }
+    }
+
+    if (audioWidgetsKz.isEmpty &&
+        audioWidgetsRu.isEmpty &&
+        audioWidgetsEn.isEmpty &&
+        autokey == autokey) {
+      audioWidgetsEmpt = autodata['fileaudiopath'];
+      audioWidgetsArr.add(audioWidgetsEmpt);
+    }
+
+    print("audioWidgetsKz***${audioWidgetsKz}");
+    print("audioWidgetsRu***${audioWidgetsRu}");
+    print("audioWidgetsEn***${audioWidgetsEn}");
+    print("audioWidgetsEmpt***${audioWidgetsEmpt}");
+    print("audioWidgetsArr $audioWidgetsArr");
+    print("audioWidgetsArr.length ${audioWidgetsArr.length}");
+
+    return audioWidgetsArr;
   }
+
+  AudioPlayer _audioPlayer = AudioPlayer();
 
   @override
   void dispose() {
-    audioPlayer.dispose();
     super.dispose();
+    _audioPlayer.stop(); // Остановите аудиоплеер при уничтожении виджета
+    _audioPlayer.dispose(); // Освободите ресурсы плеера
   }
 
-  void playMusic() async {
-    await audioPlayer.play;
-  }
+  Stream<PositionData> get _positionDataStream =>
+      Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(
+        _audioPlayer.positionStream,
+        _audioPlayer.bufferedPositionStream,
+        _audioPlayer.durationStream,
+        (position, bufferedPosition, duration) => PositionData(
+          position,
+          bufferedPosition,
+          duration ?? Duration.zero,
+        ),
+      );
 
-  void pauseMusic() async {
-    await audioPlayer.pause();
-  }
-
-  void seekTo(double milliseconds) {
-    Duration newPosition = Duration(milliseconds: milliseconds.toInt());
-    audioPlayer.seek(newPosition);
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Container(
-          padding: EdgeInsets.only(
-            bottom: 0,
-          ),
-          decoration: BoxDecoration(
-            border: Border(
-              top: BorderSide(
-                color: Colors.green, // Цвет верхней границы
-                width: 1.0, // Ширина верхней границы
+    return FutureBuilder<List<String>>(
+      // Pass the Future that will return data after executing fetchKeysFirebase()
+      future: fetchKeysFirebaseAudio(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator(); // Show a loading indicator while waiting for data
+        }
+
+        if (snapshot.hasError) {
+          return Text("Error: ${snapshot.error}");
+        }
+
+        // If data is loaded successfully, display it
+        final List<String> audioWidgetsArr = snapshot.data ?? [];
+        print("***<=>audioWidgetsArr $audioWidgetsArr");
+
+        print("***<=>audioWidgetsArr.length ${audioWidgetsArr.length}");
+
+        print("***<=>widget.selectedKey ${widget.selectedKey}");
+
+        String audioWidgetsKaz = "";
+        String audioWidgetsRus = "";
+        String audioWidgetsEng = "";
+
+        String audioDisplayed = "";
+        String currentLanguagekz = 'kk';
+        String currentLanguageru = 'ru';
+        String currentLanguageen = 'en';
+
+        audioWidgetsArr.forEach((element) {
+          print("***<=>elementaudio $element");
+          if (audioWidgetsKz == element) {
+            audioWidgetsKaz = audioWidgetsKaz + element;
+          }
+          if (audioWidgetsRu == element) {
+            audioWidgetsRus = audioWidgetsRus + element;
+          }
+          if (audioWidgetsEn == element) {
+            audioWidgetsEng = audioWidgetsEng + element;
+          }
+
+          print("***<=>elementaudio $element");
+        });
+
+        audioWidgetsArr.clear();
+        print("audioWidgetsArr.clear $audioWidgetsArr");
+
+        if (Localizations.localeOf(context).languageCode == currentLanguagekz) {
+          // fetchKeysFirebase();
+          if (audioWidgetsKaz.isNotEmpty) {
+            audioDisplayed = audioWidgetsKaz;
+          }
+        } else if (Localizations.localeOf(context).languageCode ==
+            currentLanguageru) {
+          // fetchKeysFirebase();
+          if (audioWidgetsRus.isNotEmpty) {
+            audioDisplayed = audioWidgetsRus;
+          }
+        } else if (Localizations.localeOf(context).languageCode ==
+            currentLanguageen) {
+          // fetchKeysFirebase;
+          if (audioWidgetsEng.isNotEmpty) {
+            audioDisplayed = audioWidgetsEng;
+          }
+        }
+
+        print("audioWidgetsKaz $audioWidgetsKaz");
+        print("audioWidgetsRus $audioWidgetsRus");
+        print("audioWidgetsEng $audioWidgetsEng");
+        print('audioDisplayed $audioDisplayed');
+
+        // _audioPlayer.setUrl(audioDisplayed);
+        print(
+            '_audioPlayer.setUrl(audioDisplayed) ${_audioPlayer.setUrl(audioDisplayed)}');
+        // _audioPlayer.setAudioSource(
+        //   AudioSource.uri(
+        //     Uri.parse(audioDisplayed),
+        //   ),
+        // );
+        return Container(
+          child: Column(
+            //mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                margin: EdgeInsets.only(
+                  left: 40,
+                  right: 20,
+                  bottom: 20,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.green,
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(250),
+                  ),
+                ),
+                // child: SizedBox(
+                //   width: 50, // Указываете желаемую ширину изображения
+                //   height: 50, // Указываете желаемую высоту изображения
+                //   child: IconButton(
+                //     icon: Icon(Icons.play_arrow),
+                //     onPressed: () {
+                //       _audioPlayer.play;
+                //     },
+                //   ),
+                // ),
               ),
-            ),
-          ),
-          child: Column(children: [
-            SliderTheme(
-              data: SliderTheme.of(context).copyWith(
-                trackHeight: 7.0, // Уменьшаем высоту ползунка
-                activeTrackColor: Colors
-                    .green, // Устанавливаем зеленый цвет для активной части
+              Row(
+                children: [
+                  StreamBuilder<PlayerState>(
+                    stream: _audioPlayer.playerStateStream,
+                    builder: (context, snapshot) {
+                      final playerState = snapshot.data;
+                      final proccessingState = playerState?.processingState;
+                      final playing = playerState?.playing;
+
+                      if (proccessingState == ProcessingState.loading ||
+                          proccessingState == ProcessingState.buffering) {
+                        return Container(
+                          margin: EdgeInsets.all(8.0),
+                          width: 64,
+                          height: 64,
+                          child: CircularProgressIndicator(),
+                        );
+                      } else if (playing != true) {
+                        return IconButton(
+                            onPressed: _audioPlayer.play,
+                            icon: const Icon(Icons.play_arrow));
+                      } else if (proccessingState !=
+                          ProcessingState.completed) {
+                        return IconButton(
+                          onPressed: _audioPlayer.pause,
+                          iconSize: 64,
+                          icon: const Icon(Icons.pause),
+                        );
+                      } else {
+                        return IconButton(
+                          onPressed: () => _audioPlayer.seek(Duration.zero),
+                          iconSize: 64,
+                          icon: const Icon(Icons.replay),
+                        );
+                      }
+                    },
+                  ),
+                ],
               ),
-              child: Slider(
-                value: currentPosition,
-                min: 0,
-                max: totalDuration,
-                onChanged: (double value) {
-                  seekTo(value);
+              StreamBuilder<PositionData>(
+                stream: _positionDataStream,
+                builder: (context, snapshot) {
+                  final positionData = snapshot.data;
+                  return SeekBar(
+                    duration: positionData?.duration ?? Duration.zero,
+                    position: positionData?.position ?? Duration.zero,
+                    bufferedPosition:
+                        positionData?.bufferedPosition ?? Duration.zero,
+                    onChangedEnd: _audioPlayer.seek,
+                  );
                 },
-              ),
-            )
-          ]),
-        ),
-        Container(
-          decoration: BoxDecoration(
-            border: Border(
-              bottom: BorderSide(
-                color: Colors.green, // Цвет верхней границы
-                width: 1.0,
-              ),
-            ),
+              )
+            ],
           ),
-          // child: Row(
-          //   mainAxisAlignment: MainAxisAlignment.center,
-          //   children: [
-          //     ElevatedButton(
-          //       onPressed: () {
-          //         // Добавьте функциональность для второй кнопки
-          //       },
-          //       child: Text("save".tr()),
-          //       style: ElevatedButton.styleFrom(
-          //         shape: RoundedRectangleBorder(
-          //           borderRadius:
-          //               BorderRadius.circular(10), // Настройте форму кнопки
-          //         ),
-          //       ),
-          //     ),
-          //     SizedBox(width: 25),
-          //     ElevatedButton(
-          //       onPressed: () {
-          //         if (isPlaying) {
-          //           pauseMusic();
-          //         } else {
-          //           playMusic();
-          //         }
-          //       },
-          //       child: Text(isPlaying ? "pause".tr() : "play".tr()),
-          //       style: ElevatedButton.styleFrom(
-          //         shape: RoundedRectangleBorder(
-          //           borderRadius:
-          //               BorderRadius.circular(10), // Настройте форму кнопки
-          //         ),
-          //       ),
-          //     ),
-          //   ],
-          // ),
-        ),
-      ],
+        );
+      },
     );
   }
+
+  // bool isPlaying = false;
+  // double currentPosition = 0.0;
+  // double totalDuration = 0.0;
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   audioPlayer.onPlayerStateChanged.listen((state) {
+  //     if (state == audioPlayer) {
+  //       setState(() {
+  //         isPlaying = true;
+  //       });
+  //     } else {
+  //       setState(() {
+  //         isPlaying = false;
+  //       });
+  //     }
+  //   });
+
+  //   audioPlayer.onDurationChanged.listen((Duration duration) {
+  //     setState(() {
+  //       totalDuration = duration.inMilliseconds.toDouble();
+  //     });
+  //   });
+  // }
+
+  // @override
+  // void dispose() {
+  //   audioPlayer.dispose();
+  //   super.dispose();
+  // }
+
+  // void playMusic() async {
+  //   await audioPlayer.play;
+  // }
+
+  // void pauseMusic() async {
+  //   await audioPlayer.pause();
+  // }
+
+  // void seekTo(double milliseconds) {
+  //   Duration newPosition = Duration(milliseconds: milliseconds.toInt());
+  //   audioPlayer.seek(newPosition);
+  // }
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   return Column(
+  //     mainAxisAlignment: MainAxisAlignment.center,
+  //     children: <Widget>[
+  //       Container(
+  //         padding: EdgeInsets.only(
+  //           bottom: 0,
+  //         ),
+  //         decoration: BoxDecoration(
+  //           border: Border(
+  //             top: BorderSide(
+  //               color: Colors.green, // Цвет верхней границы
+  //               width: 1.0, // Ширина верхней границы
+  //             ),
+  //           ),
+  //         ),
+  //         child: Column(children: [
+  //           SliderTheme(
+  //             data: SliderTheme.of(context).copyWith(
+  //               trackHeight: 7.0, // Уменьшаем высоту ползунка
+  //               activeTrackColor: Colors
+  //                   .green, // Устанавливаем зеленый цвет для активной части
+  //             ),
+  //             child: Slider(
+  //               value: currentPosition,
+  //               min: 0,
+  //               max: totalDuration,
+  //               onChanged: (double value) {
+  //                 seekTo(value);
+  //               },
+  //             ),
+  //           )
+  //         ]),
+  //       ),
+  //       Container(
+  //         decoration: BoxDecoration(
+  //           border: Border(
+  //             bottom: BorderSide(
+  //               color: Colors.green, // Цвет верхней границы
+  //               width: 1.0,
+  //             ),
+  //           ),
+  //         ),
+  //         child: Row(
+  //           mainAxisAlignment: MainAxisAlignment.center,
+  //           children: [
+  //             ElevatedButton(
+  //               onPressed: () {
+  //                 // Добавьте функциональность для второй кнопки
+  //               },
+  //               child: Text("save".tr()),
+  //               style: ElevatedButton.styleFrom(
+  //                 shape: RoundedRectangleBorder(
+  //                   borderRadius:
+  //                       BorderRadius.circular(10), // Настройте форму кнопки
+  //                 ),
+  //               ),
+  //             ),
+  //             SizedBox(width: 25),
+  //             ElevatedButton(
+  //               onPressed: () {
+  //                 if (isPlaying) {
+  //                   pauseMusic();
+  //                 } else {
+  //                   playMusic();
+  //                 }
+  //               },
+  //               child: Text(isPlaying ? "pause".tr() : "play".tr()),
+  //               style: ElevatedButton.styleFrom(
+  //                 shape: RoundedRectangleBorder(
+  //                   borderRadius:
+  //                       BorderRadius.circular(10), // Настройте форму кнопки
+  //                 ),
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 }
 
 class MyOverviews extends StatefulWidget {
