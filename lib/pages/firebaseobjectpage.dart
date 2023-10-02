@@ -282,13 +282,6 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
 
   AudioPlayer _audioPlayer = AudioPlayer();
 
-  @override
-  void dispose() {
-    super.dispose();
-    _audioPlayer.stop(); // Остановите аудиоплеер при уничтожении виджета
-    _audioPlayer.dispose(); // Освободите ресурсы плеера
-  }
-
   Stream<PositionData> get _positionDataStream =>
       Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(
         _audioPlayer.positionStream,
@@ -303,168 +296,186 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
 
   Widget build(BuildContext context) {
     return FutureBuilder<List<String>>(
-      // Pass the Future that will return data after executing fetchKeysFirebase()
-      future: fetchKeysFirebaseAudio(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator(); // Show a loading indicator while waiting for data
-        }
-
-        if (snapshot.hasError) {
-          return Text("Error: ${snapshot.error}");
-        }
-
-        // If data is loaded successfully, display it
-        final List<String> audioWidgetsArr = snapshot.data ?? [];
-        print("***<=>audioWidgetsArr $audioWidgetsArr");
-
-        print("***<=>audioWidgetsArr.length ${audioWidgetsArr.length}");
-
-        print("***<=>widget.selectedKey ${widget.selectedKey}");
-
-        String audioWidgetsKaz = "";
-        String audioWidgetsRus = "";
-        String audioWidgetsEng = "";
-
-        String audioDisplayed = "";
-        String currentLanguagekz = 'kk';
-        String currentLanguageru = 'ru';
-        String currentLanguageen = 'en';
-
-        audioWidgetsArr.forEach((element) {
-          print("***<=>elementaudio $element");
-          if (audioWidgetsKz == element) {
-            audioWidgetsKaz = audioWidgetsKaz + element;
-          }
-          if (audioWidgetsRu == element) {
-            audioWidgetsRus = audioWidgetsRus + element;
-          }
-          if (audioWidgetsEn == element) {
-            audioWidgetsEng = audioWidgetsEng + element;
+        // Pass the Future that will return data after executing fetchKeysFirebase()
+        future: fetchKeysFirebaseAudio(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return CircularProgressIndicator(); // Show a loading indicator while waiting for data
           }
 
-          print("***<=>elementaudio $element");
-        });
-
-        audioWidgetsArr.clear();
-        print("audioWidgetsArr.clear $audioWidgetsArr");
-
-        if (Localizations.localeOf(context).languageCode == currentLanguagekz) {
-          // fetchKeysFirebase();
-          if (audioWidgetsKaz.isNotEmpty) {
-            audioDisplayed = audioWidgetsKaz;
+          if (snapshot.hasError) {
+            return Text("Error: ${snapshot.error}");
           }
-        } else if (Localizations.localeOf(context).languageCode ==
-            currentLanguageru) {
-          // fetchKeysFirebase();
-          if (audioWidgetsRus.isNotEmpty) {
-            audioDisplayed = audioWidgetsRus;
-          }
-        } else if (Localizations.localeOf(context).languageCode ==
-            currentLanguageen) {
-          // fetchKeysFirebase;
-          if (audioWidgetsEng.isNotEmpty) {
-            audioDisplayed = audioWidgetsEng;
-          }
-        }
 
-        print("audioWidgetsKaz $audioWidgetsKaz");
-        print("audioWidgetsRus $audioWidgetsRus");
-        print("audioWidgetsEng $audioWidgetsEng");
-        print('audioDisplayed $audioDisplayed');
+          // If data is loaded successfully, display it
+          final List<String> audioWidgetsArr = snapshot.data ?? [];
+          print("***<=>audioWidgetsArr $audioWidgetsArr");
 
-        // _audioPlayer.setUrl(audioDisplayed);
-        print(
-            '_audioPlayer.setUrl(audioDisplayed) ${_audioPlayer.setUrl(audioDisplayed)}');
-        // _audioPlayer.setAudioSource(
-        //   AudioSource.uri(
-        //     Uri.parse(audioDisplayed),
-        //   ),
-        // );
-        return Container(
-          child: Column(
-            //mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                margin: EdgeInsets.only(
-                  left: 40,
-                  right: 20,
-                  bottom: 20,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.green,
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(250),
+          print("***<=>audioWidgetsArr.length ${audioWidgetsArr.length}");
+
+          print("***<=>widget.selectedKey ${widget.selectedKey}");
+
+          String audioWidgetsKaz = "";
+          String audioWidgetsRus = "";
+          String audioWidgetsEng = "";
+
+          String audioDisplayed = "";
+          String currentLanguagekz = 'kk';
+          String currentLanguageru = 'ru';
+          String currentLanguageen = 'en';
+
+          audioWidgetsArr.forEach((element) {
+            print("***<=>elementphoto $element");
+            if (audioWidgetsKz == element) {
+              audioWidgetsKaz = audioWidgetsKaz + element;
+            }
+            if (audioWidgetsRu == element) {
+              audioWidgetsRus = audioWidgetsRus + element;
+            }
+            if (audioWidgetsEn == element) {
+              audioWidgetsEng = audioWidgetsEng + element;
+            }
+
+            print("***<=>elementphoto $element");
+          });
+
+          audioWidgetsArr.clear();
+          print("audioWidgetsArr.clear $audioWidgetsArr");
+
+          if (Localizations.localeOf(context).languageCode ==
+              currentLanguagekz) {
+            // fetchKeysFirebase();
+            if (audioWidgetsKaz.isNotEmpty) {
+              audioDisplayed = audioWidgetsKaz;
+            }
+          } else if (Localizations.localeOf(context).languageCode ==
+              currentLanguageru) {
+            // fetchKeysFirebase();
+            if (audioWidgetsRus.isNotEmpty) {
+              audioDisplayed = audioWidgetsRus;
+            }
+          } else if (Localizations.localeOf(context).languageCode ==
+              currentLanguageen) {
+            // fetchKeysFirebase;
+            if (audioWidgetsEng.isNotEmpty) {
+              audioDisplayed = audioWidgetsEng;
+            }
+          }
+
+          print("audioWidgetsKaz $audioWidgetsKaz");
+          print("audioWidgetsRus $audioWidgetsRus");
+          print("audioWidgetsEng $audioWidgetsEng");
+          print('audioDisplayed $audioDisplayed');
+
+          _audioPlayer.setUrl(audioDisplayed);
+
+          // @override
+          // void initState() {
+          //   _audioPlayer.setAudioSource(
+          //     AudioSource.uri(
+          //       Uri.parse(audioDisplayed),
+          //     ),
+          //   );
+          //   super.initState();
+          // }
+
+          return WillPopScope(
+            onWillPop: () async {
+              if (_audioPlayer.playing) {
+                _audioPlayer.stop(); // Остановите аудиоплеер
+              }
+              return true; // Разрешить закрытие экрана
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                    color: Colors.green, // Цвет верхней границы
+                    width: 1.0, // Ширина верхней границы
                   ),
                 ),
-                // child: SizedBox(
-                //   width: 50, // Указываете желаемую ширину изображения
-                //   height: 50, // Указываете желаемую высоту изображения
-                //   child: IconButton(
-                //     icon: Icon(Icons.play_arrow),
-                //     onPressed: () {
-                //       _audioPlayer.play;
-                //     },
-                //   ),
-                // ),
               ),
-              Row(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  StreamBuilder<PlayerState>(
-                    stream: _audioPlayer.playerStateStream,
-                    builder: (context, snapshot) {
-                      final playerState = snapshot.data;
-                      final proccessingState = playerState?.processingState;
-                      final playing = playerState?.playing;
+                  Column(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          border: Border(
+                            top: BorderSide(
+                              color: Colors.green, // Цвет верхней границы
+                              width: 1.0, // Ширина верхней границы
+                            ),
+                          ),
+                        ),
+                        child: StreamBuilder<PositionData>(
+                          stream: _positionDataStream,
+                          builder: (context, snapshot) {
+                            final positionData = snapshot.data;
+                            return SeekBar(
+                              duration: positionData?.duration ?? Duration.zero,
+                              position: positionData?.position ?? Duration.zero,
+                              bufferedPosition:
+                                  positionData?.bufferedPosition ??
+                                      Duration.zero,
+                              onChangedEnd: _audioPlayer.seek,
+                            );
+                          },
+                        ),
+                      ),
+                      Container(
+                        // decoration: BoxDecoration(
+                        //   border: Border.all(
+                        //     color: Colors.green, // Цвет верхней границы
+                        //     width: 1.0, // Ширина верхней границы
+                        //   ),
+                        // ),
+                        child: StreamBuilder<PlayerState>(
+                          stream: _audioPlayer.playerStateStream,
+                          builder: (context, snapshot) {
+                            final playerState = snapshot.data;
+                            final proccessingState =
+                                playerState?.processingState;
+                            final playing = playerState?.playing;
 
-                      if (proccessingState == ProcessingState.loading ||
-                          proccessingState == ProcessingState.buffering) {
-                        return Container(
-                          margin: EdgeInsets.all(8.0),
-                          width: 64,
-                          height: 64,
-                          child: CircularProgressIndicator(),
-                        );
-                      } else if (playing != true) {
-                        return IconButton(
-                            onPressed: _audioPlayer.play,
-                            icon: const Icon(Icons.play_arrow));
-                      } else if (proccessingState !=
-                          ProcessingState.completed) {
-                        return IconButton(
-                          onPressed: _audioPlayer.pause,
-                          iconSize: 64,
-                          icon: const Icon(Icons.pause),
-                        );
-                      } else {
-                        return IconButton(
-                          onPressed: () => _audioPlayer.seek(Duration.zero),
-                          iconSize: 64,
-                          icon: const Icon(Icons.replay),
-                        );
-                      }
-                    },
+                            if (proccessingState == ProcessingState.loading ||
+                                proccessingState == ProcessingState.buffering) {
+                              return Container(
+                                margin: EdgeInsets.all(8.0),
+                                width: 25,
+                                height: 25,
+                                child: CircularProgressIndicator(),
+                              );
+                            } else if (playing != true) {
+                              return IconButton(
+                                  onPressed: _audioPlayer.play,
+                                  icon: const Icon(Icons.play_arrow));
+                            } else if (proccessingState !=
+                                ProcessingState.completed) {
+                              return IconButton(
+                                onPressed: _audioPlayer.pause,
+                                iconSize: 25,
+                                icon: const Icon(Icons.pause),
+                              );
+                            } else {
+                              return IconButton(
+                                onPressed: () =>
+                                    _audioPlayer.seek(Duration.zero),
+                                iconSize: 25,
+                                icon: const Icon(Icons.replay),
+                              );
+                            }
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-              StreamBuilder<PositionData>(
-                stream: _positionDataStream,
-                builder: (context, snapshot) {
-                  final positionData = snapshot.data;
-                  return SeekBar(
-                    duration: positionData?.duration ?? Duration.zero,
-                    position: positionData?.position ?? Duration.zero,
-                    bufferedPosition:
-                        positionData?.bufferedPosition ?? Duration.zero,
-                    onChangedEnd: _audioPlayer.seek,
-                  );
-                },
-              )
-            ],
-          ),
-        );
-      },
-    );
+            ),
+          );
+        });
   }
 
   // bool isPlaying = false;
