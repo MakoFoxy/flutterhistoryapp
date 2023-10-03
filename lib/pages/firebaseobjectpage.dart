@@ -1,6 +1,9 @@
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:mausoleum/pages/createpostscree.dart';
 import 'package:mausoleum/pages/homepage.dart';
 import 'dart:io';
+import 'package:saver_gallery/saver_gallery.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mausoleum/pages/editFirebasePages.dart';
 import 'package:mausoleum/pages/takeSearchFirebasepage.dart';
@@ -11,11 +14,15 @@ import 'package:mausoleum/api/dropdawn_flag/dropdawn_flag.dart';
 import 'package:path/path.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:riverpod/riverpod.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:mausoleum/pages/slider.dart';
+import 'package:dio/dio.dart';
 
 class ObjectFirebasePage extends StatefulWidget {
   final String selectedKey; // Добавьте параметр для выбранного ключа
+
   ObjectFirebasePage({
     required this.selectedKey,
   });
@@ -183,9 +190,10 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
   }
 }
 
+AudioPlayer _audioPlayer = AudioPlayer();
+
 class MusicPlayerWidget extends StatefulWidget {
   String selectedKey;
-
   MusicPlayerWidget({
     required this.selectedKey,
   });
@@ -199,7 +207,10 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
   String audioWidgetsKz = "";
   String audioWidgetsRu = "";
   String audioWidgetsEn = "";
-  String audioWidgetsEmpt = "";
+
+  String audioPathKz = "";
+  String audioPathRu = "";
+  String audioPathEn = "";
 
   @override
   Future<List<String>> fetchKeysFirebaseAudio() async {
@@ -231,7 +242,9 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
           "datafirebasekz[i]['audio']KZ from firebase ${datafirebasekz[i]['fileaudiopath']}");
       if (widget.selectedKey == datafirebasekz[i]['id']) {
         audioWidgetsKz = datafirebasekz[i]['fileaudiopath'];
+        audioPathKz = datafirebasekz[i]['firebaseaudiopath'];
         audioWidgetsArr.add(audioWidgetsKz);
+        audioWidgetsArr.add(audioPathKz);
         break;
       }
     }
@@ -245,9 +258,12 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
           "datafirebaseru[i]['audio']RU from firebase ${datafirebaseru[i]['fileaudiopath']}");
       if (widget.selectedKey == datafirebaseru[i]['id']) {
         audioWidgetsRu = datafirebaseru[i]['fileaudiopath'];
+        audioPathRu = datafirebaseru[i]['firebaseaudiopath'];
         audioWidgetsArr.add(audioWidgetsRu);
+        audioWidgetsArr.add(audioPathRu);
         break;
       }
+      print('widget.selectedKey ${widget.selectedKey}');
     }
 
     for (int i = 0; i < datafirebaseen.length; i++) {
@@ -257,30 +273,22 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
           "datafirebaseen[i]['audio']EN from firebase ${datafirebaseen[i]['fileaudiopath']}");
       if (widget.selectedKey == datafirebaseen[i]['id']) {
         audioWidgetsEn = datafirebaseen[i]['fileaudiopath'];
-        audioWidgetsArr.add(audioWidgetsEn);
+        audioPathEn = datafirebaseen[i]['firebaseaudiopath'];
+        audioWidgetsArr.add(audioPathEn);
         break;
       }
-    }
-
-    if (audioWidgetsKz.isEmpty &&
-        audioWidgetsRu.isEmpty &&
-        audioWidgetsEn.isEmpty &&
-        autokey == autokey) {
-      audioWidgetsEmpt = autodata['fileaudiopath'];
-      audioWidgetsArr.add(audioWidgetsEmpt);
     }
 
     print("audioWidgetsKz***${audioWidgetsKz}");
     print("audioWidgetsRu***${audioWidgetsRu}");
     print("audioWidgetsEn***${audioWidgetsEn}");
-    print("audioWidgetsEmpt***${audioWidgetsEmpt}");
     print("audioWidgetsArr $audioWidgetsArr");
     print("audioWidgetsArr.length ${audioWidgetsArr.length}");
 
     return audioWidgetsArr;
   }
 
-  AudioPlayer _audioPlayer = AudioPlayer();
+  // AudioPlayer _audioPlayer = AudioPlayer();
 
   Stream<PositionData> get _positionDataStream =>
       Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(
@@ -295,6 +303,59 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
       );
 
   Widget build(BuildContext context) {
+    String audioDisplayed = "";
+    String audioPath = "";
+
+    Future downloadFile() async {
+      try {
+        final ref = FirebaseStorage.instance.ref().child(audioPath);
+        final url = await ref.getDownloadURL();
+
+        //final tempDir = await getTemporaryDirectory();
+        final downloadDirectoryPath =
+            '/storage/emulated/0/Download/${ref.name}';
+        String downloadPath = "";
+        final downloadsDirectory = await getExternalStorageDirectory();
+        if (downloadsDirectory != null) {
+          downloadPath = '${downloadsDirectory.path}/${ref.name}';
+          // Теперь у вас есть путь к директории "Загрузки" на устройстве.
+          // Можете использовать его для сохранения файлов.
+        }
+
+        await Dio().download(url, downloadPath);
+        if (url.contains('.mp3')) {
+          await SaverGallery.saveFile(
+              file: downloadPath, name: ref.name, androidExistNotSave: true);
+        }
+        await File(downloadPath).copy(File(downloadDirectoryPath).path);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Downloaded ${ref.name}'),
+          ),
+        );
+        print('Saving in the: $downloadPath');
+        print('Saving in the: $downloadDirectoryPath');
+      } catch (e, stackTrace) {
+        print('Error download: $e');
+        print(stackTrace); // Вывод стека вызовов для отладки
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error download: $e'),
+          ),
+        );
+      }
+      // Reference ref = FirebaseStorage.instance.ref().child(audioDisplayed);
+      // final file = File(audioDisplayed);
+      // await ref.writeToFile(file);
+
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(
+      //     content: Text('Download file'),
+      //   ),
+      // );
+    }
+
     return FutureBuilder<List<String>>(
         // Pass the Future that will return data after executing fetchKeysFirebase()
         future: fetchKeysFirebaseAudio(),
@@ -308,67 +369,82 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
           }
 
           // If data is loaded successfully, display it
-          final List<String> audioWidgetsArr = snapshot.data ?? [];
+          List<String> audioWidgetsArr = snapshot.data ?? [];
           print("***<=>audioWidgetsArr $audioWidgetsArr");
 
           print("***<=>audioWidgetsArr.length ${audioWidgetsArr.length}");
 
           print("***<=>widget.selectedKey ${widget.selectedKey}");
 
-          String audioWidgetsKaz = "";
-          String audioWidgetsRus = "";
-          String audioWidgetsEng = "";
+          String audioWidgets = "";
 
-          String audioDisplayed = "";
+          // String audioWidgetsRus = "";
+          // String audioWidgetsEng = "";
+
+          //String audioDisplayed = "";
           String currentLanguagekz = 'kk';
           String currentLanguageru = 'ru';
           String currentLanguageen = 'en';
 
-          audioWidgetsArr.forEach((element) {
-            print("***<=>elementphoto $element");
-            if (audioWidgetsKz == element) {
-              audioWidgetsKaz = audioWidgetsKaz + element;
-            }
-            if (audioWidgetsRu == element) {
-              audioWidgetsRus = audioWidgetsRus + element;
-            }
-            if (audioWidgetsEn == element) {
-              audioWidgetsEng = audioWidgetsEng + element;
-            }
+          List<String> uniqueAudioWidgetsArr = [];
 
-            print("***<=>elementphoto $element");
+          audioWidgetsArr.forEach((element) {
+            if (!uniqueAudioWidgetsArr.contains(element)) {
+              uniqueAudioWidgetsArr.add(element);
+            }
+            print("***<=>elementaudio $element");
           });
 
           audioWidgetsArr.clear();
           print("audioWidgetsArr.clear $audioWidgetsArr");
 
+          uniqueAudioWidgetsArr.forEach((element) {
+            print("***<=>elementphoto $element");
+            if (element == audioWidgetsKz &&
+                element == audioWidgetsRu &&
+                element == audioWidgetsEn) {
+              audioWidgets = audioWidgets + element;
+            }
+            print("***<=>audioWidgets $audioWidgets");
+
+            if (element == audioPathKz &&
+                element == audioPathRu &&
+                element == audioPathEn) {
+              audioPath = audioPath + element;
+            }
+          });
+
           if (Localizations.localeOf(context).languageCode ==
               currentLanguagekz) {
             // fetchKeysFirebase();
-            if (audioWidgetsKaz.isNotEmpty) {
-              audioDisplayed = audioWidgetsKaz;
+            if (audioWidgets.isNotEmpty) {
+              audioDisplayed = audioWidgets;
             }
-          } else if (Localizations.localeOf(context).languageCode ==
+          }
+          if (Localizations.localeOf(context).languageCode ==
               currentLanguageru) {
             // fetchKeysFirebase();
-            if (audioWidgetsRus.isNotEmpty) {
-              audioDisplayed = audioWidgetsRus;
+            if (audioWidgets.isNotEmpty) {
+              audioDisplayed = audioWidgets;
             }
-          } else if (Localizations.localeOf(context).languageCode ==
+          }
+          if (Localizations.localeOf(context).languageCode ==
               currentLanguageen) {
             // fetchKeysFirebase;
-            if (audioWidgetsEng.isNotEmpty) {
-              audioDisplayed = audioWidgetsEng;
+            if (audioWidgets.isNotEmpty) {
+              audioDisplayed = audioWidgets;
             }
           }
 
-          print("audioWidgetsKaz $audioWidgetsKaz");
-          print("audioWidgetsRus $audioWidgetsRus");
-          print("audioWidgetsEng $audioWidgetsEng");
+          print("audioWidgets $audioWidgets");
+          // print("audioWidgetsRus $audioWidgetsRus");
+          // print("audioWidgetsEng $audioWidgetsEng");
           print('audioDisplayed $audioDisplayed');
 
           _audioPlayer.setUrl(audioDisplayed);
 
+          uniqueAudioWidgetsArr.clear();
+          print("uniqueAudioWidgetsArr.clear $uniqueAudioWidgetsArr");
           // @override
           // void initState() {
           //   _audioPlayer.setAudioSource(
@@ -431,42 +507,57 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
                         //     width: 1.0, // Ширина верхней границы
                         //   ),
                         // ),
-                        child: StreamBuilder<PlayerState>(
-                          stream: _audioPlayer.playerStateStream,
-                          builder: (context, snapshot) {
-                            final playerState = snapshot.data;
-                            final proccessingState =
-                                playerState?.processingState;
-                            final playing = playerState?.playing;
+                        child: Column(
+                          children: [
+                            StreamBuilder<PlayerState>(
+                              stream: _audioPlayer.playerStateStream,
+                              builder: (context, snapshot) {
+                                final playerState = snapshot.data;
+                                final proccessingState =
+                                    playerState?.processingState;
+                                final playing = playerState?.playing;
 
-                            if (proccessingState == ProcessingState.loading ||
-                                proccessingState == ProcessingState.buffering) {
-                              return Container(
-                                margin: EdgeInsets.all(8.0),
-                                width: 25,
-                                height: 25,
-                                child: CircularProgressIndicator(),
-                              );
-                            } else if (playing != true) {
-                              return IconButton(
-                                  onPressed: _audioPlayer.play,
-                                  icon: const Icon(Icons.play_arrow));
-                            } else if (proccessingState !=
-                                ProcessingState.completed) {
-                              return IconButton(
-                                onPressed: _audioPlayer.pause,
-                                iconSize: 25,
-                                icon: const Icon(Icons.pause),
-                              );
-                            } else {
-                              return IconButton(
-                                onPressed: () =>
-                                    _audioPlayer.seek(Duration.zero),
-                                iconSize: 25,
-                                icon: const Icon(Icons.replay),
-                              );
-                            }
-                          },
+                                if (proccessingState ==
+                                        ProcessingState.loading ||
+                                    proccessingState ==
+                                        ProcessingState.buffering) {
+                                  return Container(
+                                    margin: EdgeInsets.all(8.0),
+                                    width: 25,
+                                    height: 25,
+                                    child: CircularProgressIndicator(),
+                                  );
+                                } else if (playing != true) {
+                                  return IconButton(
+                                      onPressed: _audioPlayer.play,
+                                      icon: const Icon(Icons.play_arrow));
+                                } else if (proccessingState !=
+                                    ProcessingState.completed) {
+                                  return IconButton(
+                                    onPressed: _audioPlayer.pause,
+                                    iconSize: 25,
+                                    icon: const Icon(Icons.pause),
+                                  );
+                                } else {
+                                  return IconButton(
+                                    onPressed: () =>
+                                        _audioPlayer.seek(Duration.zero),
+                                    iconSize: 25,
+                                    icon: const Icon(Icons.replay),
+                                  );
+                                }
+                              },
+                            ),
+                            ListTile(
+                              trailing: IconButton(
+                                icon: const Icon(
+                                  Icons.download,
+                                  color: Colors.black,
+                                ),
+                                onPressed: () => downloadFile(),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -1633,6 +1724,7 @@ class MenuTileWidget extends State<MenuTile> {
         children: <Widget>[
           InkWell(
             onTap: () async {
+              _audioPlayer.stop();
               await Navigator.push(
                 this.context,
                 MaterialPageRoute(

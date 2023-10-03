@@ -23,7 +23,7 @@ dependencies:
   extractor: ^0.0.3
   flutter_screenutil: ^5.8.4
   in_app_update: ^4.1.4
-  dio: ^5.3.2
+  dio: ^5.3.3
   fluttericon: ^2.0.0
   permission_handler: ^10.4.3
   water_drop_nav_bar: ^2.2.0+5
@@ -49,6 +49,7 @@ dependencies:
   on_audio_query: ^2.9.0
   just_audio: ^0.9.35
   flutter_sound: ^9.2.13
+  saver_gallery: ^2.0.1
 
 
 dev_dependencies:

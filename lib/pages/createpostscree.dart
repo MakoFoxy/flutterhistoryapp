@@ -3,6 +3,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:mausoleum/pages/firebaseobjectpage.dart';
 
 class CreateHistoryPost extends StatefulWidget {
   @override
@@ -17,6 +18,7 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
   PlatformFile? pickedAudioFile;
   UploadTask? uploadAudioTask;
   String myAudioUrl = "";
+  String pathAudio = "";
 
   Future selectFile() async {
     final FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -80,10 +82,10 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
   }
 
   Future uploadAudioFile() async {
-    final path = 'files/${pickedAudioFile!.path!}';
+    pathAudio = 'files/${pickedAudioFile!.path!}';
     final fileupload = File(pickedAudioFile!.path!);
 
-    final dataref = FirebaseStorage.instance.ref().child(path);
+    final dataref = FirebaseStorage.instance.ref().child(pathAudio);
     setState(() {
       uploadAudioTask = dataref.putFile(fileupload);
     });
@@ -94,6 +96,12 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
       final urlAudioDownload = await dataref.getDownloadURL();
       myAudioUrl = urlAudioDownload;
       print('Download Link $urlAudioDownload');
+
+      // // Передача filePath при создании MusicPlayerWidget
+      // final musicPlayerWidget = ObjectFirebasePage(
+      //   selectedKey: id.text,
+      //   filePath: path, // Передача filePath
+      // );
     } catch (error) {
       print('Error uploading file: $error');
     }
@@ -342,6 +350,13 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
                             child: Text(pickedAudioFile!.path!),
                           ),
                           Text('Audio URL: $myAudioUrl'),
+                          Container(
+                            width: 200,
+                            height: 200,
+                            color: Colors.green[200],
+                            child: Text(pathAudio),
+                          ),
+                          Text('Audio path: $pathAudio'),
                         ],
                       ),
                     ),
@@ -389,6 +404,7 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
                       'yCoordinate': yCoordinateInt,
                       'filephotopath': myImageUrl,
                       'fileaudiopath': myAudioUrl,
+                      'firebaseaudiopath': pathAudio,
                     };
                     Map<String, dynamic> dataru = {
                       'id': id.text,
@@ -398,6 +414,7 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
                       'yCoordinate': yCoordinateInt,
                       'filephotopath': myImageUrl,
                       'fileaudiopath': myAudioUrl,
+                      'firebaseaudiopath': pathAudio,
                     };
                     Map<String, dynamic> dataen = {
                       'id': id.text,
@@ -407,6 +424,7 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
                       'yCoordinate': yCoordinateInt,
                       'filephotopath': myImageUrl,
                       'fileaudiopath': myAudioUrl,
+                      'firebaseaudiopath': pathAudio,
                     };
 
                     DocumentReference docRefKz = await collRefKz.add(datakz);
@@ -430,7 +448,7 @@ class _CreateHistoryPostState extends State<CreateHistoryPost> {
                     teDescriptionEn.clear();
 
                     pickedFile = null;
-
+                    pickedAudioFile = null;
                     Navigator.pop(context);
                   },
                   child: const Text('Save data in database'),
