@@ -15,6 +15,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:saver_gallery/saver_gallery.dart';
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class QRobjectpage extends StatefulWidget {
   final String selectedKey; // Добавьте параметр для выбранного ключа
@@ -975,34 +976,39 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
 
     Future downloadFile() async {
       try {
-        final ref = FirebaseStorage.instance.ref().child(audioPath);
-        final url = await ref.getDownloadURL();
+        var status = await Permission.storage.request();
+        if (status.isGranted) {
+          final ref = FirebaseStorage.instance.ref().child(audioPath);
+          final url = await ref.getDownloadURL();
 
-        //final tempDir = await getTemporaryDirectory();
-        final downloadDirectoryPath =
-            '/storage/emulated/0/Download/${ref.name}';
-        String downloadPath = "";
-        final downloadsDirectory = await getExternalStorageDirectory();
-        if (downloadsDirectory != null) {
-          downloadPath = '${downloadsDirectory.path}/${ref.name}';
-          // Теперь у вас есть путь к директории "Загрузки" на устройстве.
-          // Можете использовать его для сохранения файлов.
+          //final tempDir = await getTemporaryDirectory();
+          final downloadDirectoryPath =
+              '/storage/emulated/0/Download/${ref.name}';
+          String downloadPath = "";
+          final downloadsDirectory = await getExternalStorageDirectory();
+          if (downloadsDirectory != null) {
+            downloadPath = '${downloadsDirectory.path}/${ref.name}';
+            // Теперь у вас есть путь к директории "Загрузки" на устройстве.
+            // Можете использовать его для сохранения файлов.
+          }
+
+          await Dio().download(url, downloadPath);
+          if (url.contains('.mp3')) {
+            await SaverGallery.saveFile(
+                file: downloadPath, name: ref.name, androidExistNotSave: true);
+          }
+          await File(downloadPath).copy(File(downloadDirectoryPath).path);
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Downloaded ${ref.name}'),
+            ),
+          );
+          print('Saving in the: $downloadPath');
+          print('Saving in the: $downloadDirectoryPath');
+        } else {
+          print('Permission denied for storage');
         }
-
-        await Dio().download(url, downloadPath);
-        if (url.contains('.mp3')) {
-          await SaverGallery.saveFile(
-              file: downloadPath, name: ref.name, androidExistNotSave: true);
-        }
-        await File(downloadPath).copy(File(downloadDirectoryPath).path);
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Downloaded ${ref.name}'),
-          ),
-        );
-        print('Saving in the: $downloadPath');
-        print('Saving in the: $downloadDirectoryPath');
       } catch (e, stackTrace) {
         print('Error download: $e');
         print(stackTrace); // Вывод стека вызовов для отладки
