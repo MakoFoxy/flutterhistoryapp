@@ -488,93 +488,98 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Column(
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          border: Border(
-                            top: BorderSide(
-                              color: Colors.green, // Цвет верхней границы
-                              width: 1.0, // Ширина верхней границы
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border(
+                        top: BorderSide(
+                          color: Colors.green, // Цвет верхней границы
+                          width: 1.0, // Ширина верхней границы
+                        ),
+                      ),
+                    ),
+                    child: StreamBuilder<PositionData>(
+                      stream: _positionDataStream,
+                      builder: (context, snapshot) {
+                        final positionData = snapshot.data;
+                        return SeekBar(
+                          duration: positionData?.duration ?? Duration.zero,
+                          position: positionData?.position ?? Duration.zero,
+                          bufferedPosition:
+                              positionData?.bufferedPosition ?? Duration.zero,
+                          onChangedEnd: _audioPlayer.seek,
+                        );
+                      },
+                    ),
+                  ),
+                  Container(
+                    // decoration: BoxDecoration(
+                    //   border: Border.all(
+                    //     color: Colors.green, // Цвет верхней границы
+                    //     width: 1.0, // Ширина верхней границы
+                    //   ),
+                    // ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                          ),
+                          child: StreamBuilder<PlayerState>(
+                            stream: _audioPlayer.playerStateStream,
+                            builder: (context, snapshot) {
+                              final playerState = snapshot.data;
+                              final proccessingState =
+                                  playerState?.processingState;
+                              final playing = playerState?.playing;
+
+                              if (proccessingState == ProcessingState.loading ||
+                                  proccessingState ==
+                                      ProcessingState.buffering) {
+                                return Container(
+                                  margin: EdgeInsets.all(8.0),
+                                  width: 25,
+                                  height: 25,
+                                  child: CircularProgressIndicator(),
+                                );
+                              } else if (playing != true) {
+                                return IconButton(
+                                    onPressed: _audioPlayer.play,
+                                    icon: const Icon(Icons.play_arrow));
+                              } else if (proccessingState !=
+                                  ProcessingState.completed) {
+                                return IconButton(
+                                  onPressed: _audioPlayer.pause,
+                                  iconSize: 25,
+                                  icon: const Icon(Icons.pause),
+                                );
+                              } else {
+                                return IconButton(
+                                  onPressed: () =>
+                                      _audioPlayer.seek(Duration.zero),
+                                  iconSize: 25,
+                                  icon: const Icon(Icons.replay),
+                                );
+                              }
+                            },
+                          ),
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                          ),
+                          child: ListTile(
+                            trailing: IconButton(
+                              icon: const Icon(
+                                Icons.download,
+                                color: Colors.black,
+                              ),
+                              onPressed: () => downloadFile(),
                             ),
                           ),
                         ),
-                        child: StreamBuilder<PositionData>(
-                          stream: _positionDataStream,
-                          builder: (context, snapshot) {
-                            final positionData = snapshot.data;
-                            return SeekBar(
-                              duration: positionData?.duration ?? Duration.zero,
-                              position: positionData?.position ?? Duration.zero,
-                              bufferedPosition:
-                                  positionData?.bufferedPosition ??
-                                      Duration.zero,
-                              onChangedEnd: _audioPlayer.seek,
-                            );
-                          },
-                        ),
-                      ),
-                      Container(
-                        // decoration: BoxDecoration(
-                        //   border: Border.all(
-                        //     color: Colors.green, // Цвет верхней границы
-                        //     width: 1.0, // Ширина верхней границы
-                        //   ),
-                        // ),
-                        child: Column(
-                          children: [
-                            StreamBuilder<PlayerState>(
-                              stream: _audioPlayer.playerStateStream,
-                              builder: (context, snapshot) {
-                                final playerState = snapshot.data;
-                                final proccessingState =
-                                    playerState?.processingState;
-                                final playing = playerState?.playing;
-
-                                if (proccessingState ==
-                                        ProcessingState.loading ||
-                                    proccessingState ==
-                                        ProcessingState.buffering) {
-                                  return Container(
-                                    margin: EdgeInsets.all(8.0),
-                                    width: 25,
-                                    height: 25,
-                                    child: CircularProgressIndicator(),
-                                  );
-                                } else if (playing != true) {
-                                  return IconButton(
-                                      onPressed: _audioPlayer.play,
-                                      icon: const Icon(Icons.play_arrow));
-                                } else if (proccessingState !=
-                                    ProcessingState.completed) {
-                                  return IconButton(
-                                    onPressed: _audioPlayer.pause,
-                                    iconSize: 25,
-                                    icon: const Icon(Icons.pause),
-                                  );
-                                } else {
-                                  return IconButton(
-                                    onPressed: () =>
-                                        _audioPlayer.seek(Duration.zero),
-                                    iconSize: 25,
-                                    icon: const Icon(Icons.replay),
-                                  );
-                                }
-                              },
-                            ),
-                            ListTile(
-                              trailing: IconButton(
-                                icon: const Icon(
-                                  Icons.download,
-                                  color: Colors.black,
-                                ),
-                                onPressed: () => downloadFile(),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ],
               ),
