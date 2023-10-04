@@ -668,8 +668,8 @@ class streamBuildHome extends StatelessWidget {
                                 //     color: Colors.red,
                                 //   ),
                                 // ),
-                                child: Image.asset(
-                                  'lib/assets/images/mavzoley_yasavi.jpg',
+                                child: Image.network(
+                                  doc['filephotopath'],
                                   width: 150,
                                   height: 120,
                                   fit: BoxFit.cover,

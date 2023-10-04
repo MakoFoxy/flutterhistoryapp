@@ -37,6 +37,9 @@ class QRobjectpageState extends State<QRobjectpage> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
+        if (_audioPlayer.playing) {
+          _audioPlayer.stop(); // Остановите аудиоплеер
+        }
         if (_backPressCount == 0) {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
@@ -543,6 +546,7 @@ class _MySearchState extends State<mySearchQR> {
                       ),
                     );
                   }
+                  _audioPlayer.stop();
                 }),
             suffixIcon: IconButton(
               icon: const Icon(Icons.clear),
@@ -1289,8 +1293,8 @@ class _MyPhotoContState extends State<MyPhotoCont> {
       autokey = datafirebasekz[i].id;
       autodata = datafirebasekz[i].data() as Map<String, dynamic>;
       print(
-          "datafirebasekz[i]['title']KZ from firebase ${datafirebasekz[i]['title']}");
-      if (widget.selectedKey == datafirebasekz[i]['title'] &&
+          "datafirebasekz[i]['filephotopath']KZ from firebase ${datafirebasekz[i]['filephotopath']}");
+      if (widget.selectedKey == datafirebasekz[i]['id'] &&
           !photoWidgetsArr.contains(photoWidgetsKz)) {
         photoWidgetsKz = datafirebasekz[i]['filephotopath'];
         photoWidgetsArr.add(photoWidgetsKz);
@@ -1304,8 +1308,8 @@ class _MyPhotoContState extends State<MyPhotoCont> {
       autokey = datafirebaseru[i].id;
       autodata = datafirebaseru[i].data() as Map<String, dynamic>;
       print(
-          "datafirebaseru[i]['title']RU from firebase ${datafirebaseru[i]['title']}");
-      if (widget.selectedKey == datafirebaseru[i]['title'] &&
+          "datafirebaseru[i]['filephotopath']RU from firebase ${datafirebaseru[i]['filephotopath']}");
+      if (widget.selectedKey == datafirebaseru[i]['id'] &&
           !photoWidgetsArr.contains(photoWidgetsRu)) {
         photoWidgetsRu = datafirebaseru[i]['filephotopath'];
         photoWidgetsArr.add(photoWidgetsRu);
@@ -1317,8 +1321,8 @@ class _MyPhotoContState extends State<MyPhotoCont> {
       autokey = datafirebaseen[i].id;
       autodata = datafirebaseen[i].data() as Map<String, dynamic>;
       print(
-          "datafirebasekz[i]['title']EN from firebase ${datafirebaseen[i]['title']}");
-      if (widget.selectedKey == datafirebaseen[i]['title'] &&
+          "datafirebasekz[i]['filephotopath']EN from firebase ${datafirebaseen[i]['filephotopath']}");
+      if (widget.selectedKey == datafirebaseen[i]['id'] &&
           !photoWidgetsArr.contains(photoWidgetsEn)) {
         photoWidgetsEn = datafirebaseen[i]['filephotopath'];
         photoWidgetsArr.add(photoWidgetsEn);
@@ -1379,17 +1383,19 @@ class _MyPhotoContState extends State<MyPhotoCont> {
         photoWidgetsArr.forEach((element) {
           if (photoWidgetsKz == element) {
             photoWidgetsKaz = photoWidgetsKaz + element;
-          } else if (photoWidgetsRu == element) {
-            photoWidgetsRus = photoWidgetsRus + element;
-          } else if (photoWidgetsEn == element) {
-            photoWidgetsEng = photoWidgetsEng + element;
-          } else {
-            photoWidgetsEmpty = photoWidgetsEmpty + element;
           }
+          if (photoWidgetsRu == element) {
+            photoWidgetsRus = photoWidgetsRus + element;
+          }
+          if (photoWidgetsEn == element) {
+            photoWidgetsEng = photoWidgetsEng + element;
+          }
+          photoWidgetsEmpty = photoWidgetsEmpty + element;
+
           print("***<=>element $element");
         });
 
-        //photoWidgetsArr.clear();
+        photoWidgetsArr.clear();
 
         if (Localizations.localeOf(context).languageCode == currentLanguagekz) {
           // fetchKeysFirebase();
@@ -1427,18 +1433,17 @@ class _MyPhotoContState extends State<MyPhotoCont> {
               margin:
                   const EdgeInsets.only(left: 0, right: 0, top: 0, bottom: 10),
               elevation: 5,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(0),
-                  image: DecorationImage(
-                    image: AssetImage('lib/assets/images/mavzoley_yasavi.jpg'),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                // child: Image.file(
-                //   File(photoDisplayed),
-                //   fit: BoxFit.cover,
-                // ),
+              // child: Container(
+              //   decoration: BoxDecoration(
+              //     borderRadius: BorderRadius.circular(0),
+              //     image: DecorationImage(
+              //       image: AssetImage('lib/assets/images/mavzoley_yasavi.jpg'),
+              //       fit: BoxFit.cover,
+              //     ),
+              //   ),
+              child: Image.network(
+                photoDisplayed,
+                fit: BoxFit.cover,
               ),
             ),
           ),
@@ -1538,6 +1543,7 @@ class MenuTileWidget extends State<MenuTile> {
           children: <Widget>[
             InkWell(
               onTap: () async {
+                _audioPlayer.stop();
                 await Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -1578,6 +1584,7 @@ class MenuTileWidget extends State<MenuTile> {
         children: <Widget>[
           InkWell(
             onTap: () async {
+              _audioPlayer.stop();
               await Navigator.push(
                 this.context,
                 MaterialPageRoute(
@@ -1610,6 +1617,7 @@ class MenuTileWidget extends State<MenuTile> {
         children: <Widget>[
           InkWell(
             onTap: () async {
+              _audioPlayer.stop();
               await Navigator.push(
                 this.context,
                 MaterialPageRoute(
