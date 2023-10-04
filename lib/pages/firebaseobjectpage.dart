@@ -40,6 +40,9 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
+        if (_audioPlayer.playing) {
+          _audioPlayer.stop(); // Остановите аудиоплеер
+        }
         if (_backPressCount == 0) {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
@@ -417,12 +420,14 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
           if (Localizations.localeOf(context).languageCode ==
               currentLanguagekz) {
             // fetchKeysFirebase();
+            _audioPlayer.pause();
             if (audioWidgets.isNotEmpty) {
               audioDisplayed = audioWidgets;
             }
           }
           if (Localizations.localeOf(context).languageCode ==
               currentLanguageru) {
+            _audioPlayer.pause();
             // fetchKeysFirebase();
             if (audioWidgets.isNotEmpty) {
               audioDisplayed = audioWidgets;
@@ -430,6 +435,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
           }
           if (Localizations.localeOf(context).languageCode ==
               currentLanguageen) {
+            _audioPlayer.pause();
             // fetchKeysFirebase;
             if (audioWidgets.isNotEmpty) {
               audioDisplayed = audioWidgets;
@@ -1039,6 +1045,7 @@ class _MySearchState extends State<mySearch> {
                       ),
                     );
                   }
+                  _audioPlayer.stop();
                 }),
             suffixIcon: IconButton(
               icon: const Icon(Icons.clear),
@@ -1652,6 +1659,7 @@ class MenuTileWidget extends State<MenuTile> {
           children: <Widget>[
             InkWell(
               onTap: () async {
+                _audioPlayer.stop();
                 await Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -1692,6 +1700,7 @@ class MenuTileWidget extends State<MenuTile> {
         children: <Widget>[
           InkWell(
             onTap: () async {
+              _audioPlayer.stop();
               await Navigator.push(
                 this.context,
                 MaterialPageRoute(
