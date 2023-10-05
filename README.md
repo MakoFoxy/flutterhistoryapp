@@ -1,4 +1,4 @@
-# flutter_application_2
+# flutterhistoryapp
 
 A new Flutter project.
 
