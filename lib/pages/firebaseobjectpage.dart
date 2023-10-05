@@ -518,13 +518,13 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
                     //     width: 1.0, // Ширина верхней границы
                     //   ),
                     // ),
-                    child: Column(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
-                          decoration: BoxDecoration(
-                            color: Colors.red,
-                          ),
+                          // decoration: BoxDecoration(
+                          //   color: Colors.red,
+                          // ),
                           child: StreamBuilder<PlayerState>(
                             stream: _audioPlayer.playerStateStream,
                             builder: (context, snapshot) {
@@ -540,7 +540,6 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
                                   margin: EdgeInsets.all(8.0),
                                   width: 25,
                                   height: 25,
-                                  child: CircularProgressIndicator(),
                                 );
                               } else if (playing != true) {
                                 return IconButton(
@@ -565,9 +564,11 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
                           ),
                         ),
                         Container(
-                          decoration: BoxDecoration(
-                            color: Colors.red,
-                          ),
+                          // decoration: BoxDecoration(
+                          //   color: Colors.red,
+                          // ),
+                          width: 90,
+                          height: 48,
                           child: ListTile(
                             trailing: IconButton(
                               icon: const Icon(
