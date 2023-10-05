@@ -102,93 +102,92 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
             ),
           ),
         ),
-        // floatingActionButton: Row(
-        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //   children: [
-        //     Padding(
-        //       padding: const EdgeInsets.only(
-        //         top: 70,
-        //         left: 0,
-        //         right: 0.0,
-        //         bottom: 0.0,
-        //       ),
-        //       child: FloatingActionButton(
-        //         onPressed: () async {
-        //           Navigator.push(
-        //             context,
-        //             MaterialPageRoute(
-        //               builder: (context) => HomePage(),
-        //             ),
-        //           );
+        floatingActionButton: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(
+                top: 70,
+                left: 0,
+                right: 0.0,
+                bottom: 0.0,
+              ),
+              child: FloatingActionButton(
+                onPressed: () async {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => HomePage(),
+                    ),
+                  );
+                  late CollectionReference<Map<String, dynamic>> collRef;
+                  if (Localizations.localeOf(context).languageCode == 'kk') {
+                    collRef = FirebaseFirestore.instance.collection('datakz');
+                  } else if (Localizations.localeOf(context).languageCode ==
+                      'ru') {
+                    collRef = FirebaseFirestore.instance.collection('dataru');
+                  } else if (Localizations.localeOf(context).languageCode ==
+                      'en') {
+                    collRef = FirebaseFirestore.instance.collection('dataen');
+                  }
+                  String targetTitle =
+                      widget.selectedKey; // Значение, которое вы ищете
 
-        //           late CollectionReference<Map<String, dynamic>> collRef;
-        //           if (Localizations.localeOf(context).languageCode == 'kk') {
-        //             collRef = FirebaseFirestore.instance.collection('datakz');
-        //           } else if (Localizations.localeOf(context).languageCode ==
-        //               'ru') {
-        //             collRef = FirebaseFirestore.instance.collection('dataru');
-        //           } else if (Localizations.localeOf(context).languageCode ==
-        //               'en') {
-        //             collRef = FirebaseFirestore.instance.collection('dataen');
-        //           }
-        //           String targetTitle =
-        //               widget.selectedKey; // Значение, которое вы ищете
-
-        //           QuerySnapshot<Map<String, dynamic>> querySnapshot =
-        //               await collRef.get();
-        //           List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
-        //               querySnapshot.docs;
-        //           for (QueryDocumentSnapshot<Map<String, dynamic>> doc
-        //               in docs) {
-        //             Map<String, dynamic> autodata = doc.data();
-        //             String autokey = doc.id; // Получение ключа документа
-        //             // Проверка, соответствует ли поле title значению, которое вы ищете
-        //             if (autodata['id'] == targetTitle) {
-        //               await collRef.doc(autokey).delete();
-        //               print("Document deleted: $autokey");
-        //             }
-        //           }
-        //         },
-        //         mini:
-        //             true, // Установите mini: true для уменьшения размера кнопки
-        //         shape: RoundedRectangleBorder(
-        //           borderRadius:
-        //               BorderRadius.circular(15), // Настройте форму кнопки
-        //         ),
-        //         child: const Icon(Icons.delete),
-        //       ),
-        //     ),
-        //     Padding(
-        //       padding: const EdgeInsets.only(
-        //         left: 0.0,
-        //         bottom: 0.0,
-        //         right: 0,
-        //         top: 70,
-        //       ),
-        //       child: FloatingActionButton(
-        //         onPressed: () async {
-        //           await Navigator.push(
-        //             context,
-        //             MaterialPageRoute(
-        //               builder: (BuildContext context) => EditFirebasePage(
-        //                 //editMydb: editMydb,
-        //                 selectedKey: widget.selectedKey,
-        //               ),
-        //             ),
-        //           );
-        //         },
-        //         mini:
-        //             true, // Установите mini: true для уменьшения размера кнопки
-        //         shape: RoundedRectangleBorder(
-        //           borderRadius:
-        //               BorderRadius.circular(15), // Настройте форму кнопки
-        //         ),
-        //         child: const Icon(Icons.create),
-        //       ),
-        //     ),
-        //   ],
-        // ),
-        // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+                  QuerySnapshot<Map<String, dynamic>> querySnapshot =
+                      await collRef.get();
+                  List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
+                      querySnapshot.docs;
+                  for (QueryDocumentSnapshot<Map<String, dynamic>> doc
+                      in docs) {
+                    Map<String, dynamic> autodata = doc.data();
+                    String autokey = doc.id; // Получение ключа документа
+                    // Проверка, соответствует ли поле title значению, которое вы ищете
+                    if (autodata['id'] == targetTitle) {
+                      await collRef.doc(autokey).delete();
+                      print("Document deleted: $autokey");
+                    }
+                  }
+                },
+                mini:
+                    true, // Установите mini: true для уменьшения размера кнопки
+                shape: RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(15), // Настройте форму кнопки
+                ),
+                child: const Icon(Icons.delete),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 0.0,
+                bottom: 0.0,
+                right: 0,
+                top: 70,
+              ),
+              child: FloatingActionButton(
+                onPressed: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (BuildContext context) => EditFirebasePage(
+                        //editMydb: editMydb,
+                        selectedKey: widget.selectedKey,
+                      ),
+                    ),
+                  );
+                },
+                mini:
+                    true, // Установите mini: true для уменьшения размера кнопки
+                shape: RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(15), // Настройте форму кнопки
+                ),
+                child: const Icon(Icons.create),
+              ),
+            ),
+          ],
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       ),
     );
   }

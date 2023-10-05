@@ -19,7 +19,12 @@ class EditFirebasePage extends StatefulWidget {
 class EditFirebasePageState extends State<EditFirebasePage> {
   PlatformFile? teFilePhoto;
   UploadTask? uploadTask;
-  late String image_url;
+  String myImageUrl = "";
+
+  PlatformFile? pickedAudioFile;
+  UploadTask? uploadAudioTask;
+  String myAudioUrl = "";
+  String pathAudio = "";
   // late String description = "";
   // late String title = "";
 
@@ -38,7 +43,6 @@ class EditFirebasePageState extends State<EditFirebasePage> {
   TextEditingController teTitleEn = TextEditingController();
   TextEditingController teDecsriptionEn = TextEditingController();
 
-
   updateFirebase(String selectedKey) async {
     final datakz = await FirebaseFirestore.instance.collection('datakz').get();
     final dataru = await FirebaseFirestore.instance.collection('dataru').get();
@@ -50,7 +54,9 @@ class EditFirebasePageState extends State<EditFirebasePage> {
           'id': id.text,
           'title': teTitleKz.text,
           'description': teDecsriptionKz.text,
-          'filephotopath': teFilePhoto?.path ?? '',
+          'filephotopath': myImageUrl,
+          'fileaudiopath': myAudioUrl,
+          'firebaseaudiopath': pathAudio,
           'xCoordinate': double.parse(xCoordinateController.text),
           'yCoordinate': double.parse(yCoordinateController.text),
         });
@@ -64,7 +70,9 @@ class EditFirebasePageState extends State<EditFirebasePage> {
           'id': id.text,
           'title': teTitleRu.text,
           'description': teDecsriptionRu.text,
-          'filephotopath': teFilePhoto?.path ?? '',
+          'filephotopath': myImageUrl,
+          'fileaudiopath': myAudioUrl,
+          'firebaseaudiopath': pathAudio,
           'xCoordinate': double.parse(xCoordinateController.text),
           'yCoordinate': double.parse(yCoordinateController.text),
         });
@@ -78,7 +86,9 @@ class EditFirebasePageState extends State<EditFirebasePage> {
           'id': id.text,
           'title': teTitleEn.text,
           'description': teDecsriptionEn.text,
-          'filephotopath': teFilePhoto?.path ?? '',
+          'filephotopath': myImageUrl,
+          'fileaudiopath': myAudioUrl,
+          'firebaseaudiopath': pathAudio,
           'xCoordinate': double.parse(xCoordinateController.text),
           'yCoordinate': double.parse(yCoordinateController.text),
         });
@@ -99,11 +109,11 @@ class EditFirebasePageState extends State<EditFirebasePage> {
 
     setState(() {
       teFilePhoto = fileres.files.first;
-      print('New pickedFile: ${teFilePhoto?.name}');
+      print('New teFilePhoto: ${teFilePhoto?.name}');
     });
 
     print("result $result");
-    print("pickedFile $teFilePhoto");
+    print("teFilePhoto $teFilePhoto");
   }
 
   Future uploadFile() async {
@@ -114,16 +124,64 @@ class EditFirebasePageState extends State<EditFirebasePage> {
     setState(() {
       uploadTask = ref.putFile(fileupload);
     });
-    print('Download uploadTask $uploadTask');
-    final snapshot = await uploadTask!.whenComplete(() {});
-    print('Download snapshot $snapshot');
-
-    final urlDownload = await snapshot.ref.getDownloadURL();
-    image_url = urlDownload;
-    print('Download Link $urlDownload');
-
+    // final snapshot = await uploadTask!.whenComplete(() {});
+    // print('Download snapshot $snapshot');
+    try {
+      final urlDownload = await ref.getDownloadURL();
+      myImageUrl = urlDownload;
+      print('Download Link $urlDownload');
+    } catch (error) {
+      print('Error uploading file: $error');
+    }
     setState(() {
       uploadTask = null;
+    });
+  }
+
+  Future selectAudioFile() async {
+    final FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['mp3'],
+      initialDirectory: '/storage/emulated/0/Download',
+    );
+
+    final fileres = await FilePicker.platform.pickFiles();
+    if (fileres == null) return;
+
+    setState(() {
+      pickedAudioFile = fileres.files.first;
+    });
+
+    print("result $result");
+    print("pickedAudioFile $pickedAudioFile");
+  }
+
+  Future uploadAudioFile() async {
+    pathAudio = 'files/${pickedAudioFile!.path!}';
+    final fileupload = File(pickedAudioFile!.path!);
+
+    final dataref = FirebaseStorage.instance.ref().child(pathAudio);
+    setState(() {
+      uploadAudioTask = dataref.putFile(fileupload);
+    });
+    print('Upload uploadTask $uploadAudioTask');
+    try {
+      // final snapshot = await uploadAudioTask!.whenComplete(() {});
+      // print('Upload snapshot $snapshot');
+      final urlAudioDownload = await dataref.getDownloadURL();
+      myAudioUrl = urlAudioDownload;
+      print('Download Link $urlAudioDownload');
+
+      // // Передача filePath при создании MusicPlayerWidget
+      // final musicPlayerWidget = ObjectFirebasePage(
+      //   selectedKey: id.text,
+      //   filePath: path, // Передача filePath
+      // );
+    } catch (error) {
+      print('Error uploading file: $error');
+    }
+    setState(() {
+      uploadAudioTask = null;
     });
   }
 
@@ -303,6 +361,7 @@ class EditFirebasePageState extends State<EditFirebasePage> {
                         //     height:
                         //         8), // Отступ между изображением и текстом
                         Text(teFilePhoto!.path!),
+                        Text('Image URL: $myImageUrl'),
                       ],
                     ),
                   ),
@@ -313,7 +372,7 @@ class EditFirebasePageState extends State<EditFirebasePage> {
                   vertical: 10), // или любые другие отступы
               child: ElevatedButton(
                 onPressed: selectFile,
-                child: Text('Photo select'),
+                child: Text('Select Photo'),
               ),
             ),
             Container(
@@ -321,14 +380,60 @@ class EditFirebasePageState extends State<EditFirebasePage> {
                   vertical: 10), // или любые другие отступы
               child: ElevatedButton(
                 onPressed: uploadFile,
-                child: Text('Photo upload'),
+                child: Text('Upload Photo'),
+              ),
+            ),
+            const SizedBox(
+              height: 32,
+            ),
+            Column(
+              children: [
+                if (pickedAudioFile != null)
+                  Container(
+                    color: Colors.green[200],
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 200,
+                          height: 200,
+                          color: Colors.green[200],
+                          child: Text(pickedAudioFile!.path!),
+                        ),
+                        Text('Audio URL: $myAudioUrl'),
+                        Container(
+                          width: 200,
+                          height: 200,
+                          color: Colors.green[200],
+                          child: Text(pathAudio),
+                        ),
+                        Text('Audio path: $pathAudio'),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+            Container(
+              margin: const EdgeInsets.symmetric(
+                  vertical: 10), // или любые другие отступы
+              child: ElevatedButton(
+                onPressed: selectAudioFile,
+                child: Text('Select Audio'),
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.symmetric(
+                  vertical: 10), // или любые другие отступы
+              child: ElevatedButton(
+                onPressed: uploadAudioFile,
+                child: Text('Upload Audio'),
               ),
             ),
             Container(
               width: double.infinity,
               height: 60,
               decoration: const BoxDecoration(
-                color: Colors.amber,
+                color: Colors.green,
                 borderRadius: BorderRadius.all(Radius.circular(30)),
               ),
               margin: const EdgeInsets.all(15),
@@ -342,7 +447,7 @@ class EditFirebasePageState extends State<EditFirebasePage> {
                     ),
                   );
                 },
-                child: const Text('Тарихи тұлғаны жаңарту'),
+                child: const Text('Upadate data in databases'),
                 key: ValueKey(
                     widget.selectedKey), // Используйте ValueKey с selectedKey
               ),
