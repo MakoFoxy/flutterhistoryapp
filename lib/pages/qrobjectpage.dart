@@ -16,6 +16,7 @@ import 'package:saver_gallery/saver_gallery.dart';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:downloads_path_provider_28/downloads_path_provider_28.dart';
 
 class QRobjectpage extends StatefulWidget {
   final String selectedKey; // Добавьте параметр для выбранного ключа
@@ -978,40 +979,55 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
     String audioDisplayed = "";
     String audioPath = "";
 
-    Future downloadFile() async {
+     Future downloadFile() async {
+      print('audioPath*** $audioPath');
       try {
-        var status = await Permission.storage.request();
-        if (status.isGranted) {
+        // var readStatus = await Permission.manageExternalStorage.request();
+        // var writeStatus  = await Permission.storage.request();
+        final downloadsDirectory =
+            await DownloadsPathProvider.downloadsDirectory;
+        final Directory? downloadsDir = await getExternalStorageDirectory();
+
+        //print('Permission status: $writeStatus');
+        //if (readStatus == PermissionStatus.granted && writeStatus == PermissionStatus.granted)
+        if (downloadsDir != null) {
           final ref = FirebaseStorage.instance.ref().child(audioPath);
           final url = await ref.getDownloadURL();
 
           //final tempDir = await getTemporaryDirectory();
           final downloadDirectoryPath =
-              '/storage/emulated/0/Download/${ref.name}';
+              '/storage/emulated/0/Download/${ref.name}.mp3';
           String downloadPath = "";
-          final downloadsDirectory = await getExternalStorageDirectory();
-          if (downloadsDirectory != null) {
-            downloadPath = '${downloadsDirectory.path}/${ref.name}';
-            // Теперь у вас есть путь к директории "Загрузки" на устройстве.
-            // Можете использовать его для сохранения файлов.
-          }
-
+          //final downloadsDirectory = await getExternalStorageDirectory();
+          //if (downloadsDirectory != null) {
+          downloadPath = '${downloadsDir.path}/${ref.name}.mp3';
+          // Теперь у вас есть путь к директории "Загрузки" на устройстве.
+          // Можете использовать его для сохранения файлов.
+          // }
           await Dio().download(url, downloadPath);
-          if (url.contains('.mp3')) {
-            await SaverGallery.saveFile(
-                file: downloadPath, name: ref.name, androidExistNotSave: true);
-          }
-          await File(downloadPath).copy(File(downloadDirectoryPath).path);
+          print('url $url');
+          // if (url.contains('.mp3')) {
+          //   await SaverGallery.saveFile(
+          //       file: downloadPath, name: ref.name, androidExistNotSave: true);
+          // }
+          await File(downloadPath).copy(downloadDirectoryPath);
 
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Downloaded ${ref.name}'),
+              content: Text('Downloaded ${ref.name}.mp3'),
             ),
           );
           print('Saving in the: $downloadPath');
-          print('Saving in the: $downloadDirectoryPath');
+          // print('Saving in the: $downloadDirectoryPath');
+        } else if (downloadsDirectory != null) {
+          final dataref = FirebaseStorage.instance.ref().child(audioPath);
+          final dataurl = await dataref.getDownloadURL();
+          String downloadPathDirectoryAndroid = "";
+          downloadPathDirectoryAndroid = '${downloadsDirectory.path}/${dataref.name}.mp3';
+          await Dio().download(dataurl, downloadPathDirectoryAndroid);
+          print('dataurl $dataurl');
         } else {
-          print('Permission denied for storage');
+          print('External storage directory not available on this device.');
         }
       } catch (e, stackTrace) {
         print('Error download: $e');
@@ -1022,6 +1038,15 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
           ),
         );
       }
+      // Reference ref = FirebaseStorage.instance.ref().child(audioDisplayed);
+      // final file = File(audioDisplayed);
+      // await ref.writeToFile(file);
+
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(
+      //     content: Text('Download file'),
+      //   ),
+      // );
     }
 
     return FutureBuilder<List<String>>(

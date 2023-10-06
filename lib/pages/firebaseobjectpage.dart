@@ -315,9 +315,8 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
       try {
         // var readStatus = await Permission.manageExternalStorage.request();
         // var writeStatus  = await Permission.storage.request();
-
-        // final downloadsDirectory =
-        //     await DownloadsPathProvider.downloadsDirectory;
+        final downloadsDirectory =
+            await DownloadsPathProvider.downloadsDirectory;
         final Directory? downloadsDir = await getExternalStorageDirectory();
 
         //print('Permission status: $writeStatus');
@@ -351,6 +350,13 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
           );
           print('Saving in the: $downloadPath');
           // print('Saving in the: $downloadDirectoryPath');
+        } else if (downloadsDirectory != null) {
+          final dataref = FirebaseStorage.instance.ref().child(audioPath);
+          final dataurl = await dataref.getDownloadURL();
+          String downloadPathDirectoryAndroid = "";
+          downloadPathDirectoryAndroid = '${downloadsDirectory.path}/${dataref.name}.mp3';
+          await Dio().download(dataurl, downloadPathDirectoryAndroid);
+          print('dataurl $dataurl');
         } else {
           print('External storage directory not available on this device.');
         }
