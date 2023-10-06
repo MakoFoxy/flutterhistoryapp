@@ -313,15 +313,16 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
     Future downloadFile() async {
       print('audioPath*** $audioPath');
       try {
-        // var readStatus = await Permission.manageExternalStorage.request();
-        // var writeStatus  = await Permission.storage.request();
+        var readStatus = await Permission.manageExternalStorage.request();
+        var writeStatus = await Permission.storage.request();
         final downloadsDirectory =
             await DownloadsPathProvider.downloadsDirectory;
         final Directory? downloadsDir = await getExternalStorageDirectory();
 
         //print('Permission status: $writeStatus');
         //if (readStatus == PermissionStatus.granted && writeStatus == PermissionStatus.granted)
-        if (downloadsDir != null) {
+        if (readStatus == PermissionStatus.granted && downloadsDir != null ||
+            writeStatus == PermissionStatus.granted && downloadsDir != null) {
           final ref = FirebaseStorage.instance.ref().child(audioPath);
           final url = await ref.getDownloadURL();
 
@@ -354,7 +355,8 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
           final dataref = FirebaseStorage.instance.ref().child(audioPath);
           final dataurl = await dataref.getDownloadURL();
           String downloadPathDirectoryAndroid = "";
-          downloadPathDirectoryAndroid = '${downloadsDirectory.path}/${dataref.name}.mp3';
+          downloadPathDirectoryAndroid =
+              '${downloadsDirectory.path}/${dataref.name}.mp3';
           await Dio().download(dataurl, downloadPathDirectoryAndroid);
           print('dataurl $dataurl');
         } else {
@@ -385,7 +387,17 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
         future: fetchKeysFirebaseAudio(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator(); // Show a loading indicator while waiting for data
+            return Container(
+              alignment: Alignment.center,
+              child: const Text(
+                'loading...',
+                style: TextStyle(
+                  fontSize: 18.0,
+                  color: Colors.green,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            );
           }
 
           if (snapshot.hasError) {
@@ -857,7 +869,17 @@ class MyOverviewsState extends State<MyOverviews> {
       future: fetchKeysFirebaseOver(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator(); // Show a loading indicator while waiting for data
+          return Container(
+            alignment: Alignment.center,
+            child: const Text(
+              'loading...',
+              style: TextStyle(
+                fontSize: 18.0,
+                color: Colors.green,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          );
         }
 
         if (snapshot.hasError) {
@@ -1200,7 +1222,17 @@ class _MyTextContState extends State<MyTextCont> {
       future: fetchKeysFirebaseText(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator(); // Show a loading indicator while waiting for data
+          return Container(
+            alignment: Alignment.center,
+            child: const Text(
+              'loading...',
+              style: TextStyle(
+                fontSize: 18.0,
+                color: Colors.green,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          );
         }
 
         if (snapshot.hasError) {
@@ -1496,7 +1528,17 @@ class _MyPhotoContState extends State<MyPhotoCont> {
       future: fetchKeysFirebasePhoto(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator(); // Show a loading indicator while waiting for data
+          return Container(
+            alignment: Alignment.center,
+            child: const Text(
+              'loading...',
+              style: TextStyle(
+                fontSize: 18.0,
+                color: Colors.green,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          );
         }
 
         if (snapshot.hasError) {
@@ -1655,7 +1697,17 @@ class MenuTileWidget extends State<MenuTile> {
       stream: datastream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator(); // Показываем индикатор загрузки во время ожидания данных
+          return Container(
+            alignment: Alignment.center,
+            child: const Text(
+              'loading...',
+              style: TextStyle(
+                fontSize: 18.0,
+                color: Colors.green,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          );
         }
 
         if (snapshot.hasError) {

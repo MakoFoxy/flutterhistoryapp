@@ -320,7 +320,7 @@ class streamBuild extends StatelessWidget {
       stream: datastream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
+          return Text('Loading...');
         }
         if (snapshot.hasError) {
           return Text('Error');
@@ -403,7 +403,17 @@ class streamBuildHome extends StatelessWidget {
         stream: datastream,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator();
+            return Container(
+              alignment: Alignment.center,
+              child: const Text(
+                'loading...',
+                style: TextStyle(
+                  fontSize: 18.0,
+                  color: Colors.green,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            );
           }
           if (snapshot.hasError) {
             return Text('Error');
