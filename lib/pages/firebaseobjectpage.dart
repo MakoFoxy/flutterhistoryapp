@@ -315,21 +315,24 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
       try {
         // var readStatus = await Permission.manageExternalStorage.request();
         // var writeStatus  = await Permission.storage.request();
-        final downloadsDirectory =
-            await DownloadsPathProvider.downloadsDirectory;
+
+        // final downloadsDirectory =
+        //     await DownloadsPathProvider.downloadsDirectory;
+        final Directory? downloadsDir = await getExternalStorageDirectory();
+
         //print('Permission status: $writeStatus');
         //if (readStatus == PermissionStatus.granted && writeStatus == PermissionStatus.granted)
-        if (downloadsDirectory != null) {
+        if (downloadsDir != null) {
           final ref = FirebaseStorage.instance.ref().child(audioPath);
           final url = await ref.getDownloadURL();
 
           //final tempDir = await getTemporaryDirectory();
-          // final downloadDirectoryPath =
-          //     '/storage/emulated/0/Download/${ref.name}';
+          final downloadDirectoryPath =
+              '/storage/emulated/0/Download/${ref.name}.mp3';
           String downloadPath = "";
           //final downloadsDirectory = await getExternalStorageDirectory();
           //if (downloadsDirectory != null) {
-          downloadPath = '${downloadsDirectory.path}/${ref.name}';
+          downloadPath = '${downloadsDir.path}/${ref.name}.mp3';
           // Теперь у вас есть путь к директории "Загрузки" на устройстве.
           // Можете использовать его для сохранения файлов.
           // }
@@ -339,17 +342,17 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
           //   await SaverGallery.saveFile(
           //       file: downloadPath, name: ref.name, androidExistNotSave: true);
           // }
-          // await File(downloadPath).copy(File(downloadDirectoryPath).path);
+          await File(downloadPath).copy(downloadDirectoryPath);
 
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Downloaded ${ref.name}'),
+              content: Text('Downloaded ${ref.name}.mp3'),
             ),
           );
           print('Saving in the: $downloadPath');
-         // print('Saving in the: $downloadDirectoryPath');
+          // print('Saving in the: $downloadDirectoryPath');
         } else {
-          print('Permission denied for storage');
+          print('External storage directory not available on this device.');
         }
       } catch (e, stackTrace) {
         print('Error download: $e');
