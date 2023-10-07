@@ -469,7 +469,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
       // );
     }
 
-     Future downloadFileEn() async {
+    Future downloadFileEn() async {
       print('audioPathEng*** $audioPathEng');
       try {
         var readStatus = await Permission.manageExternalStorage.request();
@@ -597,17 +597,16 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
           });
 
           audioWidgetsArr.clear();
+          print("uniqueAudioWidgetsArr.length ${uniqueAudioWidgetsArr.length}");
           print("audioWidgetsArr.clear $audioWidgetsArr");
 
           uniqueAudioWidgetsArr.forEach((element) {
             print("***<=>elementaudio $element");
-            if (element == audioWidgetsKz) {
+            if (element == audioWidgetsKz && Localizations.localeOf(context).languageCode == currentLanguagekz) {
               audioWidgetsKaz = audioWidgetsKaz + element;
-            }
-            if (element == audioWidgetsRu) {
+            } else if (element == audioWidgetsRu && Localizations.localeOf(context).languageCode == currentLanguageru) {
               audioWidgetsRus = audioWidgetsRus + element;
-            }
-            if (element == audioWidgetsEn) {
+            } else if (element == audioWidgetsEn && Localizations.localeOf(context).languageCode == currentLanguageen) {
               audioWidgetsEng = audioWidgetsEng + element;
             }
             print("***<=>audioWidgetsKaz $audioWidgetsKaz");
@@ -623,7 +622,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
             if (element == audioPathEn) {
               audioPathEng = audioPathEng + element;
             }
-            print('audioPathKz--- $audioPathKz');
+            print('audioPathKz--- $audioPathKz');            
           });
 
           if (Localizations.localeOf(context).languageCode ==
@@ -633,16 +632,14 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
             if (audioWidgetsKaz.isNotEmpty) {
               audioDisplayed = audioWidgetsKaz;
             }
-          }
-          if (Localizations.localeOf(context).languageCode ==
+          } else if (Localizations.localeOf(context).languageCode ==
               currentLanguageru) {
             _audioPlayer.pause();
             // fetchKeysFirebase();
             if (audioWidgetsRus.isNotEmpty) {
               audioDisplayed = audioWidgetsRus;
             }
-          }
-          if (Localizations.localeOf(context).languageCode ==
+          } else if (Localizations.localeOf(context).languageCode ==
               currentLanguageen) {
             _audioPlayer.pause();
             // fetchKeysFirebase;

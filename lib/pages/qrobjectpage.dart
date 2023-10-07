@@ -1284,16 +1284,21 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
 
           audioWidgetsArr.clear();
           print("audioWidgetsArr.clear $audioWidgetsArr");
+          print("uniqueAudioWidgetsArr.length ${uniqueAudioWidgetsArr.length}");
 
           uniqueAudioWidgetsArr.forEach((element) {
             print("***<=>elementaudio $element");
-            if (element == audioWidgetsKz) {
+            if (element == audioWidgetsKz &&
+                Localizations.localeOf(context).languageCode ==
+                    currentLanguagekz) {
               audioWidgetsKaz = audioWidgetsKaz + element;
-            }
-            if (element == audioWidgetsRu) {
+            } else if (element == audioWidgetsRu &&
+                Localizations.localeOf(context).languageCode ==
+                    currentLanguageru) {
               audioWidgetsRus = audioWidgetsRus + element;
-            }
-            if (element == audioWidgetsEn) {
+            } else if (element == audioWidgetsEn &&
+                Localizations.localeOf(context).languageCode ==
+                    currentLanguageen) {
               audioWidgetsEng = audioWidgetsEng + element;
             }
             print("***<=>audioWidgetsKaz $audioWidgetsKaz");
@@ -1319,16 +1324,14 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
             if (audioWidgetsKaz.isNotEmpty) {
               audioDisplayed = audioWidgetsKaz;
             }
-          }
-          if (Localizations.localeOf(context).languageCode ==
+          } else if (Localizations.localeOf(context).languageCode ==
               currentLanguageru) {
             _audioPlayer.pause();
             // fetchKeysFirebase();
             if (audioWidgetsRus.isNotEmpty) {
               audioDisplayed = audioWidgetsRus;
             }
-          }
-          if (Localizations.localeOf(context).languageCode ==
+          } else if (Localizations.localeOf(context).languageCode ==
               currentLanguageen) {
             _audioPlayer.pause();
             // fetchKeysFirebase;
