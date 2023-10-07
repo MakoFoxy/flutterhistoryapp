@@ -602,11 +602,17 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
 
           uniqueAudioWidgetsArr.forEach((element) {
             print("***<=>elementaudio $element");
-            if (element == audioWidgetsKz && Localizations.localeOf(context).languageCode == currentLanguagekz) {
+            if (element == audioWidgetsKz &&
+                Localizations.localeOf(context).languageCode ==
+                    currentLanguagekz) {
               audioWidgetsKaz = audioWidgetsKaz + element;
-            } else if (element == audioWidgetsRu && Localizations.localeOf(context).languageCode == currentLanguageru) {
+            } else if (element == audioWidgetsRu &&
+                Localizations.localeOf(context).languageCode ==
+                    currentLanguageru) {
               audioWidgetsRus = audioWidgetsRus + element;
-            } else if (element == audioWidgetsEn && Localizations.localeOf(context).languageCode == currentLanguageen) {
+            } else if (element == audioWidgetsEn &&
+                Localizations.localeOf(context).languageCode ==
+                    currentLanguageen) {
               audioWidgetsEng = audioWidgetsEng + element;
             }
             print("***<=>audioWidgetsKaz $audioWidgetsKaz");
@@ -622,7 +628,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
             if (element == audioPathEn) {
               audioPathEng = audioPathEng + element;
             }
-            print('audioPathKz--- $audioPathKz');            
+            print('audioPathKz--- $audioPathKz');
           });
 
           if (Localizations.localeOf(context).languageCode ==
@@ -1023,6 +1029,7 @@ class MyOverviewsState extends State<MyOverviews> {
           "datafirebasekz[i]['title']EN from firebase ${datafirebaseen[i]['title']}");
       if (widget.selectedKey == datafirebaseen[i]['id'] &&
           !discripWidgetsArr.contains(discripWidgetsEn)) {
+        print("datafirebaseen[i]['id'] ${datafirebaseen[i]['id']}");
         discripWidgetsEn = datafirebaseen[i]['description'];
         print("discripWidgetsEn $discripWidgetsEn");
         discripWidgetsArr.add(discripWidgetsEn);
