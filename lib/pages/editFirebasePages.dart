@@ -21,10 +21,20 @@ class EditFirebasePageState extends State<EditFirebasePage> {
   UploadTask? uploadTask;
   String myImageUrl = "";
 
-  PlatformFile? pickedAudioFile;
-  UploadTask? uploadAudioTask;
-  String myAudioUrl = "";
-  String pathAudio = "";
+  PlatformFile? pickedAudioFileKz;
+  UploadTask? uploadAudioTaskKz;
+  String myAudioUrlKz = "";
+  String pathAudioKz = "";
+
+  PlatformFile? pickedAudioFileRu;
+  UploadTask? uploadAudioTaskRu;
+  String myAudioUrlRu = "";
+  String pathAudioRu = "";
+
+  PlatformFile? pickedAudioFileEn;
+  UploadTask? uploadAudioTaskEn;
+  String myAudioUrlEn = "";
+  String pathAudioEn = "";
   // late String description = "";
   // late String title = "";
 
@@ -55,8 +65,8 @@ class EditFirebasePageState extends State<EditFirebasePage> {
           'title': teTitleKz.text,
           'description': teDecsriptionKz.text,
           'filephotopath': myImageUrl,
-          'fileaudiopath': myAudioUrl,
-          'firebaseaudiopath': pathAudio,
+          'fileaudiopathkz': myAudioUrlKz,
+          'firebaseaudiopathkz': pathAudioKz,
           'xCoordinate': double.parse(xCoordinateController.text),
           'yCoordinate': double.parse(yCoordinateController.text),
         });
@@ -71,8 +81,8 @@ class EditFirebasePageState extends State<EditFirebasePage> {
           'title': teTitleRu.text,
           'description': teDecsriptionRu.text,
           'filephotopath': myImageUrl,
-          'fileaudiopath': myAudioUrl,
-          'firebaseaudiopath': pathAudio,
+          'fileaudiopathru': myAudioUrlRu,
+          'firebaseaudiopathru': pathAudioRu,
           'xCoordinate': double.parse(xCoordinateController.text),
           'yCoordinate': double.parse(yCoordinateController.text),
         });
@@ -87,8 +97,8 @@ class EditFirebasePageState extends State<EditFirebasePage> {
           'title': teTitleEn.text,
           'description': teDecsriptionEn.text,
           'filephotopath': myImageUrl,
-          'fileaudiopath': myAudioUrl,
-          'firebaseaudiopath': pathAudio,
+          'fileaudiopathen': myAudioUrlEn,
+          'firebaseaudiopathen': pathAudioEn,
           'xCoordinate': double.parse(xCoordinateController.text),
           'yCoordinate': double.parse(yCoordinateController.text),
         });
@@ -138,7 +148,7 @@ class EditFirebasePageState extends State<EditFirebasePage> {
     });
   }
 
-  Future selectAudioFile() async {
+  Future selectAudioFileKz() async {
     final FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['mp3'],
@@ -149,27 +159,27 @@ class EditFirebasePageState extends State<EditFirebasePage> {
     if (fileres == null) return;
 
     setState(() {
-      pickedAudioFile = fileres.files.first;
+      pickedAudioFileKz = fileres.files.first;
     });
 
     print("result $result");
-    print("pickedAudioFile $pickedAudioFile");
+    print("pickedAudioFileKz $pickedAudioFileKz");
   }
 
-  Future uploadAudioFile() async {
-    pathAudio = 'files/${pickedAudioFile!.path!}';
-    final fileupload = File(pickedAudioFile!.path!);
+  Future uploadAudioFileKz() async {
+    pathAudioKz = 'files/${pickedAudioFileKz!.path!}';
+    final fileupload = File(pickedAudioFileKz!.path!);
 
-    final dataref = FirebaseStorage.instance.ref().child(pathAudio);
+    final dataref = FirebaseStorage.instance.ref().child(pathAudioKz);
     setState(() {
-      uploadAudioTask = dataref.putFile(fileupload);
+      uploadAudioTaskKz = dataref.putFile(fileupload);
     });
-    print('Upload uploadTask $uploadAudioTask');
+    print('Upload uploadAudioTaskKz $uploadAudioTaskKz');
     try {
       // final snapshot = await uploadAudioTask!.whenComplete(() {});
       // print('Upload snapshot $snapshot');
       final urlAudioDownload = await dataref.getDownloadURL();
-      myAudioUrl = urlAudioDownload;
+      myAudioUrlKz = urlAudioDownload;
       print('Download Link $urlAudioDownload');
 
       // // Передача filePath при создании MusicPlayerWidget
@@ -181,7 +191,101 @@ class EditFirebasePageState extends State<EditFirebasePage> {
       print('Error uploading file: $error');
     }
     setState(() {
-      uploadAudioTask = null;
+      uploadAudioTaskKz = null;
+    });
+  }
+
+  Future selectAudioFileRu() async {
+    final FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['mp3'],
+      initialDirectory: '/storage/emulated/0/Download',
+    );
+
+    final fileres = await FilePicker.platform.pickFiles();
+    if (fileres == null) return;
+
+    setState(() {
+      pickedAudioFileRu = fileres.files.first;
+    });
+
+    print("result $result");
+    print("pickedAudioFileRu $pickedAudioFileRu");
+  }
+
+  Future uploadAudioFileRu() async {
+    pathAudioRu = 'files/${pickedAudioFileRu!.path!}';
+    final fileupload = File(pickedAudioFileRu!.path!);
+
+    final dataref = FirebaseStorage.instance.ref().child(pathAudioRu);
+    setState(() {
+      uploadAudioTaskRu = dataref.putFile(fileupload);
+    });
+    print('Upload uploadAudioTaskRu $uploadAudioTaskRu');
+    try {
+      // final snapshot = await uploadAudioTask!.whenComplete(() {});
+      // print('Upload snapshot $snapshot');
+      final urlAudioDownload = await dataref.getDownloadURL();
+      myAudioUrlRu = urlAudioDownload;
+      print('Download Link $urlAudioDownload');
+
+      // // Передача filePath при создании MusicPlayerWidget
+      // final musicPlayerWidget = ObjectFirebasePage(
+      //   selectedKey: id.text,
+      //   filePath: path, // Передача filePath
+      // );
+    } catch (error) {
+      print('Error uploading file: $error');
+    }
+    setState(() {
+      uploadAudioTaskRu = null;
+    });
+  }
+
+  Future selectAudioFileEn() async {
+    final FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['mp3'],
+      initialDirectory: '/storage/emulated/0/Download',
+    );
+
+    final fileres = await FilePicker.platform.pickFiles();
+    if (fileres == null) return;
+
+    setState(() {
+      pickedAudioFileEn = fileres.files.first;
+    });
+
+    print("result $result");
+    print("pickedAudioFileEn $pickedAudioFileEn");
+  }
+
+  Future uploadAudioFileEn() async {
+    pathAudioEn = 'files/${pickedAudioFileEn!.path!}';
+    final fileupload = File(pickedAudioFileEn!.path!);
+
+    final dataref = FirebaseStorage.instance.ref().child(pathAudioEn);
+    setState(() {
+      uploadAudioTaskEn = dataref.putFile(fileupload);
+    });
+    print('Upload uploadAudioTaskEn $uploadAudioTaskEn');
+    try {
+      // final snapshot = await uploadAudioTask!.whenComplete(() {});
+      // print('Upload snapshot $snapshot');
+      final urlAudioDownload = await dataref.getDownloadURL();
+      myAudioUrlEn = urlAudioDownload;
+      print('Download Link $urlAudioDownload');
+
+      // // Передача filePath при создании MusicPlayerWidget
+      // final musicPlayerWidget = ObjectFirebasePage(
+      //   selectedKey: id.text,
+      //   filePath: path, // Передача filePath
+      // );
+    } catch (error) {
+      print('Error uploading file: $error');
+    }
+    setState(() {
+      uploadAudioTaskEn = null;
     });
   }
 
@@ -388,7 +492,7 @@ class EditFirebasePageState extends State<EditFirebasePage> {
             ),
             Column(
               children: [
-                if (pickedAudioFile != null)
+                if (pickedAudioFileKz != null)
                   Container(
                     color: Colors.green[200],
                     child: Column(
@@ -398,16 +502,16 @@ class EditFirebasePageState extends State<EditFirebasePage> {
                           width: 200,
                           height: 200,
                           color: Colors.green[200],
-                          child: Text(pickedAudioFile!.path!),
+                          child: Text(pickedAudioFileKz!.path!),
                         ),
-                        Text('Audio URL: $myAudioUrl'),
+                        Text('Audio KZ URL: $myAudioUrlKz'),
                         Container(
                           width: 200,
                           height: 200,
                           color: Colors.green[200],
-                          child: Text(pathAudio),
+                          child: Text(pathAudioKz),
                         ),
-                        Text('Audio path: $pathAudio'),
+                        Text('Audio KZ path: $pathAudioKz'),
                       ],
                     ),
                   ),
@@ -417,16 +521,108 @@ class EditFirebasePageState extends State<EditFirebasePage> {
               margin: const EdgeInsets.symmetric(
                   vertical: 10), // или любые другие отступы
               child: ElevatedButton(
-                onPressed: selectAudioFile,
-                child: Text('Select Audio'),
+                onPressed: selectAudioFileKz,
+                child: Text('Select KZ Audio'),
               ),
             ),
             Container(
               margin: const EdgeInsets.symmetric(
                   vertical: 10), // или любые другие отступы
               child: ElevatedButton(
-                onPressed: uploadAudioFile,
-                child: Text('Upload Audio'),
+                onPressed: uploadAudioFileKz,
+                child: Text('Upload KZ Audio'),
+              ),
+            ),
+            const SizedBox(
+              height: 32,
+            ),
+            Column(
+              children: [
+                if (pickedAudioFileRu != null)
+                  Container(
+                    color: Colors.green[200],
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 200,
+                          height: 200,
+                          color: Colors.green[200],
+                          child: Text(pickedAudioFileRu!.path!),
+                        ),
+                        Text('Audio RU URL: $myAudioUrlRu'),
+                        Container(
+                          width: 200,
+                          height: 200,
+                          color: Colors.green[200],
+                          child: Text(pathAudioRu),
+                        ),
+                        Text('Audio RU path: $pathAudioRu'),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+            Container(
+              margin: const EdgeInsets.symmetric(
+                  vertical: 10), // или любые другие отступы
+              child: ElevatedButton(
+                onPressed: selectAudioFileRu,
+                child: Text('Select RU Audio'),
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.symmetric(
+                  vertical: 10), // или любые другие отступы
+              child: ElevatedButton(
+                onPressed: uploadAudioFileRu,
+                child: Text('Upload RU Audio'),
+              ),
+            ),
+            const SizedBox(
+              height: 32,
+            ),
+            Column(
+              children: [
+                if (pickedAudioFileEn != null)
+                  Container(
+                    color: Colors.green[200],
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 200,
+                          height: 200,
+                          color: Colors.green[200],
+                          child: Text(pickedAudioFileEn!.path!),
+                        ),
+                        Text('Audio EN URL: $myAudioUrlEn'),
+                        Container(
+                          width: 200,
+                          height: 200,
+                          color: Colors.green[200],
+                          child: Text(pathAudioEn),
+                        ),
+                        Text('Audio EN path: $pathAudioEn'),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+            Container(
+              margin: const EdgeInsets.symmetric(
+                  vertical: 10), // или любые другие отступы
+              child: ElevatedButton(
+                onPressed: selectAudioFileEn,
+                child: Text('Select EN Audio'),
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.symmetric(
+                  vertical: 10), // или любые другие отступы
+              child: ElevatedButton(
+                onPressed: uploadAudioFileEn,
+                child: Text('Upload EN Audio'),
               ),
             ),
             Container(
