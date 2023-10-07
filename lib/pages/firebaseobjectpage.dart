@@ -243,10 +243,10 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
       autokey = datafirebasekz[i].id;
       autodata = datafirebasekz[i].data() as Map<String, dynamic>;
       print(
-          "datafirebasekz[i]['audio']KZ from firebase ${datafirebasekz[i]['fileaudiopath']}");
+          "datafirebasekz[i]['audio']KZ from firebase ${datafirebasekz[i]['fileaudiopathkz']}");
       if (widget.selectedKey == datafirebasekz[i]['id']) {
-        audioWidgetsKz = datafirebasekz[i]['fileaudiopath'];
-        audioPathKz = datafirebasekz[i]['firebaseaudiopath'];
+        audioWidgetsKz = datafirebasekz[i]['fileaudiopathkz'];
+        audioPathKz = datafirebasekz[i]['firebaseaudiopathkz'];
         audioWidgetsArr.add(audioWidgetsKz);
         audioWidgetsArr.add(audioPathKz);
         break;
@@ -259,10 +259,10 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
       autokey = datafirebaseru[i].id;
       autodata = datafirebaseru[i].data() as Map<String, dynamic>;
       print(
-          "datafirebaseru[i]['audio']RU from firebase ${datafirebaseru[i]['fileaudiopath']}");
+          "datafirebaseru[i]['audio']RU from firebase ${datafirebaseru[i]['fileaudiopathru']}");
       if (widget.selectedKey == datafirebaseru[i]['id']) {
-        audioWidgetsRu = datafirebaseru[i]['fileaudiopath'];
-        audioPathRu = datafirebaseru[i]['firebaseaudiopath'];
+        audioWidgetsRu = datafirebaseru[i]['fileaudiopathru'];
+        audioPathRu = datafirebaseru[i]['firebaseaudiopathru'];
         audioWidgetsArr.add(audioWidgetsRu);
         audioWidgetsArr.add(audioPathRu);
         break;
@@ -274,10 +274,11 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
       autokey = datafirebaseen[i].id;
       autodata = datafirebaseen[i].data() as Map<String, dynamic>;
       print(
-          "datafirebaseen[i]['audio']EN from firebase ${datafirebaseen[i]['fileaudiopath']}");
+          "datafirebaseen[i]['audio']EN from firebase ${datafirebaseen[i]['fileaudiopathen']}");
       if (widget.selectedKey == datafirebaseen[i]['id']) {
-        audioWidgetsEn = datafirebaseen[i]['fileaudiopath'];
-        audioPathEn = datafirebaseen[i]['firebaseaudiopath'];
+        audioWidgetsEn = datafirebaseen[i]['fileaudiopathen'];
+        audioPathEn = datafirebaseen[i]['firebaseaudiopathen'];
+        audioWidgetsArr.add(audioWidgetsEn);
         audioWidgetsArr.add(audioPathEn);
         break;
       }
@@ -308,10 +309,12 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
 
   Widget build(BuildContext context) {
     String audioDisplayed = "";
-    String audioPath = "";
+    String audioPathKaz = "";
+    String audioPathRus = "";
+    String audioPathEng = "";
 
-    Future downloadFile() async {
-      print('audioPath*** $audioPath');
+    Future downloadFileKz() async {
+      print('audioPathKaz*** $audioPathKaz');
       try {
         var readStatus = await Permission.manageExternalStorage.request();
         var writeStatus = await Permission.storage.request();
@@ -323,7 +326,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
         //if (readStatus == PermissionStatus.granted && writeStatus == PermissionStatus.granted)
         if (readStatus == PermissionStatus.granted && downloadsDir != null ||
             writeStatus == PermissionStatus.granted && downloadsDir != null) {
-          final ref = FirebaseStorage.instance.ref().child(audioPath);
+          final ref = FirebaseStorage.instance.ref().child(audioPathKaz);
           final url = await ref.getDownloadURL();
 
           //final tempDir = await getTemporaryDirectory();
@@ -352,13 +355,175 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
           print('Saving in the: $downloadPath');
           // print('Saving in the: $downloadDirectoryPath');
         } else if (downloadsDirectory != null) {
-          final dataref = FirebaseStorage.instance.ref().child(audioPath);
+          final dataref = FirebaseStorage.instance.ref().child(audioPathKaz);
           final dataurl = await dataref.getDownloadURL();
           String downloadPathDirectoryAndroid = "";
           downloadPathDirectoryAndroid =
               '${downloadsDirectory.path}/${dataref.name}.mp3';
           await Dio().download(dataurl, downloadPathDirectoryAndroid);
           print('dataurl $dataurl');
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Downloaded ${dataref.name}.mp3'),
+            ),
+          );
+        } else {
+          print('External storage directory not available on this device.');
+        }
+      } catch (e, stackTrace) {
+        print('Error download: $e');
+        print(stackTrace); // Вывод стека вызовов для отладки
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error download: $e'),
+          ),
+        );
+      }
+      // Reference ref = FirebaseStorage.instance.ref().child(audioDisplayed);
+      // final file = File(audioDisplayed);
+      // await ref.writeToFile(file);
+
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(
+      //     content: Text('Download file'),
+      //   ),
+      // );
+    }
+
+    Future downloadFileRu() async {
+      print('audioPathRus*** $audioPathRus');
+      try {
+        var readStatus = await Permission.manageExternalStorage.request();
+        var writeStatus = await Permission.storage.request();
+        final downloadsDirectory =
+            await DownloadsPathProvider.downloadsDirectory;
+        final Directory? downloadsDir = await getExternalStorageDirectory();
+
+        //print('Permission status: $writeStatus');
+        //if (readStatus == PermissionStatus.granted && writeStatus == PermissionStatus.granted)
+        if (readStatus == PermissionStatus.granted && downloadsDir != null ||
+            writeStatus == PermissionStatus.granted && downloadsDir != null) {
+          final ref = FirebaseStorage.instance.ref().child(audioPathRus);
+          final url = await ref.getDownloadURL();
+
+          //final tempDir = await getTemporaryDirectory();
+          final downloadDirectoryPath =
+              '/storage/emulated/0/Download/${ref.name}.mp3';
+          String downloadPath = "";
+          //final downloadsDirectory = await getExternalStorageDirectory();
+          //if (downloadsDirectory != null) {
+          downloadPath = '${downloadsDir.path}/${ref.name}.mp3';
+          // Теперь у вас есть путь к директории "Загрузки" на устройстве.
+          // Можете использовать его для сохранения файлов.
+          // }
+          await Dio().download(url, downloadPath);
+          print('url $url');
+          // if (url.contains('.mp3')) {
+          //   await SaverGallery.saveFile(
+          //       file: downloadPath, name: ref.name, androidExistNotSave: true);
+          // }
+          await File(downloadPath).copy(downloadDirectoryPath);
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Downloaded ${ref.name}.mp3'),
+            ),
+          );
+          print('Saving in the: $downloadPath');
+          // print('Saving in the: $downloadDirectoryPath');
+        } else if (downloadsDirectory != null) {
+          final dataref = FirebaseStorage.instance.ref().child(audioPathRus);
+          final dataurl = await dataref.getDownloadURL();
+          String downloadPathDirectoryAndroid = "";
+          downloadPathDirectoryAndroid =
+              '${downloadsDirectory.path}/${dataref.name}.mp3';
+          await Dio().download(dataurl, downloadPathDirectoryAndroid);
+          print('dataurl $dataurl');
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Downloaded ${dataref.name}.mp3'),
+            ),
+          );
+        } else {
+          print('External storage directory not available on this device.');
+        }
+      } catch (e, stackTrace) {
+        print('Error download: $e');
+        print(stackTrace); // Вывод стека вызовов для отладки
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error download: $e'),
+          ),
+        );
+      }
+      // Reference ref = FirebaseStorage.instance.ref().child(audioDisplayed);
+      // final file = File(audioDisplayed);
+      // await ref.writeToFile(file);
+
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(
+      //     content: Text('Download file'),
+      //   ),
+      // );
+    }
+
+     Future downloadFileEn() async {
+      print('audioPathEng*** $audioPathEng');
+      try {
+        var readStatus = await Permission.manageExternalStorage.request();
+        var writeStatus = await Permission.storage.request();
+        final downloadsDirectory =
+            await DownloadsPathProvider.downloadsDirectory;
+        final Directory? downloadsDir = await getExternalStorageDirectory();
+
+        //print('Permission status: $writeStatus');
+        //if (readStatus == PermissionStatus.granted && writeStatus == PermissionStatus.granted)
+        if (readStatus == PermissionStatus.granted && downloadsDir != null ||
+            writeStatus == PermissionStatus.granted && downloadsDir != null) {
+          final ref = FirebaseStorage.instance.ref().child(audioPathEng);
+          final url = await ref.getDownloadURL();
+
+          //final tempDir = await getTemporaryDirectory();
+          final downloadDirectoryPath =
+              '/storage/emulated/0/Download/${ref.name}.mp3';
+          String downloadPath = "";
+          //final downloadsDirectory = await getExternalStorageDirectory();
+          //if (downloadsDirectory != null) {
+          downloadPath = '${downloadsDir.path}/${ref.name}.mp3';
+          // Теперь у вас есть путь к директории "Загрузки" на устройстве.
+          // Можете использовать его для сохранения файлов.
+          // }
+          await Dio().download(url, downloadPath);
+          print('url $url');
+          // if (url.contains('.mp3')) {
+          //   await SaverGallery.saveFile(
+          //       file: downloadPath, name: ref.name, androidExistNotSave: true);
+          // }
+          await File(downloadPath).copy(downloadDirectoryPath);
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Downloaded ${ref.name}.mp3'),
+            ),
+          );
+          print('Saving in the: $downloadPath');
+          // print('Saving in the: $downloadDirectoryPath');
+        } else if (downloadsDirectory != null) {
+          final dataref = FirebaseStorage.instance.ref().child(audioPathEng);
+          final dataurl = await dataref.getDownloadURL();
+          String downloadPathDirectoryAndroid = "";
+          downloadPathDirectoryAndroid =
+              '${downloadsDirectory.path}/${dataref.name}.mp3';
+          await Dio().download(dataurl, downloadPathDirectoryAndroid);
+          print('dataurl $dataurl');
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Downloaded ${dataref.name}.mp3'),
+            ),
+          );
         } else {
           print('External storage directory not available on this device.');
         }
@@ -412,12 +577,12 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
 
           print("***<=>widget.selectedKey ${widget.selectedKey}");
 
-          String audioWidgets = "";
-
-          // String audioWidgetsRus = "";
-          // String audioWidgetsEng = "";
+          String audioWidgetsKaz = "";
+          String audioWidgetsRus = "";
+          String audioWidgetsEng = "";
 
           //String audioDisplayed = "";
+
           String currentLanguagekz = 'kk';
           String currentLanguageru = 'ru';
           String currentLanguageen = 'en';
@@ -435,50 +600,60 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
           print("audioWidgetsArr.clear $audioWidgetsArr");
 
           uniqueAudioWidgetsArr.forEach((element) {
-            print("***<=>elementphoto $element");
-            if (element == audioWidgetsKz &&
-                element == audioWidgetsRu &&
-                element == audioWidgetsEn) {
-              audioWidgets = audioWidgets + element;
+            print("***<=>elementaudio $element");
+            if (element == audioWidgetsKz) {
+              audioWidgetsKaz = audioWidgetsKaz + element;
             }
-            print("***<=>audioWidgets $audioWidgets");
+            if (element == audioWidgetsRu) {
+              audioWidgetsRus = audioWidgetsRus + element;
+            }
+            if (element == audioWidgetsEn) {
+              audioWidgetsEng = audioWidgetsEng + element;
+            }
+            print("***<=>audioWidgetsKaz $audioWidgetsKaz");
+            print("***<=>audioWidgetsRus $audioWidgetsRus");
+            print("***<=>audioWidgetsEng $audioWidgetsEng");
 
-            if (element == audioPathKz &&
-                element == audioPathRu &&
-                element == audioPathEn) {
-              audioPath = audioPath + element;
+            if (element == audioPathKz) {
+              audioPathKaz = audioPathKaz + element;
             }
-            print('audioPath--- $audioPath');
+            if (element == audioPathRu) {
+              audioPathRus = audioPathRus + element;
+            }
+            if (element == audioPathEn) {
+              audioPathEng = audioPathEng + element;
+            }
+            print('audioPathKz--- $audioPathKz');
           });
 
           if (Localizations.localeOf(context).languageCode ==
               currentLanguagekz) {
             // fetchKeysFirebase();
             _audioPlayer.pause();
-            if (audioWidgets.isNotEmpty) {
-              audioDisplayed = audioWidgets;
+            if (audioWidgetsKaz.isNotEmpty) {
+              audioDisplayed = audioWidgetsKaz;
             }
           }
           if (Localizations.localeOf(context).languageCode ==
               currentLanguageru) {
             _audioPlayer.pause();
             // fetchKeysFirebase();
-            if (audioWidgets.isNotEmpty) {
-              audioDisplayed = audioWidgets;
+            if (audioWidgetsRus.isNotEmpty) {
+              audioDisplayed = audioWidgetsRus;
             }
           }
           if (Localizations.localeOf(context).languageCode ==
               currentLanguageen) {
             _audioPlayer.pause();
             // fetchKeysFirebase;
-            if (audioWidgets.isNotEmpty) {
-              audioDisplayed = audioWidgets;
+            if (audioWidgetsEng.isNotEmpty) {
+              audioDisplayed = audioWidgetsEng;
             }
           }
 
-          print("audioWidgets $audioWidgets");
-          // print("audioWidgetsRus $audioWidgetsRus");
-          // print("audioWidgetsEng $audioWidgetsEng");
+          print("audioWidgetsKaz $audioWidgetsKaz");
+          print("audioWidgetsRus $audioWidgetsRus");
+          print("audioWidgetsEng $audioWidgetsEng");
           print('audioDisplayed $audioDisplayed');
 
           _audioPlayer.setUrl(audioDisplayed);
@@ -595,13 +770,30 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
                           // ),
                           width: 90,
                           height: 48,
+
                           child: ListTile(
                             trailing: IconButton(
                               icon: const Icon(
                                 Icons.download,
                                 color: Colors.black,
                               ),
-                              onPressed: () => downloadFile(),
+                              onPressed: () {
+                                if (Localizations.localeOf(context)
+                                        .languageCode ==
+                                    currentLanguagekz) {
+                                  downloadFileKz();
+                                }
+                                if (Localizations.localeOf(context)
+                                        .languageCode ==
+                                    currentLanguageru) {
+                                  downloadFileRu();
+                                }
+                                if (Localizations.localeOf(context)
+                                        .languageCode ==
+                                    currentLanguageen) {
+                                  downloadFileEn();
+                                }
+                              },
                             ),
                           ),
                         ),
