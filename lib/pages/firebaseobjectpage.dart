@@ -746,57 +746,84 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
                                   height: 25,
                                 );
                               } else if (playing != true) {
-                                return IconButton(
-                                    onPressed: _audioPlayer.play,
-                                    icon: const Icon(Icons.play_arrow));
+                                return ElevatedButton(
+                                  onPressed: _audioPlayer.play,
+                                  child: const Icon(Icons.play_arrow),
+                                  style: ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(
+                                          30), // Настройте форму кнопки
+                                    ),
+                                  ),
+                                );
                               } else if (proccessingState !=
                                   ProcessingState.completed) {
-                                return IconButton(
+                                return ElevatedButton(
                                   onPressed: _audioPlayer.pause,
-                                  iconSize: 25,
-                                  icon: const Icon(Icons.pause),
+                                  child: const Icon(Icons.pause),
+                                  style: ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(
+                                          30), // Настройте форму кнопки
+                                    ),
+                                  ),
                                 );
                               } else {
-                                return IconButton(
+                                return ElevatedButton(
                                   onPressed: () =>
                                       _audioPlayer.seek(Duration.zero),
-                                  iconSize: 25,
-                                  icon: const Icon(Icons.replay),
+                                  child: const Icon(Icons.replay),
+                                  style: ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(
+                                          30), // Настройте форму кнопки
+                                    ),
+                                  ),
                                 );
                               }
                             },
                           ),
                         ),
+                        SizedBox(
+                          width: 15,
+                        ),
                         Container(
                           // decoration: BoxDecoration(
                           //   color: Colors.red,
                           // ),
-                          width: 90,
-                          height: 48,
-
-                          child: ListTile(
-                            trailing: IconButton(
-                              icon: const Icon(
-                                Icons.download,
-                                color: Colors.black,
+                          // width: 90,
+                          // height: 48,
+                          child: ElevatedButton(
+                            // icon: const Icon(
+                            //   Icons.download,
+                            //   color: Colors.black,
+                            // ),
+                            onPressed: () {
+                              if (Localizations.localeOf(context)
+                                      .languageCode ==
+                                  currentLanguagekz) {
+                                downloadFileKz();
+                              }
+                              if (Localizations.localeOf(context)
+                                      .languageCode ==
+                                  currentLanguageru) {
+                                downloadFileRu();
+                              }
+                              if (Localizations.localeOf(context)
+                                      .languageCode ==
+                                  currentLanguageen) {
+                                downloadFileEn();
+                              }
+                            },
+                            child: const Icon(
+                              Icons.download,
+                              color: Colors.white,
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                    30), // Настройте форму кнопки
                               ),
-                              onPressed: () {
-                                if (Localizations.localeOf(context)
-                                        .languageCode ==
-                                    currentLanguagekz) {
-                                  downloadFileKz();
-                                }
-                                if (Localizations.localeOf(context)
-                                        .languageCode ==
-                                    currentLanguageru) {
-                                  downloadFileRu();
-                                }
-                                if (Localizations.localeOf(context)
-                                        .languageCode ==
-                                    currentLanguageen) {
-                                  downloadFileEn();
-                                }
-                              },
                             ),
                           ),
                         ),
