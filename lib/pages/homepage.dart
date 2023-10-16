@@ -259,9 +259,18 @@ class FirebaseSearchWidget extends State<FirebaseSearch> {
                 prefixIcon: IconButton(
                   icon: const Icon(Icons.search),
                   onPressed: () {
-                    setState(() {
-                      getClientStream();
-                    });
+                    if (keyword.text != '') {
+                      setState(() {
+                        getClientStream();
+                      });
+                    } else if (keyword.text == '') {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => HomePage(),
+                        ),
+                      );
+                    }
                   },
                 ),
                 suffixIcon: IconButton(

@@ -540,7 +540,7 @@ class _MySearchState extends State<mySearchQR> {
                   // setState(() {
                   //   keywordAsyncFunction(keyword.text);
                   // });
-                  if (keywordTextObj != null) {
+                  if (keywordTextObj != '') {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -554,6 +554,13 @@ class _MySearchState extends State<mySearchQR> {
                             return HomePage();
                           }
                         },
+                      ),
+                    );
+                  } else if (keywordTextObj == '') {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => HomePage(),
                       ),
                     );
                   }

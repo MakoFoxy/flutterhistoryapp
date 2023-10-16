@@ -1301,7 +1301,7 @@ class _MySearchState extends State<mySearch> {
                   // setState(() {
                   //   keywordAsyncFunction(keyword.text);
                   // });
-                  if (keywordTextObj != null) {
+                  if (keywordTextObj != '') {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -1311,10 +1311,16 @@ class _MySearchState extends State<mySearch> {
                                 // resList: resList,
                                 mykeyword: keywordTextObj.text,
                                 takekeywordText: keywordTextObj);
-                          } else {
-                            return HomePage();
                           }
+                          return HomePage();
                         },
+                      ),
+                    );
+                  } else if (keywordTextObj == '') {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => HomePage(),
                       ),
                     );
                   }
