@@ -168,24 +168,31 @@ class FirebaseSearchWidget extends State<FirebaseSearch> {
   searchResultList() {
     var showRes = [];
     if (keyword.text != "") {
+      var keywords = keyword.text.toLowerCase().split(" ");
       for (var keySnap in allResults) {
         var id = keySnap['id'].toString().toLowerCase();
         var title = keySnap['title'].toString().toLowerCase();
         var description = keySnap['description'].toString().toLowerCase();
-        if (id.contains(keyword.text.toLowerCase()) ||
-            title.contains(keyword.text.toLowerCase()) ||
-             description.contains(keyword.text.toLowerCase())) {
+        bool found = false;
+        for (var kw in keywords) {
+          if (id.contains(kw) ||
+              title.contains(kw) ||
+              description.contains(kw)) {
+            found = true;
+            break;
+          }
+        }
+        if (found) {
           showRes.add(keySnap);
         }
       }
-
       print('showRes $showRes');
     } else {
       showRes = List.from(allResults);
     }
 
     showRes.forEach((element) {
-      print("showReselement $element");
+      print("showRes element $element");
     });
 
     setState(() {
