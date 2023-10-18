@@ -3,7 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show debugPaintSizeEnabled;
 import 'package:mausoleum/pages/homepage.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:google_fonts/google_fonts.dart';   
 import 'package:mausoleum/api/firebase-api.dart';
 import 'package:mausoleum/pages/qrobjectpage.dart';
 import 'package:mausoleum/pages/widget_tree.dart';

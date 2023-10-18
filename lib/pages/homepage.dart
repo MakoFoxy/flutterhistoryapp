@@ -171,8 +171,10 @@ class FirebaseSearchWidget extends State<FirebaseSearch> {
       for (var keySnap in allResults) {
         var id = keySnap['id'].toString().toLowerCase();
         var title = keySnap['title'].toString().toLowerCase();
+        var description = keySnap['description'].toString().toLowerCase();
         if (id.contains(keyword.text.toLowerCase()) ||
-            title.contains(keyword.text.toLowerCase())) {
+            title.contains(keyword.text.toLowerCase()) ||
+             description.contains(keyword.text.toLowerCase())) {
           showRes.add(keySnap);
         }
       }
