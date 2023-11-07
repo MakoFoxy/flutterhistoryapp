@@ -30,12 +30,31 @@ class QRobjectpage extends StatefulWidget {
 }
 
 class QRobjectpageState extends State<QRobjectpage> {
-  String currentSelectedKey = ''; // Инициализируйте переменную пустым значением
   int _backPressCount = 0;
   final whiteTextStyle = TextStyle(color: Colors.white, fontSize: 24);
-
   @override
   Widget build(BuildContext context) {
+    print('widget.selectedKey qr-qr-qr ${widget.selectedKey}');
+
+    String currenturl = "";
+    String currentkey = "";
+    String currentSelectedKey =
+        Uri.tryParse('${widget.selectedKey}').toString();
+    print('currentSelectedKey qr-qr-qr $currentSelectedKey');
+    bool foundDollarSign =
+        false; // Флаг, чтобы определить, был ли найден символ '$'
+    for (var i = 0; i < currentSelectedKey.length; i++) {
+      if (foundDollarSign == false) {
+        currenturl = currenturl + currentSelectedKey[i];
+      } else {
+        currentkey = currentkey + currentSelectedKey[i];
+      }
+      if (currentSelectedKey[i] == '\$') {
+        foundDollarSign = true; // Устанавливаем флаг, когда найден символ '$'
+      }
+    }
+    print('currenturl $currenturl');
+    print('currentkey $currentkey');
     return WillPopScope(
       onWillPop: () async {
         if (_audioPlayer.playing) {
@@ -76,22 +95,22 @@ class QRobjectpageState extends State<QRobjectpage> {
                     height: MediaQuery.of(context).size.height - 125,
                     child: ListView(
                       children: <Widget>[
-                        MyPhotoCont(selectedKey: widget.selectedKey),
+                        MyPhotoCont(selectedKey: currentkey),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            MyTextCont(selectedKey: widget.selectedKey),
+                            MyTextCont(selectedKey: currentkey),
                             //MyPhotoCont(),
                           ],
                         ),
-                        MusicPlayerWidget(selectedKey: widget.selectedKey),
-                        MyOverviews(selectedKey: widget.selectedKey),
+                        MusicPlayerWidget(selectedKey: currentkey),
+                        MyOverviews(selectedKey: currentkey),
                       ],
                     ),
                   ),
                   Container(
                     child: MenuTile(
-                      selectedKey: widget.selectedKey,
+                      selectedKey: currentkey,
                     ),
                   ),
                 ],

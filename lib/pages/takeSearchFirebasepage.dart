@@ -231,7 +231,7 @@ class MyTakePageState extends State<MyTakePage> {
               child: ConstrainedBox(
                 constraints: BoxConstraints(
                   maxHeight: MediaQuery.of(context).size.height +
-                      16000, // appBarHeight - это высота вашего AppBar
+                      26000, // appBarHeight - это высота вашего AppBar
                 ),
                 child: Column(
                   children: [
@@ -358,43 +358,43 @@ class FirebaseSearchWidget extends State<FirebaseSearch>
             description.contains(widget.keywordText.text.toLowerCase())) {
           showRes.add(keySnap);
         }
-
-        // if (widget.mykeywordpagenow != "") {
-        //   var keywords = widget.mykeywordpagenow.toLowerCase().split(" ");
-        //   for (var keySnap in allResults) {
-        //     var id = keySnap['id'].toString().toLowerCase();
-        //     var title = keySnap['title'].toString().toLowerCase();
-        //     var description = keySnap['description'].toString().toLowerCase();
-        //     if (keywords.length == 1) {
-        //       print('keywords.length ${keywords.length}');
-        //       if (id.contains(widget.keywordText.text.toLowerCase()) ||
-        //           title.contains(widget.keywordText.text.toLowerCase()) ||
-        //           description.contains(widget.keywordText.text.toLowerCase())) {
-        //         showRes.add(keySnap);
-        //       }
-        //     }
-
-        // else if (keywords.length > 1) {
-        //   print('keywords.length ${keywords.length}');
-        //   bool found = false;
-        //   for (var kw in keywords) {
-        //     if (id.contains(kw) ||
-        //         title.contains(kw) ||
-        //         description.contains(kw)) {
-        //       print("kw $kw");
-        //       print("description $description");
-        //       found = true;
-        //       break;
-        //     }
-        //   }
-        //   if (found) {
-        //     showRes.add(keySnap);
-        //   }
-        // }
       }
     } else {
       showRes = List.from(allResults);
     }
+
+    // if (widget.mykeywordpagenow != "") {
+    //   var keywords = widget.mykeywordpagenow.toLowerCase().split(" ");
+    //   for (var keySnap in allResults) {
+    //     var id = keySnap['id'].toString().toLowerCase();
+    //     var title = keySnap['title'].toString().toLowerCase();
+    //     var description = keySnap['description'].toString().toLowerCase();
+    //     if (keywords.length == 1) {
+    //       print('keywords.length ${keywords.length}');
+    //       if (id.contains(widget.keywordText.text.toLowerCase()) ||
+    //           title.contains(widget.keywordText.text.toLowerCase()) ||
+    //           description.contains(widget.keywordText.text.toLowerCase())) {
+    //         showRes.add(keySnap);
+    //       }
+    //     }
+
+    // else if (keywords.length > 1) {
+    //   print('keywords.length ${keywords.length}');
+    //   bool found = false;
+    //   for (var kw in keywords) {
+    //     if (id.contains(kw) ||
+    //         title.contains(kw) ||
+    //         description.contains(kw)) {
+    //       print("kw $kw");
+    //       print("description $description");
+    //       found = true;
+    //       break;
+    //     }
+    //   }
+    //   if (found) {
+    //     showRes.add(keySnap);
+    //   }
+    // }
 
     showRes.forEach((element) {
       print("showReselement $element");

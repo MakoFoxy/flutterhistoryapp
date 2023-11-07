@@ -188,6 +188,12 @@ class FirebaseSearchWidget extends State<FirebaseSearch> {
       }
       print('showRes $showRes');
     } else {
+      for (var keySnap in allResults) {
+        var id = keySnap['id'].toString().toLowerCase();
+        var title = keySnap['title'].toString().toLowerCase();
+        var description = keySnap['description'].toString().toLowerCase();
+        print("ID: $id TITLE doc: $title DESCRIPTION: $description");
+      }
       showRes = List.from(allResults);
     }
 
@@ -638,7 +644,7 @@ class HomePageState extends State<MyHomePage> {
               child: ConstrainedBox(
                 constraints: BoxConstraints(
                   maxHeight: MediaQuery.of(context).size.height +
-                      16000, // appBarHeight - это высота вашего AppBar
+                      26000, // appBarHeight - это высота вашего AppBar
                 ),
                 child: Column(
                   children: [

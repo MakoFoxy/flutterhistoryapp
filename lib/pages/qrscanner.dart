@@ -14,7 +14,7 @@ class QrScanner extends StatefulWidget {
 }
 
 class _QrScannerState extends State<QrScanner> {
-  String selectedKey = '';
+  late String selectedKey = "";
   bool isScanComplated = false;
   bool isFlashOn = false;
   bool isFrontCamera = false;
@@ -31,7 +31,7 @@ class _QrScannerState extends State<QrScanner> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) {  
     return Scaffold(
       backgroundColor: bgColor,
       appBar: AppBar(
@@ -138,10 +138,18 @@ class _QrScannerState extends State<QrScanner> {
                   letterSpacing: 1,
                 ),
               ),
+
             ),
+
           ],
+
         ),
+
       ),
+
     );
+
   }
+
+
 }
