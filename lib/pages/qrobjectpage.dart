@@ -49,7 +49,7 @@ class QRobjectpageState extends State<QRobjectpage> {
       } else {
         currentkey = currentkey + currentSelectedKey[i];
       }
-      if (currentSelectedKey[i] == '\$') {
+      if (currentSelectedKey[i] == '=') {
         foundDollarSign = true; // Устанавливаем флаг, когда найден символ '$'
       }
     }

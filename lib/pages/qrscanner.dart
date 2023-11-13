@@ -31,7 +31,7 @@ class _QrScannerState extends State<QrScanner> {
   }
 
   @override
-  Widget build(BuildContext context) {  
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bgColor,
       appBar: AppBar(
@@ -126,7 +126,7 @@ class _QrScannerState extends State<QrScanner> {
               ),
             ),
             SizedBox(
-              height: MediaQuery.of(context).size.height / 6,
+              height: MediaQuery.of(context).size.height / 8,
             ),
             Container(
               alignment: Alignment.center,
@@ -138,18 +138,10 @@ class _QrScannerState extends State<QrScanner> {
                   letterSpacing: 1,
                 ),
               ),
-
             ),
-
           ],
-
         ),
-
       ),
-
     );
-
   }
-
-
 }
