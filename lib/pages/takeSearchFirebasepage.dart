@@ -231,7 +231,7 @@ class MyTakePageState extends State<MyTakePage> {
               child: ConstrainedBox(
                 constraints: BoxConstraints(
                   maxHeight: MediaQuery.of(context).size.height +
-                      26000, // appBarHeight - это высота вашего AppBar
+                      26500, // appBarHeight - это высота вашего AppBar
                 ),
                 child: Column(
                   children: [
