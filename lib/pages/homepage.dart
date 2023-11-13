@@ -42,7 +42,7 @@ class _HomePageState extends State<HomePage> {
             child: ListView(
               children: <Widget>[
                 Container(
-                  height: MediaQuery.of(context).size.height - 126,
+                  height: MediaQuery.of(context).size.height - 152,
                   padding: const EdgeInsets.only(left: 0, right: 0),
                   child: MyHomePage(
                     resultListHome: onResultListChanged,

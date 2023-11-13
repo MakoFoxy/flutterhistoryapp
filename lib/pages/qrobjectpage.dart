@@ -92,7 +92,7 @@ class QRobjectpageState extends State<QRobjectpage> {
               child: ListView(
                 children: <Widget>[
                   Container(
-                    height: MediaQuery.of(context).size.height - 125,
+                    height: MediaQuery.of(context).size.height - 152,
                     child: ListView(
                       children: <Widget>[
                         MyPhotoCont(selectedKey: currentkey),
@@ -242,9 +242,9 @@ class _MyAppBarState extends State<MyAppBar> {
           width: 10, // Устанавливаем отступ сверху
         ),
         Padding(
-          padding: const EdgeInsets.only(left: 0),
+          padding: const EdgeInsets.only(right: 10),
           child: SizedBox(
-            width: 230,
+            width: 290,
             child: FutureBuilder(
               builder: (context, snapshot) {
                 return mySearchQR();

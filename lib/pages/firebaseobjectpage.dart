@@ -77,7 +77,7 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
               child: ListView(
                 children: <Widget>[
                   Container(
-                    height: MediaQuery.of(context).size.height - 125,
+                    height: MediaQuery.of(context).size.height - 152,
                     child: ListView(
                       children: <Widget>[
                         MyPhotoCont(selectedKey: widget.selectedKey),
@@ -729,6 +729,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
                           // decoration: BoxDecoration(
                           //   color: Colors.red,
                           // ),
+                          width: 110,
                           child: StreamBuilder<PlayerState>(
                             stream: _audioPlayer.playerStateStream,
                             builder: (context, snapshot) {
@@ -791,7 +792,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
                           // decoration: BoxDecoration(
                           //   color: Colors.red,
                           // ),
-                          // width: 90,
+                          width: 110,
                           // height: 48,
                           child: ElevatedButton(
                             // icon: const Icon(
@@ -1218,9 +1219,9 @@ class _MyAppBarState extends State<MyAppBar> {
           width: 10, // Устанавливаем отступ сверху
         ),
         Padding(
-          padding: const EdgeInsets.only(left: 0),
+          padding: const EdgeInsets.only(left: 10),
           child: SizedBox(
-            width: 230,
+            width: 290,
             child: FutureBuilder(
               builder: (context, snapshot) {
                 return mySearch();

@@ -109,7 +109,7 @@ class _ApptakeSearchPage extends State<takeSearchFirebasePage> {
                   //   ],
                   // ),
                   Container(
-                    height: MediaQuery.of(context).size.height - 126,
+                    height: MediaQuery.of(context).size.height - 152,
                     padding: const EdgeInsets.only(left: 0, right: 0),
                     child: MyTakePage(
                       resultListHome: onResultListChanged,
@@ -157,9 +157,9 @@ class _MyAppBarState extends State<MyAppBar> {
           width: 10, // Устанавливаем отступ сверху
         ),
         Padding(
-          padding: const EdgeInsets.only(left: 0),
+          padding: const EdgeInsets.only(left: 10),
           child: SizedBox(
-            width: 230,
+            width: 290,
             child: FutureBuilder(
               builder: (context, snapshot) {
                 return FirebaseSearch(
@@ -449,9 +449,12 @@ class FirebaseSearchWidget extends State<FirebaseSearch>
     super.build(context);
     return ListView(
       children: [
+        SizedBox(
+          height: 5, // Устанавливаем отступ сверху
+        ),
         Container(
           width: double.infinity,
-          height: 40,
+          height: 45,
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(15),
@@ -854,7 +857,7 @@ class MenuTileWidget extends State<MenuTile> {
       child: Column(
         children: <Widget>[
           Card(
-            elevation: 5,
+            elevation: 0,
             margin: const EdgeInsets.all(0),
             child: Container(
               color: Colors.white70,
