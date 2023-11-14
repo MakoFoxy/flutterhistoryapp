@@ -42,7 +42,7 @@ class _HomePageState extends State<HomePage> {
             child: ListView(
               children: <Widget>[
                 Container(
-                  height: MediaQuery.of(context).size.height - 152,
+                  height: MediaQuery.of(context).size.height - 128,
                   padding: const EdgeInsets.only(left: 0, right: 0),
                   child: MyHomePage(
                     resultListHome: onResultListChanged,
@@ -433,7 +433,7 @@ class streamBuildHome extends StatelessWidget {
                 'loading...',
                 style: TextStyle(
                   fontSize: 18.0,
-                  color: Colors.green,
+                  color: Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
               ),

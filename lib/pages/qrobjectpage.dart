@@ -92,7 +92,7 @@ class QRobjectpageState extends State<QRobjectpage> {
               child: ListView(
                 children: <Widget>[
                   Container(
-                    height: MediaQuery.of(context).size.height - 152,
+                    height: MediaQuery.of(context).size.height - 128,
                     child: ListView(
                       children: <Widget>[
                         MyPhotoCont(selectedKey: currentkey),
@@ -418,7 +418,7 @@ class MyOverviewsState extends State<MyOverviews> {
               'loading...',
               style: TextStyle(
                 fontSize: 18.0,
-                color: Colors.green,
+                color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -716,7 +716,7 @@ class _MyTextContState extends State<MyTextCont> {
               'loading...',
               style: TextStyle(
                 fontSize: 18.0,
-                color: Colors.green,
+                color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -1270,7 +1270,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
                 'loading...',
                 style: TextStyle(
                   fontSize: 18.0,
-                  color: Colors.green,
+                  color: Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -1669,7 +1669,7 @@ class _MyPhotoContState extends State<MyPhotoCont> {
               'loading...',
               style: TextStyle(
                 fontSize: 18.0,
-                color: Colors.green,
+                color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -1835,7 +1835,7 @@ class MenuTileWidget extends State<MenuTile> {
               'loading...',
               style: TextStyle(
                 fontSize: 18.0,
-                color: Colors.green,
+                color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),
             ),

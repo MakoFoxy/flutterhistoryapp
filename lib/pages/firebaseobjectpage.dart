@@ -77,7 +77,7 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
               child: ListView(
                 children: <Widget>[
                   Container(
-                    height: MediaQuery.of(context).size.height - 152,
+                    height: MediaQuery.of(context).size.height - 128,
                     child: ListView(
                       children: <Widget>[
                         MyPhotoCont(selectedKey: widget.selectedKey),
@@ -160,8 +160,8 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
             // ),
             Padding(
               padding: const EdgeInsets.only(
-                left: 0.0,
-                bottom: 0.0,
+                left: 310.0,
+                bottom: 40.0,
                 right: 0,
                 top: 70,
               ),
@@ -558,7 +558,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
                 'loading...',
                 style: TextStyle(
                   fontSize: 18.0,
-                  color: Colors.green,
+                  color: Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -1099,7 +1099,7 @@ class MyOverviewsState extends State<MyOverviews> {
               'loading...',
               style: TextStyle(
                 fontSize: 18.0,
-                color: Colors.green,
+                color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -1458,7 +1458,7 @@ class _MyTextContState extends State<MyTextCont> {
               'loading...',
               style: TextStyle(
                 fontSize: 18.0,
-                color: Colors.green,
+                color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -1764,7 +1764,7 @@ class _MyPhotoContState extends State<MyPhotoCont> {
               'loading...',
               style: TextStyle(
                 fontSize: 18.0,
-                color: Colors.green,
+                color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -1933,7 +1933,7 @@ class MenuTileWidget extends State<MenuTile> {
               'loading...',
               style: TextStyle(
                 fontSize: 18.0,
-                color: Colors.green,
+                color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),
             ),
