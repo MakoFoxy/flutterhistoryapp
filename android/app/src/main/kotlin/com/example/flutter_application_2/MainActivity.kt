@@ -1,4 +1,4 @@
-package com.hodgaahmedturkistanmausoleum.mausoleumhodgaahmed
+package com.hodgaahmedofdturkistanmausoleum.mausoleumofthehodgaahmed
 
 import androidx.annotation.NonNull
 import io.flutter.embedding.android.FlutterActivity

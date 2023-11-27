@@ -33,7 +33,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace "com.hodgaahmedturkistanmausoleum.mausoleumhodgaahmed"
+    namespace "com.hodgaahmedofdturkistanmausoleum.mausoleumofthehodgaahmed"
     compileSdkVersion 33
     ndkVersion "25.1.8937393"
 
@@ -52,13 +52,13 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.hodgaahmedturkistanmausoleum.mausoleumhodgaahmed"
+        applicationId "com.hodgaahmedofdturkistanmausoleum.mausoleumofthehodgaahmed"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdkVersion 21
         targetSdkVersion 33
-        versionCode 8
-        versionName "1.7"
+        versionCode 1
+        versionName "1.0"
         multiDexEnabled true
     }
 

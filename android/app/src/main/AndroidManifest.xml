@@ -8,7 +8,7 @@
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO"/>
     
     <application
-        android:label="mausoleumhodgaahmed"
+        android:label="mausoleumofthehodgaahmed"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
