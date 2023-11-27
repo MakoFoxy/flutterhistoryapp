@@ -192,14 +192,24 @@ class FirebaseSearchWidget extends State<FirebaseSearch> {
       //   var id = keySnap['id'].toString();
       //   var title = keySnap['title'].toString();
       //   var description = keySnap['description'].toString();
-      //   print("ID: $id TITLE doc: $title DESCRIPTION: $description");
+      //   print("--------------------------------");
+      //   print("ID: $id");
+      //   print("TITLE doc: $title");
+      //   print("DESCRIPTION: $description");
+      //   print("--------------------------------");
       // }
       showRes = List.from(allResults);
+      // showRes.forEach((element) {
+      //   print("showRes id ${element['id']}");
+      //   print("showRes title ${element['title']}");
+      //   print("showRes description ${element['description']}");
+      // });
     }
-
-    showRes.forEach((element) {
-      print("showRes element $element");
-    });
+    // showRes.forEach((element) {
+    //   print("showRes id ${element['id']}");
+    //   print("showRes title ${element['title']}");
+    //   print("showRes description ${element['description']}");
+    // });
 
     setState(() {
       resultList = showRes;
