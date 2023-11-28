@@ -1030,14 +1030,16 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
       try {
         var readStatus = await Permission.manageExternalStorage.request();
         var writeStatus = await Permission.storage.request();
-        final downloadsDirectory =
-            await DownloadsPathProvider.downloadsDirectory;
+        // final downloadsDirectory =
+        //     await DownloadsPathProvider.downloadsDirectory;
+
         final Directory? downloadsDir = await getExternalStorageDirectory();
 
         //print('Permission status: $writeStatus');
         //if (readStatus == PermissionStatus.granted && writeStatus == PermissionStatus.granted)
-        if (readStatus == PermissionStatus.granted && downloadsDir != null ||
-            writeStatus == PermissionStatus.granted && downloadsDir != null) {
+        if (readStatus == PermissionStatus.granted &&
+            downloadsDir != null &&
+            writeStatus == PermissionStatus.granted) {
           final ref = FirebaseStorage.instance.ref().child(audioPathKaz);
           final url = await ref.getDownloadURL();
 
@@ -1066,12 +1068,12 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
           );
           print('Saving in the: $downloadPath');
           // print('Saving in the: $downloadDirectoryPath');
-        } else if (downloadsDirectory != null) {
+        } else if (downloadsDir != null) {
           final dataref = FirebaseStorage.instance.ref().child(audioPathKaz);
           final dataurl = await dataref.getDownloadURL();
           String downloadPathDirectoryAndroid = "";
           downloadPathDirectoryAndroid =
-              '${downloadsDirectory.path}/${dataref.name}.mp3';
+              '${downloadsDir.path}/${dataref.name}.mp3';
           await Dio().download(dataurl, downloadPathDirectoryAndroid);
           print('dataurl $dataurl');
 
@@ -1108,14 +1110,15 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
       try {
         var readStatus = await Permission.manageExternalStorage.request();
         var writeStatus = await Permission.storage.request();
-        final downloadsDirectory =
-            await DownloadsPathProvider.downloadsDirectory;
+        // final downloadsDirectory =
+        //     await DownloadsPathProvider.downloadsDirectory;
         final Directory? downloadsDir = await getExternalStorageDirectory();
 
         //print('Permission status: $writeStatus');
         //if (readStatus == PermissionStatus.granted && writeStatus == PermissionStatus.granted)
-        if (readStatus == PermissionStatus.granted && downloadsDir != null ||
-            writeStatus == PermissionStatus.granted && downloadsDir != null) {
+        if (readStatus == PermissionStatus.granted &&
+            downloadsDir != null &&
+            writeStatus == PermissionStatus.granted) {
           final ref = FirebaseStorage.instance.ref().child(audioPathRus);
           final url = await ref.getDownloadURL();
 
@@ -1144,12 +1147,12 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
           );
           print('Saving in the: $downloadPath');
           // print('Saving in the: $downloadDirectoryPath');
-        } else if (downloadsDirectory != null) {
+        } else if (downloadsDir != null) {
           final dataref = FirebaseStorage.instance.ref().child(audioPathRus);
           final dataurl = await dataref.getDownloadURL();
           String downloadPathDirectoryAndroid = "";
           downloadPathDirectoryAndroid =
-              '${downloadsDirectory.path}/${dataref.name}.mp3';
+              '${downloadsDir.path}/${dataref.name}.mp3';
           await Dio().download(dataurl, downloadPathDirectoryAndroid);
           print('dataurl $dataurl');
 
@@ -1186,14 +1189,15 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
       try {
         var readStatus = await Permission.manageExternalStorage.request();
         var writeStatus = await Permission.storage.request();
-        final downloadsDirectory =
-            await DownloadsPathProvider.downloadsDirectory;
+        // final downloadsDirectory =
+        //     await DownloadsPathProvider.downloadsDirectory;
         final Directory? downloadsDir = await getExternalStorageDirectory();
 
         //print('Permission status: $writeStatus');
         //if (readStatus == PermissionStatus.granted && writeStatus == PermissionStatus.granted)
-        if (readStatus == PermissionStatus.granted && downloadsDir != null ||
-            writeStatus == PermissionStatus.granted && downloadsDir != null) {
+        if (readStatus == PermissionStatus.granted &&
+            downloadsDir != null &&
+            writeStatus == PermissionStatus.granted) {
           final ref = FirebaseStorage.instance.ref().child(audioPathEng);
           final url = await ref.getDownloadURL();
 
@@ -1222,12 +1226,12 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
           );
           print('Saving in the: $downloadPath');
           // print('Saving in the: $downloadDirectoryPath');
-        } else if (downloadsDirectory != null) {
+        } else if (downloadsDir != null) {
           final dataref = FirebaseStorage.instance.ref().child(audioPathEng);
           final dataurl = await dataref.getDownloadURL();
           String downloadPathDirectoryAndroid = "";
           downloadPathDirectoryAndroid =
-              '${downloadsDirectory.path}/${dataref.name}.mp3';
+              '${downloadsDir.path}/${dataref.name}.mp3';
           await Dio().download(dataurl, downloadPathDirectoryAndroid);
           print('dataurl $dataurl');
 
@@ -1441,6 +1445,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
                           // decoration: BoxDecoration(
                           //   color: Colors.red,
                           // ),
+                          width: 110,
                           child: StreamBuilder<PlayerState>(
                             stream: _audioPlayer.playerStateStream,
                             builder: (context, snapshot) {
@@ -1503,7 +1508,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
                           // decoration: BoxDecoration(
                           //   color: Colors.red,
                           // ),
-                          // width: 90,
+                          width: 110,
                           // height: 48,
                           child: ElevatedButton(
                             // icon: const Icon(
