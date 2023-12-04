@@ -410,7 +410,7 @@ class streamBuild extends StatelessWidget {
   }
 }
 
-class streamBuildHome extends StatelessWidget {
+class streamBuildHome extends StatefulWidget {
   List<dynamic> resultList;
 
   streamBuildHome({
@@ -418,189 +418,248 @@ class streamBuildHome extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    late Stream<QuerySnapshot<Map<String, dynamic>>> datastream;
-    if (Localizations.localeOf(context).languageCode == 'kk') {
-      datastream = FirebaseFirestore.instance.collection('datakz').snapshots();
-    } else if (Localizations.localeOf(context).languageCode == 'ru') {
-      datastream = FirebaseFirestore.instance.collection('dataru').snapshots();
-    } else if (Localizations.localeOf(context).languageCode == 'en') {
-      datastream = FirebaseFirestore.instance.collection('dataen').snapshots();
+  State<streamBuildHome> createState() => _streamBuildHomeState();
+}
+
+class _streamBuildHomeState extends State<streamBuildHome> {
+  DocumentSnapshot? lastDocument;
+  bool isLoading = false;
+  final int documentLimit = 10;
+  ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        loadMoreData(); // Загрузка данных при достижении конца списка
+      }
+    });
+    loadInitialData(); // Загрузка начальных данных
+  }
+
+  loadInitialData() async {
+    isLoading = true;
+    QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+        .instance
+        .collection(
+            getCollectionName(Localizations.localeOf(context).languageCode))
+        .limit(documentLimit)
+        .get();
+    widget.resultList = snapshot.docs;
+    if (snapshot.docs.isNotEmpty) {
+      lastDocument = snapshot.docs.last;
     }
+    isLoading = false;
+    setState(() {});
+  }
+
+  loadMoreData() async {
+    if (isLoading || lastDocument == null) return;
+    isLoading = true;
+    QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+        .instance
+        .collection(
+            getCollectionName(Localizations.localeOf(context).languageCode))
+        .startAfterDocument(lastDocument!)
+        .limit(documentLimit)
+        .get();
+
+    if (snapshot.docs.isNotEmpty) {
+      lastDocument = snapshot.docs.last;
+      widget.resultList.addAll(snapshot.docs);
+    }
+    isLoading = false;
+    setState(() {});
+  }
+
+  String getCollectionName(String languageCode) {
+    switch (languageCode) {
+      case 'kk':
+        return 'datakz';
+      case 'ru':
+        return 'dataru';
+      default:
+        return 'dataen';
+    }
+  }
+
+  Widget build(BuildContext context) {
+    // late Stream<QuerySnapshot<Map<String, dynamic>>> datastream;
+    // if (Localizations.localeOf(context).languageCode == 'kk') {
+    //   datastream = FirebaseFirestore.instance.collection('datakz').snapshots();
+    // } else if (Localizations.localeOf(context).languageCode == 'ru') {
+    //   datastream = FirebaseFirestore.instance.collection('dataru').snapshots();
+    // } else if (Localizations.localeOf(context).languageCode == 'en') {
+    //   datastream = FirebaseFirestore.instance.collection('dataen').snapshots();
+    // }
     return WillPopScope(
       onWillPop: () async {
         // Выход из приложения при нажатии кнопки "назад"
         SystemNavigator.pop();
         return true; // Возвращаем true, чтобы разрешить выход из приложения
       },
-      child: StreamBuilder<QuerySnapshot>(
-        stream: datastream,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Container(
-              alignment: Alignment.center,
-              child: const Text(
-                'loading...',
-                style: TextStyle(
-                  fontSize: 18.0,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            );
-          }
-          if (snapshot.hasError) {
-            return Text('Error');
-          }
-          if (!snapshot.hasData || snapshot.data == null) {
-            return Text('No data');
-          }
-
-          if (resultList != "") {
-            return Container(
-              decoration: BoxDecoration(
-                border: Border.all(
-                    color: Colors.greenAccent), // Устанавливаем красную границу
-              ),
-              child: Column(
-                children: resultList.map((data) {
-                  final doc = data.data() as Map<String, dynamic>;
-                  return Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                          color: Colors.green), // Устанавливаем красную границу
+      child: ListView.builder(
+        controller: _scrollController,
+        itemCount: widget.resultList.length + (isLoading ? 1 : 0),
+        itemBuilder: (context, index) {
+          if (index >= widget.resultList.length) {
+            return isLoading
+                ? Container(
+                    alignment: Alignment.center,
+                    child: const Text(
+                      'loading...',
+                      style: TextStyle(
+                        fontSize: 18.0,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
+                  )
+                : Container();
+          }
+          final doc = widget.resultList[index].data() as Map<String, dynamic>;
+          return buildItem(doc); // Построение каждого элемента списка
+        },
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose(); // Освобождение ресурсов контроллера прокрутки
+    super.dispose();
+  }
+
+  Widget buildItem(Map<String, dynamic> doc) {
+    // Определите здесь, как вы хотите отображать каждый элемент списка
+    return Container(
+      decoration: BoxDecoration(
+        border:
+            Border.all(color: Colors.green), // Устанавливаем красную границу
+      ),
+      child: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.only(
+              left: 10,
+              top: 0,
+              bottom: 0,
+              right: 0,
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  // decoration: BoxDecoration(
+                  //   border: Border.all(
+                  //     color: Colors.red,
+                  //   ),
+                  // ),
+                  child: Image.network(
+                    doc['filephotopath'],
+                    width: 150,
+                    height: 120,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                SizedBox(width: 10.0),
+                Expanded(
+                  // Используем Expanded для текста и кнопки
+                  child: Container(
+                    padding: const EdgeInsets.only(
+                      left: 0,
+                      top: 0,
+                      right: 0,
+                      bottom: 0,
+                    ),
+                    // decoration: BoxDecoration(
+                    //   border: Border.all(
+                    //     color: Colors.red,
+                    //   ),
+                    // ),
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment
+                          .center, // Выравнивание текста по левому краю
                       children: [
-                        Container(
-                          padding: EdgeInsets.only(
-                            left: 10,
-                            top: 0,
-                            bottom: 0,
-                            right: 0,
+                        Text(
+                          doc['title'],
+                          style: TextStyle(
+                            fontSize: 18.0,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
                           ),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                // decoration: BoxDecoration(
-                                //   border: Border.all(
-                                //     color: Colors.red,
-                                //   ),
-                                // ),
-                                child: Image.network(
-                                  doc['filephotopath'],
-                                  width: 150,
-                                  height: 120,
-                                  fit: BoxFit.cover,
+                          softWrap: true,
+                          //overflow: TextOverflow.ellipsis,
+                        ),
+                        SizedBox(
+                          height: 43,
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ObjectFirebasePage(
+                                  selectedKey: doc['id'],
                                 ),
                               ),
-                              SizedBox(width: 10.0),
-                              Expanded(
-                                // Используем Expanded для текста и кнопки
-                                child: Container(
-                                  padding: const EdgeInsets.only(
-                                    left: 0,
-                                    top: 0,
-                                    right: 0,
-                                    bottom: 0,
-                                  ),
-                                  // decoration: BoxDecoration(
-                                  //   border: Border.all(
-                                  //     color: Colors.red,
-                                  //   ),
-                                  // ),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment
-                                        .center, // Выравнивание текста по левому краю
-                                    children: [
-                                      Text(
-                                        doc['title'],
-                                        style: TextStyle(
-                                          fontSize: 18.0,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                        softWrap: true,
-                                        //overflow: TextOverflow.ellipsis,
-                                      ),
-                                      SizedBox(
-                                        height: 43,
-                                      ),
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  ObjectFirebasePage(
-                                                selectedKey: doc['id'],
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          padding: EdgeInsets.all(0),
-                                        ),
-                                        child: Container(
-                                          width: double
-                                              .infinity, // Разрешаем кнопке занимать всю ширину
-                                          alignment: Alignment
-                                              .topCenter, // Выравнивание текста по центру
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 8,
-                                              horizontal:
-                                                  0), // Отступы для текста кнопки
-                                          child: Text(
-                                            "details".tr(),
-                                            style: TextStyle(
-                                              fontSize: 14.0,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            padding: EdgeInsets.all(0),
+                          ),
+                          child: Container(
+                            width: double
+                                .infinity, // Разрешаем кнопке занимать всю ширину
+                            alignment: Alignment
+                                .topCenter, // Выравнивание текста по центру
+                            padding: EdgeInsets.symmetric(
+                                vertical: 8,
+                                horizontal: 0), // Отступы для текста кнопки
+                            child: Text(
+                              "details".tr(),
+                              style: TextStyle(
+                                fontSize: 14.0,
+                                fontWeight: FontWeight.bold,
                               ),
-                              Container(
-                                padding: const EdgeInsets.only(
-                                  left: 0,
-                                  bottom: 10,
-                                  top: 0,
-                                  right: 10,
-                                ),
-                                height: 25,
-                                width: 25,
-                                // decoration: BoxDecoration(
-                                //   border: Border.all(
-                                //       color: Colors
-                                //           .red), // Устанавливаем красную границу
-                                // ),
-                                // child: IconButton(
-                                //   padding: const EdgeInsets.only(
-                                //     left: 0,
-                                //     bottom: 10,
-                                //     top: 0,
-                                //     right: 10,
-                                //   ),
-                                //   onPressed: () {},
-                                //   icon: Icon(Icons.bookmark_add),
-                                // ),
-                              ),
-                            ],
+                            ),
                           ),
                         ),
                       ],
                     ),
-                  );
-                }).toList(), // Convert the mapped items to a list
-              ),
-            );
-          }
-          return Container();
-        },
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.only(
+                    left: 0,
+                    bottom: 10,
+                    top: 0,
+                    right: 10,
+                  ),
+                  height: 25,
+                  width: 25,
+                  // decoration: BoxDecoration(
+                  //   border: Border.all(
+                  //       color: Colors
+                  //           .red), // Устанавливаем красную границу
+                  // ),
+                  // child: IconButton(
+                  //   padding: const EdgeInsets.only(
+                  //     left: 0,
+                  //     bottom: 10,
+                  //     top: 0,
+                  //     right: 10,
+                  //   ),
+                  //   onPressed: () {},
+                  //   icon: Icon(Icons.bookmark_add),
+                  // ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -631,40 +690,43 @@ class HomePageState extends State<MyHomePage> {
     ); // Обновленный размер текста
     print('widget.onResultListChanged2 ${widget.resultListHome}');
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            // Container(
-            //   child: SingleChildScrollView(
-            //     scrollDirection: Axis.horizontal,
-            //     child: ConstrainedBox(
-            //       constraints: BoxConstraints(
-            //         maxHeight: MediaQuery.of(context).size.height -
-            //             228, // appBarHeight - это высота вашего AppBar
-            //       ),
-            //       child: Row(
-            //         children: [
-            //           streamBuild(resultList: widget.resultListHome),
-            //         ],
-            //       ),
-            //     ),
-            //   ),
-            // ),
-            Container(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxHeight: MediaQuery.of(context).size.height +
-                      26500, // appBarHeight - это высота вашего AppBar
-                ),
-                child: Column(
-                  children: [
-                    streamBuildHome(resultList: widget.resultListHome),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
+      body: Column(
+        children: [
+          // Container(
+          //   child: SingleChildScrollView(
+          //     scrollDirection: Axis.horizontal,
+          //     child: ConstrainedBox(
+          //       constraints: BoxConstraints(
+          //         maxHeight: MediaQuery.of(context).size.height -
+          //             228, // appBarHeight - это высота вашего AppBar
+          //       ),
+          //       child: Row(
+          //         children: [
+          //           streamBuild(resultList: widget.resultListHome),
+          //         ],
+          //       ),
+          //     ),
+          //   ),
+          // ),
+          Expanded(
+            // Используйте Expanded здесь
+            child: streamBuildHome(resultList: widget.resultListHome),
+          ),
+
+          // Container(
+          //   child: ConstrainedBox(
+          //     constraints: BoxConstraints(
+          //       maxHeight: MediaQuery.of(context).size.height +
+          //           26500, // appBarHeight - это высота вашего AppBar
+          //     ),
+          //     child: Column(
+          //       children: [
+          //         streamBuildHome(resultList: widget.resultListHome),
+          //       ],
+          //     ),
+          //   ),
+          // ),
+        ],
       ),
       // floatingActionButton: Stack(
       //   children: [
