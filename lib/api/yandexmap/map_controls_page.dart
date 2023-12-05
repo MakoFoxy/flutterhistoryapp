@@ -57,8 +57,7 @@ class MapControlsExampleState extends State<MapControlsExample> {
 
   int? poiLimit;
 
-  final String style =
-      '''
+  final String style = '''
     [
       {
         "tags": {
@@ -90,11 +89,17 @@ class MapControlsExampleState extends State<MapControlsExample> {
           onMapCreated: (YandexMapController yandexMapController) async {
             controller = yandexMapController;
 
-            final cameraPosition = await controller.getCameraPosition();
+            //final cameraPosition = await controller.getCameraPosition();
+            double initialZoom = 15.0;
+            await controller.moveCamera(
+              CameraUpdate.newCameraPosition(
+                CameraPosition(target: _point, zoom: initialZoom),
+              ),
+            );
             final minZoom = await controller.getMinZoom();
             final maxZoom = await controller.getMaxZoom();
 
-            print('Camera position: $cameraPosition');
+            // print('Camera position: $cameraPosition');
             print('Min zoom: $minZoom, Max zoom: $maxZoom');
           },
           onMapTap: (Point point) async {
@@ -145,7 +150,7 @@ class MapControlsExampleState extends State<MapControlsExample> {
                                 );
                               },
                               child: Icon(
-                                Icons.place, 
+                                Icons.place,
                               ),
                             ),
                           ),

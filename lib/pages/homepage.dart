@@ -192,10 +192,16 @@ class FirebaseSearchWidget extends State<FirebaseSearch> {
       //   var id = keySnap['id'].toString();
       //   var title = keySnap['title'].toString();
       //   var description = keySnap['description'].toString();
+      //   var firebaseaudiopathkz = keySnap['firebaseaudiopathkz'].toString();
+      //   var firebaseaudiopathru = keySnap['firebaseaudiopathru'].toString();
+      //   var firebaseaudiopathen = keySnap['firebaseaudiopathen'].toString();
       //   print("--------------------------------");
       //   print("ID: $id");
       //   print("TITLE doc: $title");
       //   print("DESCRIPTION: $description");
+      //   print("firebaseaudiopathkz: $firebaseaudiopathkz");
+      //   print("firebaseaudiopathru: $firebaseaudiopathru");
+      //   print("firebaseaudiopathen: $firebaseaudiopathen");
       //   print("--------------------------------");
       // }
       showRes = List.from(allResults);
