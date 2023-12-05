@@ -9,5 +9,6 @@
     "save": "Save",
     "play": "Play",
     "pause": "Pause",
-    "qr-scanner": "Scan the qr code"
+    "qr-scanner": "Scan the QR code",
+    "use_qr-scanner": "use QR scanner"
 }

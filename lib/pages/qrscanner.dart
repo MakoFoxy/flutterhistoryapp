@@ -37,8 +37,8 @@ class _QrScannerState extends State<QrScanner> {
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.white),
         centerTitle: true,
-        title: const Text(
-          "QR Scanner",
+        title: Text(
+          "qr-scanner".tr(),
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.bold,
@@ -54,9 +54,9 @@ class _QrScannerState extends State<QrScanner> {
             Container(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
+                children: [
                   Text(
-                    "use QR code",
+                    "use_qr-scanner".tr(),
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 18,

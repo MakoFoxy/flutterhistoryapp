@@ -3,11 +3,12 @@
     "myhomepage": "Главная",
     "mymap": "Карта",
     "myQR":"QR",
-    "searchword": "пойск...",
+    "searchword": "поиск...",
     "details": "Подробнее",
     "description": "Описание",
     "save": "Скачать",
     "play": "Воспроизвести",
     "pause": "Пауза",
-    "qr-scanner": "Просканируйте QR код"
+    "qr-scanner": "Просканируйте QR код",
+    "use_qr-scanner": "Используйте QR сканер"
 }
