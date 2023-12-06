@@ -8,6 +8,11 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:mausoleum/api/dropdawn_flag/dropdawn_flag.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
+import 'package:excel/excel.dart' as excel;
+import 'package:path/path.dart' as path;
+import 'package:downloads_path_provider_28/downloads_path_provider_28.dart';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -165,6 +170,35 @@ class FirebaseSearchWidget extends State<FirebaseSearch> {
     searchResultList();
   }
 
+  void createAndSaveExcelFile(List<List<String>> excelData) async {
+    // Создание нового Excel документа
+    var exc = excel.Excel.createExcel();
+    excel.Sheet sheetObject = exc['Sheet1'];
+
+    for (int row = 0; row < excelData.length; row++) {
+      for (int col = 0; col < excelData[row].length; col++) {
+        var cellIndex =
+            excel.CellIndex.indexByColumnRow(columnIndex: col, rowIndex: row);
+        // Создаем экземпляр TextCellValue из строки
+        var cellValue = excel.TextCellValue(excelData[row][col]);
+        // Добавление данных в ячейку
+        sheetObject.updateCell(cellIndex, cellValue);
+      }
+    }
+    // Сохранение Excel файла в файловой системе
+
+    final directory = await getApplicationDocumentsDirectory();
+    String filePath = path.join(directory.path, "output.xlsx");
+
+    // Сохранение файла
+    var fileBytes = exc.save();
+    File(filePath)
+      ..createSync(recursive: true)
+      ..writeAsBytesSync(fileBytes!);
+
+    print('Excel файл сохранен: $filePath');
+  }
+
   searchResultList() {
     var showRes = [];
     if (keyword.text != "") {
@@ -188,6 +222,22 @@ class FirebaseSearchWidget extends State<FirebaseSearch> {
       }
       print('showRes $showRes');
     } else {
+      showRes = List.from(allResults);
+
+      // List<List<String>> excelData = allResults.map((keySnap) {
+      //   return [
+      //     keySnap['id'].toString(),
+      //     keySnap['title'].toString(),
+      //     keySnap['description'].toString(),
+      //     //keySnap['firebaseaudiopathkz'].toString(),
+      //     //keySnap['firebaseaudiopathru'].toString(),
+      //     //keySnap['firebaseaudiopathen'].toString(),
+      //   ];
+      // }).toList();
+
+      // // Создание и сохранение файла Excel
+      // createAndSaveExcelFile(excelData);
+
       // for (var keySnap in allResults) {
       //   var id = keySnap['id'].toString();
       //   var title = keySnap['title'].toString();
@@ -204,7 +254,7 @@ class FirebaseSearchWidget extends State<FirebaseSearch> {
       //   print("firebaseaudiopathen: $firebaseaudiopathen");
       //   print("--------------------------------");
       // }
-      showRes = List.from(allResults);
+
       // showRes.forEach((element) {
       //   print("showRes id ${element['id']}");
       //   print("showRes title ${element['title']}");

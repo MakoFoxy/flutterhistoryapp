@@ -51,6 +51,7 @@ dependencies:
   flutter_sound: ^9.2.13
   saver_gallery: ^2.0.1
   downloads_path_provider_28: ^0.1.2
+  excel: ^4.0.0
 
 
 dev_dependencies:
