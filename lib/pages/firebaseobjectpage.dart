@@ -330,8 +330,8 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
           final url = await ref.getDownloadURL();
 
           //final tempDir = await getTemporaryDirectory();
-          // final downloadDirectoryPath =
-          //     '/storage/emulated/0/Download/${ref.name}.mp3';
+          final downloadDirectoryPath =
+              '/storage/emulated/0/Download/${ref.name}.mp3';
           String downloadPath = "";
           //final downloadsDirectory = await getExternalStorageDirectory();
           //if (downloadsDirectory != null) {
@@ -345,7 +345,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
           //   await SaverGallery.saveFile(
           //       file: downloadPath, name: ref.name, androidExistNotSave: true);
           // }
-          //await File(downloadPath).copy(downloadDirectoryPath);
+          await File(downloadPath).copy(downloadDirectoryPath);
 
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -354,8 +354,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
           );
           print('Saving in the: $downloadPath');
           // print('Saving in the: $downloadDirectoryPath');
-        }
-        if (downloadsDirectory != null) {
+        } else if (downloadsDirectory != null) {
           final dataref = FirebaseStorage.instance.ref().child(audioPathKaz);
           final dataurl = await dataref.getDownloadURL();
           String downloadPathDirectoryAndroid = "";
@@ -374,12 +373,12 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
         }
       } catch (e, stackTrace) {
         print('Error download: $e');
-        print('stackTrace $stackTrace'); // Вывод стека вызовов для отладки
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   SnackBar(
-        //     content: Text('Error download: $e'),
-        //   ),
-        // );
+        print(stackTrace); // Вывод стека вызовов для отладки
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error download: $e'),
+          ),
+        );
       }
       // Reference ref = FirebaseStorage.instance.ref().child(audioDisplayed);
       // final file = File(audioDisplayed);
@@ -409,8 +408,8 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
           final url = await ref.getDownloadURL();
 
           //final tempDir = await getTemporaryDirectory();
-          // final downloadDirectoryPath =
-          //     '/storage/emulated/0/Download/${ref.name}.mp3';
+          final downloadDirectoryPath =
+              '/storage/emulated/0/Download/${ref.name}.mp3';
           String downloadPath = "";
           //final downloadsDirectory = await getExternalStorageDirectory();
           //if (downloadsDirectory != null) {
@@ -424,7 +423,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
           //   await SaverGallery.saveFile(
           //       file: downloadPath, name: ref.name, androidExistNotSave: true);
           // }
-          //  await File(downloadPath).copy(downloadDirectoryPath);
+          await File(downloadPath).copy(downloadDirectoryPath);
 
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -433,8 +432,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
           );
           print('Saving in the: $downloadPath');
           // print('Saving in the: $downloadDirectoryPath');
-        }
-        if (downloadsDirectory != null) {
+        } else if (downloadsDirectory != null) {
           final dataref = FirebaseStorage.instance.ref().child(audioPathRus);
           final dataurl = await dataref.getDownloadURL();
           String downloadPathDirectoryAndroid = "";
@@ -453,12 +451,12 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
         }
       } catch (e, stackTrace) {
         print('Error download: $e');
-        print('stackTrace $stackTrace'); // Вывод стека вызовов для отладки
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   SnackBar(
-        //     content: Text('Error download: $e'),
-        //   ),
-        // );
+        print(stackTrace); // Вывод стека вызовов для отладки
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error download: $e'),
+          ),
+        );
       }
       // Reference ref = FirebaseStorage.instance.ref().child(audioDisplayed);
       // final file = File(audioDisplayed);
@@ -488,8 +486,8 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
           final url = await ref.getDownloadURL();
 
           //final tempDir = await getTemporaryDirectory();
-          // final downloadDirectoryPath =
-          //     '/storage/emulated/0/Download/${ref.name}.mp3';
+          final downloadDirectoryPath =
+              '/storage/emulated/0/Download/${ref.name}.mp3';
           String downloadPath = "";
           //final downloadsDirectory = await getExternalStorageDirectory();
           //if (downloadsDirectory != null) {
@@ -503,7 +501,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
           //   await SaverGallery.saveFile(
           //       file: downloadPath, name: ref.name, androidExistNotSave: true);
           // }
-          //await File(downloadPath).copy(downloadDirectoryPath);
+          await File(downloadPath).copy(downloadDirectoryPath);
 
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -512,8 +510,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
           );
           print('Saving in the: $downloadPath');
           // print('Saving in the: $downloadDirectoryPath');
-        }
-        if (downloadsDirectory != null) {
+        } else if (downloadsDirectory != null) {
           final dataref = FirebaseStorage.instance.ref().child(audioPathEng);
           final dataurl = await dataref.getDownloadURL();
           String downloadPathDirectoryAndroid = "";
@@ -532,12 +529,12 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
         }
       } catch (e, stackTrace) {
         print('Error download: $e');
-        print('stackTrace $stackTrace'); // Вывод стека вызовов для отладки
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   SnackBar(
-        //     content: Text('Error download: $e'),
-        //   ),
-        // );
+        print(stackTrace); // Вывод стека вызовов для отладки
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error download: $e'),
+          ),
+        );
       }
       // Reference ref = FirebaseStorage.instance.ref().child(audioDisplayed);
       // final file = File(audioDisplayed);
