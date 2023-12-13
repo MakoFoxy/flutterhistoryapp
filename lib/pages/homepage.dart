@@ -639,15 +639,24 @@ class _streamBuildHomeState extends State<streamBuildHome> {
                       crossAxisAlignment: CrossAxisAlignment
                           .center, // Выравнивание текста по левому краю
                       children: [
-                        Text(
-                          doc['title'],
-                          style: TextStyle(
-                            fontSize: 18.0,
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
+                        Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                doc['title'],
+                                textAlign: TextAlign
+                                    .center, // Добавляем выравнивание текста по центру
+                                style: TextStyle(
+                                  fontSize: 18.0,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                softWrap: true,
+                                //overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
                           ),
-                          softWrap: true,
-                          //overflow: TextOverflow.ellipsis,
                         ),
                         SizedBox(
                           height: 43,
