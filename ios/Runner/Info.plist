@@ -28,7 +28,7 @@
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
-	<key>UISupportedInterfaceOrientations</key>
+	<key>UISupportedInterfaceOrientations</key>	
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
@@ -49,5 +49,13 @@
 	<true/>
 	<key>io.flutter.embedded_views_preview</key>
 	<true/>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Это приложение требует доступа к вашей фотогалерее.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Это приложение требует доступа к вашей фотогалерее для сохранения изображений.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Это приложение требует доступа к вашей локации для ...</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Это приложение требует постоянного доступа к вашей локации для ...</string>
 </dict>
 </plist>
