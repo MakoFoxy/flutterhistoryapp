@@ -757,8 +757,9 @@ class streamBuildHome extends StatelessWidget {
                                   //   ),
                                   // ),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment
-                                        .center, // Выравнивание текста по левому краю
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
                                     children: [
                                       Text(
                                         doc['title'],
