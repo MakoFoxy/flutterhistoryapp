@@ -763,6 +763,7 @@ class streamBuildHome extends StatelessWidget {
                                     children: [
                                       Text(
                                         doc['title'],
+                                        textAlign: TextAlign.center,
                                         style: TextStyle(
                                           fontSize: 18.0,
                                           color: Colors.black,
