@@ -33,6 +33,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: PreferredSize(
         preferredSize:
             Size.fromHeight(kToolbarHeight), // Set your preferred height here
@@ -41,30 +42,34 @@ class _HomePageState extends State<HomePage> {
         ), // Use your custom app bar
       ),
       body: SafeArea(
-        child: DefaultTextStyle.merge(
-          child: Container(
-            color: Colors.white,
-            child: ListView(
-              children: <Widget>[
-                Container(
-                  height: MediaQuery.of(context).size.height - 128,
-                  padding: const EdgeInsets.only(left: 0, right: 0),
-                  child: MyHomePage(
-                    resultListHome: onResultListChanged,
-                    backgroundImage: DecorationImage(
-                      image:
-                          AssetImage('lib/assets/images/backgroundImages.jpg'),
-                      fit: BoxFit.cover,
+        child: Column(
+          children: <Widget>[
+            Expanded(
+              child: Container(
+                color: Colors.white,
+                child: ListView(
+                  children: <Widget>[
+                    Container(
+                      height: MediaQuery.of(context).size.height - 128,
+                      padding: const EdgeInsets.only(left: 0, right: 0),
+                      child: MyHomePage(
+                        resultListHome: onResultListChanged,
+                        backgroundImage: DecorationImage(
+                          image: AssetImage(
+                              'lib/assets/images/backgroundImages.jpg'),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-                Container(
-                  padding: const EdgeInsets.all(0),
-                  child: MenuTile(),
-                ),
-              ],
+              ),
             ),
-          ),
+            Container(
+              padding: const EdgeInsets.all(0),
+              child: MenuTile(),
+            ),
+          ],
         ),
       ),
     );
@@ -229,9 +234,9 @@ class FirebaseSearchWidget extends State<FirebaseSearch> {
       //     keySnap['id'].toString(),
       //     keySnap['title'].toString(),
       //     keySnap['description'].toString(),
-      //     keySnap['firebaseaudiopathkz'].toString(),
+      //     //keySnap['firebaseaudiopathkz'].toString(),
       //     //keySnap['firebaseaudiopathru'].toString(),
-      //     // keySnap['firebaseaudiopathen'].toString(),
+      //     //keySnap['firebaseaudiopathen'].toString(),
       //   ];
       // }).toList();
 
@@ -639,24 +644,15 @@ class _streamBuildHomeState extends State<streamBuildHome> {
                       crossAxisAlignment: CrossAxisAlignment
                           .center, // Выравнивание текста по левому краю
                       children: [
-                        Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                doc['title'],
-                                textAlign: TextAlign
-                                    .center, // Добавляем выравнивание текста по центру
-                                style: TextStyle(
-                                  fontSize: 18.0,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                softWrap: true,
-                                //overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
+                        Text(
+                          doc['title'],
+                          style: TextStyle(
+                            fontSize: 18.0,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
                           ),
+                          softWrap: true,
+                          //overflow: TextOverflow.ellipsis,
                         ),
                         SizedBox(
                           height: 43,
@@ -916,13 +912,13 @@ class MenuTileWidget extends State<MenuTile> {
                 ),
               );
             },
-            child: const Icon(Icons.map),
+            child: const Icon(Icons.map, size: 23.0),
           ),
           Container(
             child: Text(
               label,
               style: TextStyle(
-                fontSize: 15,
+                fontSize: 20,
                 fontWeight: FontWeight.w300,
                 color: color,
               ),
@@ -948,13 +944,13 @@ class MenuTileWidget extends State<MenuTile> {
                 ),
               );
             },
-            child: const Icon(Icons.qr_code_scanner),
+            child: const Icon(Icons.qr_code_scanner, size: 23.0),
           ),
           Container(
             child: Text(
               label,
               style: TextStyle(
-                fontSize: 15,
+                fontSize: 20,
                 fontWeight: FontWeight.w400,
                 color: color,
               ),
@@ -980,13 +976,13 @@ class MenuTileWidget extends State<MenuTile> {
                 ),
               );
             },
-            child: const Icon(Icons.home),
+            child: const Icon(Icons.home, size: 23.0),
           ),
           Container(
             child: Text(
               label,
               style: TextStyle(
-                fontSize: 15,
+                fontSize: 20,
                 fontWeight: FontWeight.w400,
                 color: color,
               ),

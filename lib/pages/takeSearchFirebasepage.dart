@@ -55,6 +55,7 @@ class _ApptakeSearchPage extends State<takeSearchFirebasePage> {
         }
       },
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: PreferredSize(
           preferredSize:
               Size.fromHeight(kToolbarHeight), // Set your preferred height here
@@ -67,60 +68,66 @@ class _ApptakeSearchPage extends State<takeSearchFirebasePage> {
         body: SafeArea(
           child: DefaultTextStyle.merge(
             style: whiteTexstStyle,
-            child: Container(
-              color: Colors.white,
-              child: ListView(
-                children: <Widget>[
-                  // Container(
-                  //   decoration: BoxDecoration(
-                  //     image: DecorationImage(
-                  //       image: AssetImage(imageUrl),
-                  //       fit: BoxFit.cover,
-                  //     ),
-                  //   ),
-                  //   child: Row(
-                  //     mainAxisSize: MainAxisSize.max,
-                  //     mainAxisAlignment: MainAxisAlignment.start,
-                  //     crossAxisAlignment: CrossAxisAlignment.start,
-                  //   ),
-                  // ),
-                  // AppBar(
-                  //   elevation: 0,
-                  //   backgroundColor: Color.fromARGB(255, 83, 112, 85),
-                  //   title: Text(
-                  //     'mytitlepage'.tr(),
-                  //     style: TextStyle(
-                  //       fontSize: 18,
-                  //       fontWeight: FontWeight.w600,
-                  //       color: Color.fromARGB(255, 184, 182, 156),
-                  //     ),
-                  //   ),
-                  //   actions: [
-                  //     Padding(
-                  //       padding: const EdgeInsets.only(right: 20),
-                  //       child: DropdownFlag(
-                  //         changedLanguage: (value) {
-                  //           setState(() {
-                  //             context.setLocale(Locale((value)));
-                  //           });
-                  //         },
-                  //       ),
-                  //     ),
-                  //   ],
-                  // ),
-                  Container(
-                    height: MediaQuery.of(context).size.height - 128,
-                    padding: const EdgeInsets.only(left: 0, right: 0),
-                    child: MyTakePage(
-                      resultListHome: onResultListChanged,
+            child: Column(
+              children: <Widget>[
+                Expanded(
+                  child: Container(
+                    color: Colors.white,
+                    child: ListView(
+                      children: <Widget>[
+                        // Container(
+                        //   decoration: BoxDecoration(
+                        //     image: DecorationImage(
+                        //       image: AssetImage(imageUrl),
+                        //       fit: BoxFit.cover,
+                        //     ),
+                        //   ),
+                        //   child: Row(
+                        //     mainAxisSize: MainAxisSize.max,
+                        //     mainAxisAlignment: MainAxisAlignment.start,
+                        //     crossAxisAlignment: CrossAxisAlignment.start,
+                        //   ),
+                        // ),
+                        // AppBar(
+                        //   elevation: 0,
+                        //   backgroundColor: Color.fromARGB(255, 83, 112, 85),
+                        //   title: Text(
+                        //     'mytitlepage'.tr(),
+                        //     style: TextStyle(
+                        //       fontSize: 18,
+                        //       fontWeight: FontWeight.w600,
+                        //       color: Color.fromARGB(255, 184, 182, 156),
+                        //     ),
+                        //   ),
+                        //   actions: [
+                        //     Padding(
+                        //       padding: const EdgeInsets.only(right: 20),
+                        //       child: DropdownFlag(
+                        //         changedLanguage: (value) {
+                        //           setState(() {
+                        //             context.setLocale(Locale((value)));
+                        //           });
+                        //         },
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
+                        Container(
+                          height: MediaQuery.of(context).size.height - 128,
+                          padding: const EdgeInsets.only(left: 0, right: 0),
+                          child: MyTakePage(
+                            resultListHome: onResultListChanged,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  Container(
-                    padding: const EdgeInsets.all(0),
-                    child: MenuTile(),
-                  ),
-                ],
-              ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(0),
+                  child: MenuTile(),
+                ),
+              ],
             ),
           ),
         ),
@@ -904,13 +911,13 @@ class MenuTileWidget extends State<MenuTile> {
                 ),
               );
             },
-            child: const Icon(Icons.map),
+            child: const Icon(Icons.map, size: 23),
           ),
           Container(
             child: Text(
               label,
               style: TextStyle(
-                fontSize: 15,
+                fontSize: 20,
                 fontWeight: FontWeight.w300,
                 color: color,
               ),
@@ -936,13 +943,13 @@ class MenuTileWidget extends State<MenuTile> {
                 ),
               );
             },
-            child: const Icon(Icons.qr_code_scanner),
+            child: const Icon(Icons.qr_code_scanner, size: 20),
           ),
           Container(
             child: Text(
               label,
               style: TextStyle(
-                fontSize: 15,
+                fontSize: 20,
                 fontWeight: FontWeight.w400,
                 color: color,
               ),
@@ -968,13 +975,13 @@ class MenuTileWidget extends State<MenuTile> {
                 ),
               );
             },
-            child: const Icon(Icons.home),
+            child: const Icon(Icons.home, size: 23),
           ),
           Container(
             child: Text(
               label,
               style: TextStyle(
-                fontSize: 15,
+                fontSize: 20,
                 fontWeight: FontWeight.w400,
                 color: color,
               ),

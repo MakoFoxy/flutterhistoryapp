@@ -52,6 +52,7 @@ dependencies:
   saver_gallery: ^2.0.1
   downloads_path_provider_28: ^0.1.2
   excel: ^4.0.0
+  audio_session: ^0.1.18
 
 
 dev_dependencies:

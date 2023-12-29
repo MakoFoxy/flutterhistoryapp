@@ -79,6 +79,7 @@ class QRobjectpageState extends State<QRobjectpage> {
         }
       },
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: PreferredSize(
           preferredSize:
               Size.fromHeight(kToolbarHeight), // Set your preferred height here
@@ -87,34 +88,40 @@ class QRobjectpageState extends State<QRobjectpage> {
         body: SafeArea(
           child: DefaultTextStyle(
             style: whiteTextStyle,
-            child: Container(
-              color: Colors.white,
-              child: ListView(
-                children: <Widget>[
-                  Container(
-                    height: MediaQuery.of(context).size.height - 128,
+            child: Column(
+              children: <Widget>[
+                Expanded(
+                  child: Container(
+                    color: Colors.white,
                     child: ListView(
                       children: <Widget>[
-                        MyPhotoCont(selectedKey: currentkey),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            MyTextCont(selectedKey: currentkey),
-                            //MyPhotoCont(),
-                          ],
+                        Container(
+                          height: MediaQuery.of(context).size.height - 128,
+                          child: ListView(
+                            children: <Widget>[
+                              MyPhotoCont(selectedKey: currentkey),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  MyTextCont(selectedKey: currentkey),
+                                  //MyPhotoCont(),
+                                ],
+                              ),
+                              MusicPlayerWidget(selectedKey: currentkey),
+                              MyOverviews(selectedKey: currentkey),
+                            ],
+                          ),
                         ),
-                        MusicPlayerWidget(selectedKey: currentkey),
-                        MyOverviews(selectedKey: currentkey),
                       ],
                     ),
                   ),
-                  Container(
-                    child: MenuTile(
-                      selectedKey: currentkey,
-                    ),
+                ),
+                Container(
+                  child: MenuTile(
+                    selectedKey: currentkey,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
@@ -1886,13 +1893,13 @@ class MenuTileWidget extends State<MenuTile> {
                   ),
                 );
               },
-              child: const Icon(Icons.map),
+              child: const Icon(Icons.map, size: 23),
             ),
             Container(
               child: Text(
                 label,
                 style: TextStyle(
-                  fontSize: 15,
+                  fontSize: 20,
                   fontWeight: FontWeight.w400,
                   color: color,
                 ),
@@ -1922,13 +1929,13 @@ class MenuTileWidget extends State<MenuTile> {
                 ),
               );
             },
-            child: const Icon(Icons.qr_code_scanner),
+            child: const Icon(Icons.qr_code_scanner, size: 23),
           ),
           Container(
             child: Text(
               label,
               style: TextStyle(
-                fontSize: 15,
+                fontSize: 20,
                 fontWeight: FontWeight.w400,
                 color: color,
               ),
@@ -1955,13 +1962,13 @@ class MenuTileWidget extends State<MenuTile> {
                 ),
               );
             },
-            child: const Icon(Icons.home),
+            child: const Icon(Icons.home, size: 23),
           ),
           Container(
             child: Text(
               label,
               style: TextStyle(
-                fontSize: 15,
+                fontSize: 20,
                 fontWeight: FontWeight.w400,
                 color: color,
               ),
