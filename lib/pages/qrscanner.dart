@@ -128,17 +128,17 @@ class _QrScannerState extends State<QrScanner> {
             SizedBox(
               height: MediaQuery.of(context).size.height / 8,
             ),
-            Container(
-              alignment: Alignment.center,
-              child: const Text(
-                "Developed version 1.0",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 14,
-                  letterSpacing: 1,
-                ),
-              ),
-            ),
+            // Container(
+            //   alignment: Alignment.center,
+            //   child: const Text(
+            //     "Developed version 1.0",
+            //     style: TextStyle(
+            //       color: Colors.black,
+            //       fontSize: 14,
+            //       letterSpacing: 1,
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),

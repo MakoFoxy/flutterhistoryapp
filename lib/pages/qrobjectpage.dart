@@ -1032,10 +1032,19 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
     String audioPathRus = "";
     String audioPathEng = "";
 
+    Future<void> requestManageExternalStoragePermission() async {
+      if (Platform.isAndroid &&
+          await Permission.manageExternalStorage.status.isDenied) {
+        // Открываем страницу настроек системы, где пользователь может предоставить разрешение
+        await Permission.manageExternalStorage.request();
+      }
+    }
+
     Future downloadFileKz() async {
       print('audioPathKaz*** $audioPathKaz');
       try {
         if (Platform.isAndroid) {
+          await requestManageExternalStoragePermission();
           var readStatus = await Permission.manageExternalStorage.request();
           var writeStatus = await Permission.storage.request();
           final downloadsDirectory =
@@ -1052,7 +1061,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
 
             //final tempDir = await getTemporaryDirectory();
             final downloadDirectoryPath =
-                '/storage/emulated/0/Download/${ref.name}.mp3';
+                '${downloadsDirectory!.path}/${ref.name}.mp3';
             String downloadPath = "";
             //final downloadsDirectory = await getExternalStorageDirectory();
             //if (downloadsDirectory != null) {
@@ -1128,6 +1137,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
       print('audioPathRus*** $audioPathRus');
       try {
         if (Platform.isAndroid) {
+          await requestManageExternalStoragePermission();
           var readStatus = await Permission.manageExternalStorage.request();
           var writeStatus = await Permission.storage.request();
           final downloadsDirectory =
@@ -1143,7 +1153,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
 
             //final tempDir = await getTemporaryDirectory();
             final downloadDirectoryPath =
-                '/storage/emulated/0/Download/${ref.name}.mp3';
+                '${downloadsDirectory!.path}/${ref.name}.mp3';
             String downloadPath = "";
             //final downloadsDirectory = await getExternalStorageDirectory();
             //if (downloadsDirectory != null) {
@@ -1219,6 +1229,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
       print('audioPathEng*** $audioPathEng');
       try {
         if (Platform.isAndroid) {
+          await requestManageExternalStoragePermission();
           var readStatus = await Permission.manageExternalStorage.request();
           var writeStatus = await Permission.storage.request();
           final downloadsDirectory =
@@ -1234,7 +1245,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
 
             //final tempDir = await getTemporaryDirectory();
             final downloadDirectoryPath =
-                '/storage/emulated/0/Download/${ref.name}.mp3';
+                '${downloadsDirectory!.path}/${ref.name}.mp3';
             String downloadPath = "";
             //final downloadsDirectory = await getExternalStorageDirectory();
             //if (downloadsDirectory != null) {
@@ -1393,20 +1404,20 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
           if (Localizations.localeOf(context).languageCode ==
               currentLanguagekz) {
             // fetchKeysFirebase();
-            _audioPlayer.pause();
+            _audioPlayer.play();
             if (audioWidgetsKaz.isNotEmpty) {
               audioDisplayed = audioWidgetsKaz;
             }
           } else if (Localizations.localeOf(context).languageCode ==
               currentLanguageru) {
-            _audioPlayer.pause();
+            _audioPlayer.play();
             // fetchKeysFirebase();
             if (audioWidgetsRus.isNotEmpty) {
               audioDisplayed = audioWidgetsRus;
             }
           } else if (Localizations.localeOf(context).languageCode ==
               currentLanguageen) {
-            _audioPlayer.pause();
+            _audioPlayer.play();
             // fetchKeysFirebase;
             if (audioWidgetsEng.isNotEmpty) {
               audioDisplayed = audioWidgetsEng;
