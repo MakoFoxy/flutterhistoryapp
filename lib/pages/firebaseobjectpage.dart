@@ -214,7 +214,40 @@ class MusicPlayerWidget extends StatefulWidget {
   _MusicPlayerWidgetState createState() => _MusicPlayerWidgetState();
 }
 
-class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
+class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
+    with WidgetsBindingObserver {
+  @override
+  void initState() {
+    audioDisplayed = "";
+    newAudioUrl = "";
+    super.initState();
+    WidgetsBinding.instance.addObserver(this); // Добавляем наблюдателя
+  }
+
+  String audioDisplayed = "";
+  String newAudioUrl = "";
+  @override
+  void dispose() {
+    audioDisplayed = "";
+    newAudioUrl = "";
+    // Удаление обработчика изменения состояния приложения
+    WidgetsBinding.instance.removeObserver(this);
+    // Остановка аудиоплеера при уничтожении виджета
+    _audioPlayer.stop();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      // Приложение свернуто, ставим плеер на паузу
+      _audioPlayer.pause();
+    } else if (state == AppLifecycleState.resumed) {
+      _audioPlayer.pause();
+      // Приложение развернуто, можно возобновить воспроизведение, если необходимо
+    }
+  }
+
   List<String> audioWidgetsArr = [];
   String audioWidgetsKz = "";
   String audioWidgetsRu = "";
@@ -316,7 +349,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
       );
 
   Widget build(BuildContext context) {
-    String audioDisplayed = "";
+    //String audioDisplayed = "";
     String audioPathKaz = "";
     String audioPathRus = "";
     String audioPathEng = "";
@@ -601,6 +634,17 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
       // );
     }
 
+    Future<void> changeAudio(newAudioUrl) async {
+      if (audioDisplayed != newAudioUrl) {
+        await _audioPlayer.stop(); // Остановить текущий трек
+        await _audioPlayer.setUrl(newAudioUrl); // Установить новый URL
+        audioDisplayed = newAudioUrl;
+        _audioPlayer.play(); // Начать воспроизведение нового аудио
+      } else if (audioDisplayed == newAudioUrl) {
+        await _audioPlayer.stop(); // Остановить текущий трек
+      }
+    }
+
     return FutureBuilder<List<String>>(
         // Pass the Future that will return data after executing fetchKeysFirebase()
         future: fetchKeysFirebaseAudio(),
@@ -688,23 +732,23 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
           if (Localizations.localeOf(context).languageCode ==
               currentLanguagekz) {
             // fetchKeysFirebase();
-            _audioPlayer.play();
             if (audioWidgetsKaz.isNotEmpty) {
-              audioDisplayed = audioWidgetsKaz;
+              changeAudio(audioWidgetsKaz);
+              audioWidgetsKaz = "";
             }
           } else if (Localizations.localeOf(context).languageCode ==
               currentLanguageru) {
-            _audioPlayer.play();
             // fetchKeysFirebase();
             if (audioWidgetsRus.isNotEmpty) {
-              audioDisplayed = audioWidgetsRus;
+              changeAudio(audioWidgetsRus);
+              audioWidgetsRus = "";
             }
           } else if (Localizations.localeOf(context).languageCode ==
               currentLanguageen) {
-            _audioPlayer.play();
             // fetchKeysFirebase;
             if (audioWidgetsEng.isNotEmpty) {
-              audioDisplayed = audioWidgetsEng;
+              changeAudio(audioWidgetsEng);
+              audioWidgetsEng = "";
             }
           }
 
@@ -713,7 +757,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
           print("audioWidgetsEng $audioWidgetsEng");
           print('audioDisplayed $audioDisplayed');
 
-          _audioPlayer.setUrl(audioDisplayed);
+          // _audioPlayer.setUrl(audioDisplayed);
 
           uniqueAudioWidgetsArr.clear();
           print("uniqueAudioWidgetsArr.clear $uniqueAudioWidgetsArr");
