@@ -458,7 +458,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
                 SnackBar(
                   content: Text('Downloaded ${ref.name}.mp3'),
                 ),
-              );1
+              );
             }
           } else {
             if (storageStatus.isPermanentlyDenied) {
