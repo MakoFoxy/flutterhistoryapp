@@ -354,27 +354,50 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
     String audioPathRus = "";
     String audioPathEng = "";
 
-    Future<void> requestManageExternalStoragePermission() async {
-      if (Platform.isAndroid &&
-          await Permission.manageExternalStorage.status.isDenied) {
-        // Открываем страницу настроек системы, где пользователь может предоставить разрешение
-        await Permission.manageExternalStorage.request();
-      }
+    // Future<void> requestManageExternalStoragePermission() async {
+    //   if (Platform.isAndroid &&
+    //       await Permission.manageExternalStorage.status.isDenied) {
+    //     // Открываем страницу настроек системы, где пользователь может предоставить разрешение
+    //     await Permission.manageExternalStorage.request();
+    //   }
+    // }
+
+    void showPermissionDialog(BuildContext context) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Need permission'),
+          content: Text('Please, you should to get permission.'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Open settings'),
+              onPressed: () {
+                openAppSettings(); // Открывает настройки приложения
+              },
+            ),
+          ],
+        ),
+      );
     }
 
     Future downloadFileKz() async {
       print('audioPathKaz*** $audioPathKaz');
       try {
         if (Platform.isAndroid) {
-          await requestManageExternalStoragePermission();
-          var readStatus = await Permission.manageExternalStorage.request();
-          var writeStatus = await Permission.storage.request();
+          //await requestManageExternalStoragePermission();
+          var storageStatus = await Permission.storage.request();
           final downloadsDirectory =
               await DownloadsPathProvider.downloadsDirectory;
           final Directory? downloadsDir = await getExternalStorageDirectory();
-
-          if (readStatus == PermissionStatus.granted && downloadsDir != null ||
-              writeStatus == PermissionStatus.granted && downloadsDir != null) {
+          // Если разрешение ещё не предоставлено, запросить его
+          if (!storageStatus.isGranted) {
+            await Permission.storage.request();
+          }
+          if (downloadsDir == null || downloadsDirectory == null) {
+            print('Downloads directory not available on this device.');
+          }
+          if (storageStatus == PermissionStatus.granted &&
+              downloadsDir != null) {
             final ref = FirebaseStorage.instance.ref().child(audioPathKaz);
             final url = await ref.getDownloadURL();
 
@@ -403,7 +426,8 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
             );
             print('Saving in the: $downloadPath');
             // print('Saving in the: $downloadDirectoryPath');
-          } else if (downloadsDirectory != null) {
+          } else if (storageStatus == PermissionStatus.granted &&
+              downloadsDirectory != null) {
             final dataref = FirebaseStorage.instance.ref().child(audioPathKaz);
             final dataurl = await dataref.getDownloadURL();
             String downloadPathDirectoryAndroid = "";
@@ -417,8 +441,33 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
                 content: Text('Downloaded ${dataref.name}.mp3'),
               ),
             );
+          } else if (storageStatus.isDenied) {
+            final ref = FirebaseStorage.instance.ref().child(audioPathKaz);
+            Directory appDirectory = await getApplicationDocumentsDirectory();
+            String appFolderPath = '${appDirectory.path}/${ref.name}.mp3';
+            final url = await ref.getDownloadURL();
+            await Dio().download(url, appFolderPath);
+            if (downloadsDirectory != null) {
+              String destinationFilePath =
+                  '${downloadsDirectory.path}/${ref.name}.mp3';
+              // Переместите файл из исходного пути в путь загрузок
+              File originalFile = File(appFolderPath);
+              final readAppfiles = await originalFile.readAsBytes();
+              File(destinationFilePath).writeAsBytes(readAppfiles);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Downloaded ${ref.name}.mp3'),
+                ),
+              );
+            }
           } else {
-            print('External storage directory not available on this device.');
+            if (storageStatus.isPermanentlyDenied) {
+              // Пользователь отказал и выбрал "Не спрашивать снова"
+              // Показать диалоговое окно с информацией о необходимости предоставления разрешения
+              if (mounted) {
+                showPermissionDialog(context);
+              }
+            }
           }
         } else if (Platform.isIOS) {
           final ref = FirebaseStorage.instance.ref().child(audioPathKaz);
@@ -456,7 +505,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
       print('audioPathRus*** $audioPathRus');
       try {
         if (Platform.isAndroid) {
-          await requestManageExternalStoragePermission();
+          //await requestManageExternalStoragePermission();
           var readStatus = await Permission.manageExternalStorage.request();
           var writeStatus = await Permission.storage.request();
           final downloadsDirectory =
@@ -548,7 +597,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
       print('audioPathEng*** $audioPathEng');
       try {
         if (Platform.isAndroid) {
-          await requestManageExternalStoragePermission();
+          //await requestManageExternalStoragePermission();
           var readStatus = await Permission.manageExternalStorage.request();
           var writeStatus = await Permission.storage.request();
           final downloadsDirectory =
