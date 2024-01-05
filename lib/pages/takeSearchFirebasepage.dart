@@ -353,22 +353,36 @@ class FirebaseSearchWidget extends State<FirebaseSearch>
   }
 
   searchResultList() {
-    var showRes = [];
+    List<dynamic> showRes = [];
 
-    if (controlkey.text != "" || widget.mykeywordpagenow != "") {
+    if (controlkey.text.isNotEmpty || widget.mykeywordpagenow.isNotEmpty) {
+      String searchQuery = widget.keywordText.text.toLowerCase();
+
       for (var keySnap in allResults) {
-        var id = keySnap['id'].toString().toLowerCase();
-        var title = keySnap['title'].toString().toLowerCase();
-        var description = keySnap['description'].toString().toLowerCase();
-        if (id.contains(widget.keywordText.text.toLowerCase()) ||
-            title.contains(widget.keywordText.text.toLowerCase()) ||
-            description.contains(widget.keywordText.text.toLowerCase())) {
+        String id = keySnap['id'].toString().toLowerCase();
+        String title = keySnap['title'].toString().toLowerCase();
+        String description = keySnap['description'].toString().toLowerCase();
+
+        // Проверяем сначала заголовок, затем ID и описание
+        if (title.contains(searchQuery) ||
+            id.contains(searchQuery) ||
+            description.contains(searchQuery)) {
           showRes.add(keySnap);
         }
       }
     } else {
       showRes = List.from(allResults);
     }
+
+    showRes.forEach((element) {
+      print("showReselement $element");
+    });
+
+    setState(() {
+      resultList = showRes;
+    });
+
+    widget.onResultListChanged(resultList);
 
     // if (widget.mykeywordpagenow != "") {
     //   var keywords = widget.mykeywordpagenow.toLowerCase().split(" ");
@@ -402,36 +416,21 @@ class FirebaseSearchWidget extends State<FirebaseSearch>
     //     showRes.add(keySnap);
     //   }
     // }
-
-    showRes.forEach((element) {
-      print("showReselement $element");
-    });
-
-    setState(() {
-      resultList = showRes;
-    });
-
-    widget.onResultListChanged(resultList);
   }
 
   getClientStream() async {
-    late QuerySnapshot<Map<String, dynamic>> datalingua;
-    if (Localizations.localeOf(context).languageCode == 'kk') {
-      datalingua = await FirebaseFirestore.instance
-          .collection('datakz')
-          .orderBy('id')
-          .get();
-    } else if (Localizations.localeOf(context).languageCode == 'ru') {
-      datalingua = await FirebaseFirestore.instance
-          .collection('dataru')
-          .orderBy('id')
-          .get();
-    } else if (Localizations.localeOf(context).languageCode == 'en') {
-      datalingua = await FirebaseFirestore.instance
-          .collection('dataen')
-          .orderBy('id')
-          .get();
-    }
+    final localeCode = Localizations.localeOf(context).languageCode;
+    final collectionName = localeCode == 'kk'
+        ? 'datakz'
+        : localeCode == 'ru'
+            ? 'dataru'
+            : 'dataen';
+
+    final datalingua = await FirebaseFirestore.instance
+        .collection(collectionName)
+        .orderBy('id')
+        .get();
+
     setState(() {
       allResults = datalingua.docs;
       searchResultList();

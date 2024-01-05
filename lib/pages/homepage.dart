@@ -175,34 +175,34 @@ class FirebaseSearchWidget extends State<FirebaseSearch> {
     searchResultList();
   }
 
-  void createAndSaveExcelFile(List<List<String>> excelData) async {
-    // Создание нового Excel документа
-    var exc = excel.Excel.createExcel();
-    excel.Sheet sheetObject = exc['Sheet1'];
+  // void createAndSaveExcelFile(List<List<String>> excelData) async {
+  //   // Создание нового Excel документа
+  //   var exc = excel.Excel.createExcel();
+  //   excel.Sheet sheetObject = exc['Sheet1'];
 
-    for (int row = 0; row < excelData.length; row++) {
-      for (int col = 0; col < excelData[row].length; col++) {
-        var cellIndex =
-            excel.CellIndex.indexByColumnRow(columnIndex: col, rowIndex: row);
-        // Создаем экземпляр TextCellValue из строки
-        var cellValue = excel.TextCellValue(excelData[row][col]);
-        // Добавление данных в ячейку
-        sheetObject.updateCell(cellIndex, cellValue);
-      }
-    }
-    // Сохранение Excel файла в файловой системе
+  //   for (int row = 0; row < excelData.length; row++) {
+  //     for (int col = 0; col < excelData[row].length; col++) {
+  //       var cellIndex =
+  //           excel.CellIndex.indexByColumnRow(columnIndex: col, rowIndex: row);
+  //       // Создаем экземпляр TextCellValue из строки
+  //       var cellValue = excel.TextCellValue(excelData[row][col]);
+  //       // Добавление данных в ячейку
+  //       sheetObject.updateCell(cellIndex, cellValue);
+  //     }
+  //   }
+  //   // Сохранение Excel файла в файловой системе
 
-    final directory = await getApplicationDocumentsDirectory();
-    String filePath = path.join(directory.path, "output.xlsx");
+  //   final directory = await getApplicationDocumentsDirectory();
+  //   String filePath = path.join(directory.path, "output.xlsx");
 
-    // Сохранение файла
-    var fileBytes = exc.save();
-    File(filePath)
-      ..createSync(recursive: true)
-      ..writeAsBytesSync(fileBytes!);
+  //   // Сохранение файла
+  //   var fileBytes = exc.save();
+  //   File(filePath)
+  //     ..createSync(recursive: true)
+  //     ..writeAsBytesSync(fileBytes!);
 
-    print('Excel файл сохранен: $filePath');
-  }
+  //   print('Excel файл сохранен: $filePath');
+  // }
 
   searchResultList() {
     var showRes = [];
@@ -212,16 +212,11 @@ class FirebaseSearchWidget extends State<FirebaseSearch> {
         var id = keySnap['id'].toString().toLowerCase();
         var title = keySnap['title'].toString().toLowerCase();
         var description = keySnap['description'].toString().toLowerCase();
-        bool found = false;
-        for (var kw in keywords) {
-          if (id.contains(kw) ||
-              title.contains(kw) ||
-              description.contains(kw)) {
-            found = true;
-            break;
-          }
-        }
-        if (found) {
+        bool foundInTitle = keywords.any((kw) => title.contains(kw));
+        bool foundInOtherFields =
+            keywords.any((kw) => id.contains(kw) || description.contains(kw));
+
+        if (foundInTitle || foundInOtherFields) {
           showRes.add(keySnap);
         }
       }
@@ -282,27 +277,22 @@ class FirebaseSearchWidget extends State<FirebaseSearch> {
   }
 
   getClientStream() async {
-    late QuerySnapshot<Map<String, dynamic>> datalingua;
-    if (Localizations.localeOf(context).languageCode == 'kk') {
-      datalingua = await FirebaseFirestore.instance
-          .collection('datakz')
-          .orderBy('id')
-          .get();
-    } else if (Localizations.localeOf(context).languageCode == 'ru') {
-      datalingua = await FirebaseFirestore.instance
-          .collection('dataru')
-          .orderBy('id')
-          .get();
-    } else if (Localizations.localeOf(context).languageCode == 'en') {
-      datalingua = await FirebaseFirestore.instance
-          .collection('dataen')
-          .orderBy('id')
-          .get();
-    }
+    final localeCode = Localizations.localeOf(context).languageCode;
+    final collectionName = localeCode == 'kk'
+        ? 'datakz'
+        : localeCode == 'ru'
+            ? 'dataru'
+            : 'dataen';
+
+    final datalingua = await FirebaseFirestore.instance
+        .collection(collectionName)
+        .orderBy('id')
+        .get();
+
     setState(() {
       allResults = datalingua.docs;
+      searchResultList();
     });
-    searchResultList();
   }
 
   @override
