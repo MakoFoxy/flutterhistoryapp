@@ -75,43 +75,6 @@ class _ApptakeSearchPage extends State<takeSearchFirebasePage> {
                     color: Colors.white,
                     child: ListView(
                       children: <Widget>[
-                        // Container(
-                        //   decoration: BoxDecoration(
-                        //     image: DecorationImage(
-                        //       image: AssetImage(imageUrl),
-                        //       fit: BoxFit.cover,
-                        //     ),
-                        //   ),
-                        //   child: Row(
-                        //     mainAxisSize: MainAxisSize.max,
-                        //     mainAxisAlignment: MainAxisAlignment.start,
-                        //     crossAxisAlignment: CrossAxisAlignment.start,
-                        //   ),
-                        // ),
-                        // AppBar(
-                        //   elevation: 0,
-                        //   backgroundColor: Color.fromARGB(255, 83, 112, 85),
-                        //   title: Text(
-                        //     'mytitlepage'.tr(),
-                        //     style: TextStyle(
-                        //       fontSize: 18,
-                        //       fontWeight: FontWeight.w600,
-                        //       color: Color.fromARGB(255, 184, 182, 156),
-                        //     ),
-                        //   ),
-                        //   actions: [
-                        //     Padding(
-                        //       padding: const EdgeInsets.only(right: 20),
-                        //       child: DropdownFlag(
-                        //         changedLanguage: (value) {
-                        //           setState(() {
-                        //             context.setLocale(Locale((value)));
-                        //           });
-                        //         },
-                        //       ),
-                        //     ),
-                        //   ],
-                        // ),
                         Container(
                           height: MediaQuery.of(context).size.height - 128,
                           padding: const EdgeInsets.only(left: 0, right: 0),
@@ -136,191 +99,13 @@ class _ApptakeSearchPage extends State<takeSearchFirebasePage> {
   }
 }
 
-class MyAppBar extends StatefulWidget {
-  final ValueChanged<List<dynamic>> onResultListChanged;
-  String mykeywordpage;
-  TextEditingController takekeywordTextpage;
-
-  MyAppBar(
-      {required this.mykeywordpage,
-      required this.takekeywordTextpage,
-      required this.onResultListChanged,
-      Key? key})
-      : super(key: key);
-
-  @override
-  State<MyAppBar> createState() => _MyAppBarState();
-}
-
-class _MyAppBarState extends State<MyAppBar> {
-  @override
-  Widget build(BuildContext context) {
-    return AppBar(
-      iconTheme: IconThemeData(color: Colors.grey),
-      backgroundColor: Colors.white,
-      automaticallyImplyLeading: false,
-      actions: <Widget>[
-        SizedBox(
-          width: 10, // Устанавливаем отступ сверху
-        ),
-        Padding(
-          padding: const EdgeInsets.only(left: 10),
-          child: SizedBox(
-            width: 290,
-            child: FutureBuilder(
-              builder: (context, snapshot) {
-                return FirebaseSearch(
-                  onResultListChanged: widget.onResultListChanged,
-                  mykeywordpagenow: widget.mykeywordpage,
-                  keywordText: widget.takekeywordTextpage,
-                );
-              },
-              future: Future.delayed(const Duration(seconds: 1)),
-            ),
-          ),
-        ),
-        // IconButton(
-        //   padding: const EdgeInsets.only(left: 0),
-        //   onPressed: () {},
-        //   icon: Icon(Icons.bookmark_add),
-        // ),
-        Padding(
-          padding: const EdgeInsets.only(right: 10),
-          child: DropdownFlag(
-            changedLanguage: (value) {
-              setState(() {
-                context.setLocale(Locale((value)));
-              });
-            },
-          ),
-        ),
-      ],
-      // leading: Builder(
-      //   builder: (context) {
-      //     return Padding(
-      //       padding: const EdgeInsets.only(
-      //           right: 20.0), // Устанавливаем отступ слева
-      //       child: IconButton(
-      //         icon: Icon(Icons.menu),
-      //         onPressed: () {
-      //           Scaffold.of(context).openDrawer();
-      //         },
-      //       ),
-      //     );
-      //   },
-      // ),
-    );
-  }
-}
-
-class MyTakePage extends StatefulWidget {
-  final List<dynamic> resultListHome;
-
-  MyTakePage({required this.resultListHome, Key? key}) : super(key: key);
-  @override
-  MyTakePageState createState() => MyTakePageState();
-}
-
-class MyTakePageState extends State<MyTakePage> {
-  final whiteTexstStyle = TextStyle(color: Colors.white, fontSize: 24);
-
-  @override
-  Widget build(BuildContext context) {
-    final colorTextStyle = TextStyle(
-      color: Color.fromARGB(255, 78, 82, 26),
-      fontSize: 25,
-    ); // Обновленный размер текста
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxHeight: MediaQuery.of(context).size.height +
-                      26500, // appBarHeight - это высота вашего AppBar
-                ),
-                child: Column(
-                  children: [
-                    streamBuildHome(resultList: widget.resultListHome),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-        // floatingActionButton: Stack(
-        //   children: [
-        //     Positioned(
-        //       right: 0,
-        //       bottom: 0,
-        //       child: FloatingActionButton(
-        //         onPressed: () async {
-        //           await Navigator.push(
-        //             context,
-        //             MaterialPageRoute(
-        //               builder: (context) => CreateHistoryPost(),
-        //             ),
-        //           );
-        //         },
-        //         child: const Icon(Icons.create),
-        //       ),
-        //     ),
-        //     Positioned(
-        //       left: 20,
-        //       bottom: 0,
-        //       child: FloatingActionButton(
-        //         onPressed: () async {
-        //           var collRefkz = FirebaseFirestore.instance.collection('datakz');
-        //           var collRefru = FirebaseFirestore.instance.collection('dataru');
-        //           var collRefen = FirebaseFirestore.instance.collection('dataen');
-
-        //           QuerySnapshot querySnapshotkz = await collRefkz.get();
-        //           QuerySnapshot querySnapshotru = await collRefru.get();
-        //           QuerySnapshot querySnapshoten = await collRefen.get();
-
-        //           List<QueryDocumentSnapshot> docskz = querySnapshotkz.docs;
-        //           List<QueryDocumentSnapshot> docsru = querySnapshotru.docs;
-        //           List<QueryDocumentSnapshot> docsen = querySnapshoten.docs;
-
-        //           List<String> autokey = [];
-        //           for (QueryDocumentSnapshot doc in docskz) {
-        //             autokey.add(doc.id);
-        //           }
-        //           for (QueryDocumentSnapshot doc in docsru) {
-        //             autokey.add(doc.id);
-        //           }
-        //           for (QueryDocumentSnapshot doc in docsen) {
-        //             autokey.add(doc.id);
-        //           }
-
-        //           autokey.forEach((element) {
-        //             collRefkz.doc(element).delete();
-        //           });
-        //           autokey.forEach((element) {
-        //             collRefru.doc(element).delete();
-        //           });
-        //           autokey.forEach((element) {
-        //             collRefen.doc(element).delete();
-        //           });
-        //         },
-        //         child: const Icon(Icons.delete),
-        //       ),
-        //     ),
-        //   ],
-        // ),
-      ),
-    );
-  }
-}
-
-class FirebaseSearch extends StatefulWidget {
+class FirebaseTakeSearch extends StatefulWidget {
   final ValueChanged<List<dynamic>>
       onResultListChanged; // Изменили тип на ValueChanged
 
   String mykeywordpagenow;
   TextEditingController keywordText; // Добавьте это поле
-  FirebaseSearch(
+  FirebaseTakeSearch(
       {required this.mykeywordpagenow,
       required this.keywordText,
       required this.onResultListChanged,
@@ -329,10 +114,10 @@ class FirebaseSearch extends StatefulWidget {
 
   // const FirebaseSearch({Key? key}) : super(key: key);
   @override
-  FirebaseSearchWidget createState() => FirebaseSearchWidget();
+  FirebaseTakeSearchWidget createState() => FirebaseTakeSearchWidget();
 }
 
-class FirebaseSearchWidget extends State<FirebaseSearch>
+class FirebaseTakeSearchWidget extends State<FirebaseTakeSearch>
     with AutomaticKeepAliveClientMixin {
   TextEditingController controlkey = TextEditingController();
 
@@ -525,132 +310,120 @@ class FirebaseSearchWidget extends State<FirebaseSearch>
   bool get wantKeepAlive => true;
 }
 
-class streamBuild extends StatelessWidget {
-  List<dynamic> resultList = [];
+class MyAppBar extends StatefulWidget {
+  final ValueChanged<List<dynamic>> onResultListChanged;
+  String mykeywordpage;
+  TextEditingController takekeywordTextpage;
 
-  streamBuild({
-    required this.resultList,
-  });
+  MyAppBar(
+      {required this.mykeywordpage,
+      required this.takekeywordTextpage,
+      required this.onResultListChanged,
+      Key? key})
+      : super(key: key);
 
   @override
-  final colorTextStyle = TextStyle(color: Colors.white, fontSize: 24);
+  State<MyAppBar> createState() => _MyAppBarState();
+}
+
+class _MyAppBarState extends State<MyAppBar> {
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      iconTheme: IconThemeData(color: Colors.grey),
+      backgroundColor: Colors.white,
+      automaticallyImplyLeading: false,
+      actions: <Widget>[
+        SizedBox(
+          width: 10, // Устанавливаем отступ сверху
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 10),
+          child: SizedBox(
+            width: 290,
+            child: FutureBuilder(
+              builder: (context, snapshot) {
+                return FirebaseTakeSearch(
+                  onResultListChanged: widget.onResultListChanged,
+                  mykeywordpagenow: widget.mykeywordpage,
+                  keywordText: widget.takekeywordTextpage,
+                );
+              },
+              future: Future.delayed(const Duration(seconds: 1)),
+            ),
+          ),
+        ),
+        // IconButton(
+        //   padding: const EdgeInsets.only(left: 0),
+        //   onPressed: () {},
+        //   icon: Icon(Icons.bookmark_add),
+        // ),
+        Padding(
+          padding: const EdgeInsets.only(right: 10),
+          child: DropdownFlag(
+            changedLanguage: (value) {
+              setState(() {
+                context.setLocale(Locale((value)));
+              });
+            },
+          ),
+        ),
+      ],
+      // leading: Builder(
+      //   builder: (context) {
+      //     return Padding(
+      //       padding: const EdgeInsets.only(
+      //           right: 20.0), // Устанавливаем отступ слева
+      //       child: IconButton(
+      //         icon: Icon(Icons.menu),
+      //         onPressed: () {
+      //           Scaffold.of(context).openDrawer();
+      //         },
+      //       ),
+      //     );
+      //   },
+      // ),
+    );
+  }
+}
+
+class MyTakePage extends StatefulWidget {
+  final List<dynamic> resultListHome;
+
+  MyTakePage({required this.resultListHome, Key? key}) : super(key: key);
+  @override
+  MyTakePageState createState() => MyTakePageState();
+}
+
+class MyTakePageState extends State<MyTakePage> {
+  final whiteTexstStyle = TextStyle(color: Colors.white, fontSize: 24);
 
   @override
   Widget build(BuildContext context) {
-    late Stream<QuerySnapshot<Map<String, dynamic>>> datastream;
-    if (Localizations.localeOf(context).languageCode == 'kk') {
-      datastream = FirebaseFirestore.instance.collection('datakz').snapshots();
-    } else if (Localizations.localeOf(context).languageCode == 'ru') {
-      datastream = FirebaseFirestore.instance.collection('dataru').snapshots();
-    } else if (Localizations.localeOf(context).languageCode == 'en') {
-      datastream = FirebaseFirestore.instance.collection('dataen').snapshots();
-    }
-    return StreamBuilder<QuerySnapshot>(
-      stream: datastream,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Container(
-            alignment: Alignment.center,
-            child: const Text(
-              'loading...',
-              style: TextStyle(
-                fontSize: 18.0,
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
+    final colorTextStyle = TextStyle(
+      color: Color.fromARGB(255, 78, 82, 26),
+      fontSize: 25,
+    ); // Обновленный размер текста
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.of(context).size.height +
+                      26500, // appBarHeight - это высота вашего AppBar
+                ),
+                child: Column(
+                  children: [
+                    streamBuildHome(resultList: widget.resultListHome),
+                  ],
+                ),
               ),
             ),
-          );
-        }
-        if (snapshot.hasError) {
-          return Text('Error');
-        }
-        if (!snapshot.hasData || snapshot.data == null) {
-          return Text('No Data');
-        }
-        final keysfirebase = snapshot.data?.docs.toList();
-
-        if (resultList != "") {
-          print('resultList from firebase ${resultList.asMap()}');
-          return Column(
-            children: resultList.map((data) {
-              final doc = data.data() as Map<String, dynamic>;
-              print("doc['id'] from firebase ${doc['id']}");
-              return Container(
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 5,
-                  ),
-                  child: Hero(
-                    tag: 'id_${doc['id']}',
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (doc == '') {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => HomePage(),
-                            ),
-                          );
-                        }
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ObjectFirebasePage(
-                              selectedKey: doc['id'],
-                            ),
-                          ),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                      ),
-                      child: Text(
-                        doc['title'],
-                        style: colorTextStyle,
-                      ),
-                    ),
-                  ));
-            }).toList(),
-          );
-        } else {
-          return Column(
-            children: keysfirebase!.map((data) {
-              final doc = data.data() as Map<String, dynamic>;
-              return Container(
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 5,
-                  ),
-                  child: Hero(
-                    tag: 'id_${doc['id']}',
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ObjectFirebasePage(
-                              selectedKey: doc['id'],
-                            ),
-                          ),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                      ),
-                      child: Text(
-                        doc['title'],
-                        style: colorTextStyle,
-                      ),
-                    ),
-                  ));
-            }).toList(),
-          );
-        }
-      },
+          ],
+        ),
+      ),
     );
   }
 }
@@ -991,3 +764,196 @@ class MenuTileWidget extends State<MenuTile> {
         ],
       );
 }
+
+
+
+// class streamBuild extends StatelessWidget {
+//   List<dynamic> resultList = [];
+
+//   streamBuild({
+//     required this.resultList,
+//   });
+
+//   @override
+//   final colorTextStyle = TextStyle(color: Colors.white, fontSize: 24);
+
+//   @override
+//   Widget build(BuildContext context) {
+//     late Stream<QuerySnapshot<Map<String, dynamic>>> datastream;
+//     if (Localizations.localeOf(context).languageCode == 'kk') {
+//       datastream = FirebaseFirestore.instance.collection('datakz').snapshots();
+//     } else if (Localizations.localeOf(context).languageCode == 'ru') {
+//       datastream = FirebaseFirestore.instance.collection('dataru').snapshots();
+//     } else if (Localizations.localeOf(context).languageCode == 'en') {
+//       datastream = FirebaseFirestore.instance.collection('dataen').snapshots();
+//     }
+//     return StreamBuilder<QuerySnapshot>(
+//       stream: datastream,
+//       builder: (context, snapshot) {
+//         if (snapshot.connectionState == ConnectionState.waiting) {
+//           return Container(
+//             alignment: Alignment.center,
+//             child: const Text(
+//               'loading...',
+//               style: TextStyle(
+//                 fontSize: 18.0,
+//                 color: Colors.white,
+//                 fontWeight: FontWeight.bold,
+//               ),
+//             ),
+//           );
+//         }
+//         if (snapshot.hasError) {
+//           return Text('Error');
+//         }
+//         if (!snapshot.hasData || snapshot.data == null) {
+//           return Text('No Data');
+//         }
+//         final keysfirebase = snapshot.data?.docs.toList();
+
+//         if (resultList != "") {
+//           print('resultList from firebase ${resultList.asMap()}');
+//           return Column(
+//             children: resultList.map((data) {
+//               final doc = data.data() as Map<String, dynamic>;
+//               print("doc['id'] from firebase ${doc['id']}");
+//               return Container(
+//                   margin: const EdgeInsets.symmetric(
+//                     horizontal: 10,
+//                     vertical: 5,
+//                   ),
+//                   child: Hero(
+//                     tag: 'id_${doc['id']}',
+//                     child: ElevatedButton(
+//                       onPressed: () {
+//                         if (doc == '') {
+//                           Navigator.push(
+//                             context,
+//                             MaterialPageRoute(
+//                               builder: (context) => HomePage(),
+//                             ),
+//                           );
+//                         }
+//                         Navigator.push(
+//                           context,
+//                           MaterialPageRoute(
+//                             builder: (context) => ObjectFirebasePage(
+//                               selectedKey: doc['id'],
+//                             ),
+//                           ),
+//                         );
+//                       },
+//                       style: ElevatedButton.styleFrom(
+//                         shape: RoundedRectangleBorder(
+//                           borderRadius: BorderRadius.circular(30),
+//                         ),
+//                       ),
+//                       child: Text(
+//                         doc['title'],
+//                         style: colorTextStyle,
+//                       ),
+//                     ),
+//                   ));
+//             }).toList(),
+//           );
+//         } else {
+//           return Column(
+//             children: keysfirebase!.map((data) {
+//               final doc = data.data() as Map<String, dynamic>;
+//               return Container(
+//                   margin: const EdgeInsets.symmetric(
+//                     horizontal: 10,
+//                     vertical: 5,
+//                   ),
+//                   child: Hero(
+//                     tag: 'id_${doc['id']}',
+//                     child: ElevatedButton(
+//                       onPressed: () {
+//                         Navigator.push(
+//                           context,
+//                           MaterialPageRoute(
+//                             builder: (context) => ObjectFirebasePage(
+//                               selectedKey: doc['id'],
+//                             ),
+//                           ),
+//                         );
+//                       },
+//                       style: ElevatedButton.styleFrom(
+//                         shape: RoundedRectangleBorder(
+//                           borderRadius: BorderRadius.circular(30),
+//                         ),
+//                       ),
+//                       child: Text(
+//                         doc['title'],
+//                         style: colorTextStyle,
+//                       ),
+//                     ),
+//                   ));
+//             }).toList(),
+//           );
+//         }
+//       },
+//     );
+//   }
+// }
+
+   // floatingActionButton: Stack(
+        //   children: [
+        //     Positioned(
+        //       right: 0,
+        //       bottom: 0,
+        //       child: FloatingActionButton(
+        //         onPressed: () async {
+        //           await Navigator.push(
+        //             context,
+        //             MaterialPageRoute(
+        //               builder: (context) => CreateHistoryPost(),
+        //             ),
+        //           );
+        //         },
+        //         child: const Icon(Icons.create),
+        //       ),
+        //     ),
+        //     Positioned(
+        //       left: 20,
+        //       bottom: 0,
+        //       child: FloatingActionButton(
+        //         onPressed: () async {
+        //           var collRefkz = FirebaseFirestore.instance.collection('datakz');
+        //           var collRefru = FirebaseFirestore.instance.collection('dataru');
+        //           var collRefen = FirebaseFirestore.instance.collection('dataen');
+
+        //           QuerySnapshot querySnapshotkz = await collRefkz.get();
+        //           QuerySnapshot querySnapshotru = await collRefru.get();
+        //           QuerySnapshot querySnapshoten = await collRefen.get();
+
+        //           List<QueryDocumentSnapshot> docskz = querySnapshotkz.docs;
+        //           List<QueryDocumentSnapshot> docsru = querySnapshotru.docs;
+        //           List<QueryDocumentSnapshot> docsen = querySnapshoten.docs;
+
+        //           List<String> autokey = [];
+        //           for (QueryDocumentSnapshot doc in docskz) {
+        //             autokey.add(doc.id);
+        //           }
+        //           for (QueryDocumentSnapshot doc in docsru) {
+        //             autokey.add(doc.id);
+        //           }
+        //           for (QueryDocumentSnapshot doc in docsen) {
+        //             autokey.add(doc.id);
+        //           }
+
+        //           autokey.forEach((element) {
+        //             collRefkz.doc(element).delete();
+        //           });
+        //           autokey.forEach((element) {
+        //             collRefru.doc(element).delete();
+        //           });
+        //           autokey.forEach((element) {
+        //             collRefen.doc(element).delete();
+        //           });
+        //         },
+        //         child: const Icon(Icons.delete),
+        //       ),
+        //     ),
+        //   ],
+        // ),

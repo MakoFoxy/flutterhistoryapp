@@ -17,6 +17,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:downloads_path_provider_28/downloads_path_provider_28.dart';
+import 'package:file_picker/file_picker.dart';
 
 class QRobjectpage extends StatefulWidget {
   final String selectedKey; // Добавьте параметр для выбранного ключа
@@ -57,8 +58,8 @@ class QRobjectpageState extends State<QRobjectpage> {
     print('currentkey $currentkey');
     return WillPopScope(
       onWillPop: () async {
-        if (_audioPlayer.playing) {
-          _audioPlayer.stop(); // Остановите аудиоплеер
+        if (_audioPlayerQR.playing) {
+          _audioPlayerQR.stop(); // Остановите аудиоплеер
         }
         if (_backPressCount == 0) {
           Navigator.of(context).pushReplacement(
@@ -125,108 +126,6 @@ class QRobjectpageState extends State<QRobjectpage> {
             ),
           ),
         ),
-        // floatingActionButton: Row(
-        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //   children: [
-        //     Padding(
-        //       padding: const EdgeInsets.only(left: 0.0, bottom: 0.0),
-        //       child: FloatingActionButton(
-        //         onPressed: () async {
-        //           late String keyforedit;
-        //           late CollectionReference<Map<String, dynamic>> collRef;
-        //           if (Localizations.localeOf(context).languageCode == 'kk') {
-        //             collRef = FirebaseFirestore.instance.collection('datakz');
-        //           } else if (Localizations.localeOf(context).languageCode ==
-        //               'ru') {
-        //             collRef = FirebaseFirestore.instance.collection('dataru');
-        //           } else if (Localizations.localeOf(context).languageCode ==
-        //               'en') {
-        //             collRef = FirebaseFirestore.instance.collection('dataen');
-        //           }
-        //           String targetTitle =
-        //               widget.selectedKey; // Значение, которое вы ищете
-        //           QuerySnapshot<Map<String, dynamic>> querySnapshot =
-        //               await collRef.get();
-        //           List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
-        //               querySnapshot.docs;
-        //           for (QueryDocumentSnapshot<Map<String, dynamic>> doc
-        //               in docs) {
-        //             Map<String, dynamic> autodata = doc.data();
-        //             String autokey = doc.id; // Получение ключа документа
-        //             // Проверка, соответствует ли поле title значению, которое вы ищете
-        //             if (autodata['id'] == targetTitle) {
-        //               keyforedit = autodata['id'];
-        //             }
-        //           }
-        //           await Navigator.push(
-        //             context,
-        //             MaterialPageRoute(
-        //               builder: (BuildContext context) => EditFirebasePage(
-        //                 //editMydb: editMydb,
-        //                 selectedKey: keyforedit,
-        //               ),
-        //             ),
-        //           );
-        //         },
-        //         mini:
-        //             true, // Установите mini: true для уменьшения размера кнопки
-        //         shape: RoundedRectangleBorder(
-        //           borderRadius:
-        //               BorderRadius.circular(15), // Настройте форму кнопки
-        //         ),
-        //         child: const Icon(Icons.create),
-        //       ),
-        //     ),
-        //     Padding(
-        //       padding: const EdgeInsets.only(right: 0.0, bottom: 0.0),
-        //       child: FloatingActionButton(
-        //         onPressed: () async {
-        //           Navigator.push(
-        //             context,
-        //             MaterialPageRoute(
-        //               builder: (context) => HomePage(),
-        //             ),
-        //           );
-        //           late CollectionReference<Map<String, dynamic>> collRef;
-        //           if (Localizations.localeOf(context).languageCode == 'kk') {
-        //             collRef = FirebaseFirestore.instance.collection('datakz');
-        //           } else if (Localizations.localeOf(context).languageCode ==
-        //               'ru') {
-        //             collRef = FirebaseFirestore.instance.collection('dataru');
-        //           } else if (Localizations.localeOf(context).languageCode ==
-        //               'en') {
-        //             collRef = FirebaseFirestore.instance.collection('dataen');
-        //           }
-        //           String targetTitle =
-        //               widget.selectedKey; // Значение, которое вы ищете
-
-        //           QuerySnapshot<Map<String, dynamic>> querySnapshot =
-        //               await collRef.get();
-        //           List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
-        //               querySnapshot.docs;
-        //           for (QueryDocumentSnapshot<Map<String, dynamic>> doc
-        //               in docs) {
-        //             Map<String, dynamic> autodata = doc.data();
-        //             String autokey = doc.id; // Получение ключа документа
-        //             // Проверка, соответствует ли поле title значению, которое вы ищете
-        //             if (autodata['id'] == targetTitle) {
-        //               await collRef.doc(autokey).delete();
-        //               print("Document deleted: $autokey");
-        //             }
-        //           }
-        //         },
-        //         mini:
-        //             true, // Установите mini: true для уменьшения размера кнопки
-        //         shape: RoundedRectangleBorder(
-        //           borderRadius:
-        //               BorderRadius.circular(15), // Настройте форму кнопки
-        //         ),
-        //         child: const Icon(Icons.delete),
-        //       ),
-        //     ),
-        //   ],
-        // ),
-        // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       ),
     );
   }
@@ -590,7 +489,7 @@ class _MySearchState extends State<mySearchQR> {
                       ),
                     );
                   }
-                  _audioPlayer.stop();
+                  _audioPlayerQR.stop();
                 }),
             suffixIcon: IconButton(
               icon: const Icon(Icons.clear),
@@ -913,7 +812,7 @@ class _MyTextContState extends State<MyTextCont> {
   }
 }
 
-AudioPlayer _audioPlayer = AudioPlayer();
+AudioPlayer _audioPlayerQR = AudioPlayer();
 
 class MusicPlayerWidget extends StatefulWidget {
   String selectedKey;
@@ -929,22 +828,23 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
     with WidgetsBindingObserver {
   @override
   void initState() {
-    audioDisplayed = "";
-    newAudioUrl = "";
+    // audioDisplayed = "";
+    // newAudioUrl = "";
     super.initState();
+    _audioPlayerQR = AudioPlayer();    
     WidgetsBinding.instance.addObserver(this); // Добавляем наблюдателя
   }
 
-  String audioDisplayed = "";
-  String newAudioUrl = "";
+  // String audioDisplayed = "";
+  // String newAudioUrl = "";
   @override
   void dispose() {
-    audioDisplayed = "";
-    newAudioUrl = "";
+    // audioDisplayed = "";
+    // newAudioUrl = "";
     // Удаление обработчика изменения состояния приложения
     WidgetsBinding.instance.removeObserver(this);
     // Остановка аудиоплеера при уничтожении виджета
-    _audioPlayer.stop();
+    _audioPlayerQR.dispose();
     super.dispose();
   }
 
@@ -952,9 +852,9 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.paused) {
       // Приложение свернуто, ставим плеер на паузу
-      _audioPlayer.pause();
+      _audioPlayerQR.pause();
     } else if (state == AppLifecycleState.resumed) {
-      _audioPlayer.pause();
+      _audioPlayerQR.pause();
       // Приложение развернуто, можно возобновить воспроизведение, если необходимо
     }
   }
@@ -999,7 +899,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
       if (widget.selectedKey == datafirebasekz[i]['id']) {
         audioWidgetsKz = datafirebasekz[i]['fileaudiopathkz'];
         audioPathKz = datafirebasekz[i]['firebaseaudiopathkz'];
-        audioWidgetsArr.add(audioWidgetsKz);
+        //audioWidgetsArr.add(audioWidgetsKz);
         audioWidgetsArr.add(audioPathKz);
         break;
       }
@@ -1015,7 +915,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
       if (widget.selectedKey == datafirebaseru[i]['id']) {
         audioWidgetsRu = datafirebaseru[i]['fileaudiopathru'];
         audioPathRu = datafirebaseru[i]['firebaseaudiopathru'];
-        audioWidgetsArr.add(audioWidgetsRu);
+        //audioWidgetsArr.add(audioWidgetsRu);
         audioWidgetsArr.add(audioPathRu);
         break;
       }
@@ -1030,7 +930,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
       if (widget.selectedKey == datafirebaseen[i]['id']) {
         audioWidgetsEn = datafirebaseen[i]['fileaudiopathen'];
         audioPathEn = datafirebaseen[i]['firebaseaudiopathen'];
-        audioWidgetsArr.add(audioWidgetsEn);
+        //audioWidgetsArr.add(audioWidgetsEn);
         audioWidgetsArr.add(audioPathEn);
         break;
       }
@@ -1049,9 +949,9 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
 
   Stream<PositionData> get _positionDataStream =>
       Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(
-        _audioPlayer.positionStream,
-        _audioPlayer.bufferedPositionStream,
-        _audioPlayer.durationStream,
+        _audioPlayerQR.positionStream,
+        _audioPlayerQR.bufferedPositionStream,
+        _audioPlayerQR.durationStream,
         (position, bufferedPosition, duration) => PositionData(
           position,
           bufferedPosition,
@@ -1065,30 +965,46 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
     String audioPathRus = "";
     String audioPathEng = "";
 
-    Future<void> requestManageExternalStoragePermission() async {
-      if (Platform.isAndroid &&
-          await Permission.manageExternalStorage.status.isDenied) {
-        // Открываем страницу настроек системы, где пользователь может предоставить разрешение
-        await Permission.manageExternalStorage.request();
-      }
+    // Future<void> requestManageExternalStoragePermission() async {
+    //   if (Platform.isAndroid &&
+    //       await Permission.manageExternalStorage.status.isDenied) {
+    //     // Открываем страницу настроек системы, где пользователь может предоставить разрешение
+    //     await Permission.manageExternalStorage.request();
+    //   }
+    // }
+    void showPermissionDialog(BuildContext context) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Need permission'),
+          content: Text('Please, you should to get permission.'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Open settings'),
+              onPressed: () {
+                openAppSettings(); // Открывает настройки приложения
+              },
+            ),
+          ],
+        ),
+      );
     }
 
     Future downloadFileKz() async {
       print('audioPathKaz*** $audioPathKaz');
       try {
         if (Platform.isAndroid) {
-          await requestManageExternalStoragePermission();
-          var readStatus = await Permission.manageExternalStorage.request();
-          var writeStatus = await Permission.storage.request();
+          //await requestManageExternalStoragePermission();
+          var storageStatus = await Permission.storage.request();
           final downloadsDirectory =
               await DownloadsPathProvider.downloadsDirectory;
-
           final Directory? downloadsDir = await getExternalStorageDirectory();
-
-          //print('Permission status: $writeStatus');
-          //if (readStatus == PermissionStatus.granted && writeStatus == PermissionStatus.granted)
-          if (readStatus == PermissionStatus.granted && downloadsDir != null ||
-              writeStatus == PermissionStatus.granted && downloadsDir != null) {
+          // Если разрешение ещё не предоставлено, запросить его
+          if (downloadsDir == null || downloadsDirectory == null) {
+            print('Downloads directory not available on this device.');
+          }
+          if (storageStatus == PermissionStatus.granted &&
+              downloadsDir != null) {
             final ref = FirebaseStorage.instance.ref().child(audioPathKaz);
             final url = await ref.getDownloadURL();
 
@@ -1117,7 +1033,8 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
             );
             print('Saving in the: $downloadPath');
             // print('Saving in the: $downloadDirectoryPath');
-          } else if (downloadsDirectory != null) {
+          } else if (storageStatus == PermissionStatus.granted &&
+              downloadsDirectory != null) {
             final dataref = FirebaseStorage.instance.ref().child(audioPathKaz);
             final dataurl = await dataref.getDownloadURL();
             String downloadPathDirectoryAndroid = "";
@@ -1131,20 +1048,63 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
                 content: Text('Downloaded ${dataref.name}.mp3'),
               ),
             );
+          } else if (storageStatus.isDenied) {
+            final ref = FirebaseStorage.instance.ref().child(audioPathKaz);
+            //Directory appDirectory = await getApplicationDocumentsDirectory();
+            //String appFolderPath = '${appDirectory.path}/${ref.name}.mp3';
+            String? selectedDirectory =
+                await FilePicker.platform.getDirectoryPath();
+            final url = await ref.getDownloadURL();
+            // await Dio().download(url, appFolderPath);
+            if (selectedDirectory != null) {
+              String savePath = '$selectedDirectory/${ref.name}.mp3';
+              await Dio().download(url, savePath);
+              // String destinationFilePath =
+              //     '${downloadsDirectory.path}/${ref.name}.mp3';
+              // // Переместите файл из исходного пути в путь загрузок
+              // File originalFile = File(savePath);
+              // final readAppfiles = await originalFile.readAsBytes();
+              // File(destinationFilePath).writeAsBytes(readAppfiles);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content:
+                      Text('Downloaded ${ref.name}.mp3 to $selectedDirectory'),
+                ),
+              );
+            }
           } else {
-            print('External storage directory not available on this device.');
+            if (storageStatus.isPermanentlyDenied) {
+              // Пользователь отказал и выбрал "Не спрашивать снова"
+              // Показать диалоговое окно с информацией о необходимости предоставления разрешения
+              if (mounted) {
+                showPermissionDialog(context);
+              }
+            }
           }
         } else if (Platform.isIOS) {
           final ref = FirebaseStorage.instance.ref().child(audioPathKaz);
-          final appDocDir = await getApplicationDocumentsDirectory();
-          final downloadPath = '${appDocDir.path}/${ref.name}.mp3';
+          // final appDocDir = await getApplicationDocumentsDirectory();
+          // final downloadPath = '${appDocDir.path}/${ref.name}.mp3';
+          String? selectedDirectory =
+              await FilePicker.platform.getDirectoryPath();
           final url = await ref.getDownloadURL();
-          await Dio().download(url, downloadPath);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Downloaded ${ref.name}.mp3'),
-            ),
-          );
+          //await Dio().download(url, downloadPath);
+          if (selectedDirectory != null) {
+            String savePath = '$selectedDirectory/${ref.name}.mp3';
+            await Dio().download(url, savePath);
+            // String destinationFilePath =
+            //     '${downloadsDirectory.path}/${ref.name}.mp3';
+            // // Переместите файл из исходного пути в путь загрузок
+            // File originalFile = File(savePath);
+            // final readAppfiles = await originalFile.readAsBytes();
+            // File(destinationFilePath).writeAsBytes(readAppfiles);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content:
+                    Text('Downloaded ${ref.name}.mp3 to $selectedDirectory'),
+              ),
+            );
+          }
         }
       } catch (e, stackTrace) {
         print('Error download: $e');
@@ -1170,17 +1130,17 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
       print('audioPathRus*** $audioPathRus');
       try {
         if (Platform.isAndroid) {
-          await requestManageExternalStoragePermission();
-          var readStatus = await Permission.manageExternalStorage.request();
-          var writeStatus = await Permission.storage.request();
+          //await requestManageExternalStoragePermission();
+          var storageStatus = await Permission.storage.request();
           final downloadsDirectory =
               await DownloadsPathProvider.downloadsDirectory;
           final Directory? downloadsDir = await getExternalStorageDirectory();
-
-          //print('Permission status: $writeStatus');
-          //if (readStatus == PermissionStatus.granted && writeStatus == PermissionStatus.granted)
-          if (readStatus == PermissionStatus.granted && downloadsDir != null ||
-              writeStatus == PermissionStatus.granted && downloadsDir != null) {
+          // Если разрешение ещё не предоставлено, запросить его
+          if (downloadsDir == null || downloadsDirectory == null) {
+            print('Downloads directory not available on this device.');
+          }
+          if (storageStatus == PermissionStatus.granted &&
+              downloadsDir != null) {
             final ref = FirebaseStorage.instance.ref().child(audioPathRus);
             final url = await ref.getDownloadURL();
 
@@ -1209,7 +1169,8 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
             );
             print('Saving in the: $downloadPath');
             // print('Saving in the: $downloadDirectoryPath');
-          } else if (downloadsDirectory != null) {
+          } else if (storageStatus == PermissionStatus.granted &&
+              downloadsDirectory != null) {
             final dataref = FirebaseStorage.instance.ref().child(audioPathRus);
             final dataurl = await dataref.getDownloadURL();
             String downloadPathDirectoryAndroid = "";
@@ -1223,20 +1184,63 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
                 content: Text('Downloaded ${dataref.name}.mp3'),
               ),
             );
+          } else if (storageStatus.isDenied) {
+            final ref = FirebaseStorage.instance.ref().child(audioPathRus);
+            //Directory appDirectory = await getApplicationDocumentsDirectory();
+            //String appFolderPath = '${appDirectory.path}/${ref.name}.mp3';
+            String? selectedDirectory =
+                await FilePicker.platform.getDirectoryPath();
+            final url = await ref.getDownloadURL();
+            // await Dio().download(url, appFolderPath);
+            if (selectedDirectory != null) {
+              String savePath = '$selectedDirectory/${ref.name}.mp3';
+              await Dio().download(url, savePath);
+              // String destinationFilePath =
+              //     '${downloadsDirectory.path}/${ref.name}.mp3';
+              // // Переместите файл из исходного пути в путь загрузок
+              // File originalFile = File(savePath);
+              // final readAppfiles = await originalFile.readAsBytes();
+              // File(destinationFilePath).writeAsBytes(readAppfiles);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content:
+                      Text('Downloaded ${ref.name}.mp3 to $selectedDirectory'),
+                ),
+              );
+            }
           } else {
-            print('External storage directory not available on this device.');
+            if (storageStatus.isPermanentlyDenied) {
+              // Пользователь отказал и выбрал "Не спрашивать снова"
+              // Показать диалоговое окно с информацией о необходимости предоставления разрешения
+              if (mounted) {
+                showPermissionDialog(context);
+              }
+            }
           }
         } else if (Platform.isIOS) {
           final ref = FirebaseStorage.instance.ref().child(audioPathRus);
-          final appDocDir = await getApplicationDocumentsDirectory();
-          final downloadPath = '${appDocDir.path}/${ref.name}.mp3';
+          // final appDocDir = await getApplicationDocumentsDirectory();
+          // final downloadPath = '${appDocDir.path}/${ref.name}.mp3';
+          String? selectedDirectory =
+              await FilePicker.platform.getDirectoryPath();
           final url = await ref.getDownloadURL();
-          await Dio().download(url, downloadPath);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Downloaded ${ref.name}.mp3'),
-            ),
-          );
+          //await Dio().download(url, downloadPath);
+          if (selectedDirectory != null) {
+            String savePath = '$selectedDirectory/${ref.name}.mp3';
+            await Dio().download(url, savePath);
+            // String destinationFilePath =
+            //     '${downloadsDirectory.path}/${ref.name}.mp3';
+            // // Переместите файл из исходного пути в путь загрузок
+            // File originalFile = File(savePath);
+            // final readAppfiles = await originalFile.readAsBytes();
+            // File(destinationFilePath).writeAsBytes(readAppfiles);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content:
+                    Text('Downloaded ${ref.name}.mp3 to $selectedDirectory'),
+              ),
+            );
+          }
         }
       } catch (e, stackTrace) {
         print('Error download: $e');
@@ -1262,17 +1266,17 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
       print('audioPathEng*** $audioPathEng');
       try {
         if (Platform.isAndroid) {
-          await requestManageExternalStoragePermission();
-          var readStatus = await Permission.manageExternalStorage.request();
-          var writeStatus = await Permission.storage.request();
+          //await requestManageExternalStoragePermission();
+          var storageStatus = await Permission.storage.request();
           final downloadsDirectory =
               await DownloadsPathProvider.downloadsDirectory;
           final Directory? downloadsDir = await getExternalStorageDirectory();
-
-          //print('Permission status: $writeStatus');
-          //if (readStatus == PermissionStatus.granted && writeStatus == PermissionStatus.granted)
-          if (readStatus == PermissionStatus.granted && downloadsDir != null ||
-              writeStatus == PermissionStatus.granted && downloadsDir != null) {
+          // Если разрешение ещё не предоставлено, запросить его
+          if (downloadsDir == null || downloadsDirectory == null) {
+            print('Downloads directory not available on this device.');
+          }
+          if (storageStatus == PermissionStatus.granted &&
+              downloadsDir != null) {
             final ref = FirebaseStorage.instance.ref().child(audioPathEng);
             final url = await ref.getDownloadURL();
 
@@ -1301,7 +1305,8 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
             );
             print('Saving in the: $downloadPath');
             // print('Saving in the: $downloadDirectoryPath');
-          } else if (downloadsDirectory != null) {
+          } else if (storageStatus == PermissionStatus.granted &&
+              downloadsDirectory != null) {
             final dataref = FirebaseStorage.instance.ref().child(audioPathEng);
             final dataurl = await dataref.getDownloadURL();
             String downloadPathDirectoryAndroid = "";
@@ -1315,20 +1320,63 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
                 content: Text('Downloaded ${dataref.name}.mp3'),
               ),
             );
+          } else if (storageStatus.isDenied) {
+            final ref = FirebaseStorage.instance.ref().child(audioPathEng);
+            //Directory appDirectory = await getApplicationDocumentsDirectory();
+            //String appFolderPath = '${appDirectory.path}/${ref.name}.mp3';
+            String? selectedDirectory =
+                await FilePicker.platform.getDirectoryPath();
+            final url = await ref.getDownloadURL();
+            // await Dio().download(url, appFolderPath);
+            if (selectedDirectory != null) {
+              String savePath = '$selectedDirectory/${ref.name}.mp3';
+              await Dio().download(url, savePath);
+              // String destinationFilePath =
+              //     '${downloadsDirectory.path}/${ref.name}.mp3';
+              // // Переместите файл из исходного пути в путь загрузок
+              // File originalFile = File(savePath);
+              // final readAppfiles = await originalFile.readAsBytes();
+              // File(destinationFilePath).writeAsBytes(readAppfiles);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content:
+                      Text('Downloaded ${ref.name}.mp3 to $selectedDirectory'),
+                ),
+              );
+            }
           } else {
-            print('External storage directory not available on this device.');
+            if (storageStatus.isPermanentlyDenied) {
+              // Пользователь отказал и выбрал "Не спрашивать снова"
+              // Показать диалоговое окно с информацией о необходимости предоставления разрешения
+              if (mounted) {
+                showPermissionDialog(context);
+              }
+            }
           }
         } else if (Platform.isIOS) {
           final ref = FirebaseStorage.instance.ref().child(audioPathEng);
-          final appDocDir = await getApplicationDocumentsDirectory();
-          final downloadPath = '${appDocDir.path}/${ref.name}.mp3';
+          // final appDocDir = await getApplicationDocumentsDirectory();
+          // final downloadPath = '${appDocDir.path}/${ref.name}.mp3';
+          String? selectedDirectory =
+              await FilePicker.platform.getDirectoryPath();
           final url = await ref.getDownloadURL();
-          await Dio().download(url, downloadPath);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Downloaded ${ref.name}.mp3'),
-            ),
-          );
+          //await Dio().download(url, downloadPath);
+          if (selectedDirectory != null) {
+            String savePath = '$selectedDirectory/${ref.name}.mp3';
+            await Dio().download(url, savePath);
+            // String destinationFilePath =
+            //     '${downloadsDirectory.path}/${ref.name}.mp3';
+            // // Переместите файл из исходного пути в путь загрузок
+            // File originalFile = File(savePath);
+            // final readAppfiles = await originalFile.readAsBytes();
+            // File(destinationFilePath).writeAsBytes(readAppfiles);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content:
+                    Text('Downloaded ${ref.name}.mp3 to $selectedDirectory'),
+              ),
+            );
+          }
         }
       } catch (e, stackTrace) {
         print('Error download: $e');
@@ -1351,14 +1399,15 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
     }
 
     Future<void> changeAudio(newAudioUrl) async {
-      if (audioDisplayed != newAudioUrl) {
-        await _audioPlayer.stop(); // Остановить текущий трек
-        await _audioPlayer.setUrl(newAudioUrl); // Установить новый URL
-        audioDisplayed = newAudioUrl;
-        _audioPlayer.play(); // Начать воспроизведение нового аудио
-      } else if (audioDisplayed == newAudioUrl) {
-        await _audioPlayer.stop(); // Остановить текущий трек
+      if (audioDisplayed == newAudioUrl) {
+        if (_audioPlayerQR.playing || audioDisplayed.isNotEmpty) {
+          await _audioPlayerQR
+              .stop(); // Остановить текущий трек, если он играет
+        }
       }
+      await _audioPlayerQR.setUrl(newAudioUrl); // Установить новый URL
+      audioDisplayed = newAudioUrl;
+      _audioPlayerQR.play(); // Начать воспроизведение нового аудио
     }
 
     return FutureBuilder<List<String>>(
@@ -1391,9 +1440,9 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
 
           print("***<=>widget.selectedKey ${widget.selectedKey}");
 
-          String audioWidgetsKaz = "";
-          String audioWidgetsRus = "";
-          String audioWidgetsEng = "";
+          String audioWidgetsKaz = audioWidgetsKz;
+          String audioWidgetsRus = audioWidgetsRu;
+          String audioWidgetsEng = audioWidgetsEn;
 
           //String audioDisplayed = "";
 
@@ -1415,24 +1464,6 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
           print("uniqueAudioWidgetsArr.length ${uniqueAudioWidgetsArr.length}");
 
           uniqueAudioWidgetsArr.forEach((element) {
-            print("***<=>elementaudio $element");
-            if (element == audioWidgetsKz &&
-                Localizations.localeOf(context).languageCode ==
-                    currentLanguagekz) {
-              audioWidgetsKaz = audioWidgetsKaz + element;
-            } else if (element == audioWidgetsRu &&
-                Localizations.localeOf(context).languageCode ==
-                    currentLanguageru) {
-              audioWidgetsRus = audioWidgetsRus + element;
-            } else if (element == audioWidgetsEn &&
-                Localizations.localeOf(context).languageCode ==
-                    currentLanguageen) {
-              audioWidgetsEng = audioWidgetsEng + element;
-            }
-            print("***<=>audioWidgetsKaz $audioWidgetsKaz");
-            print("***<=>audioWidgetsRus $audioWidgetsRus");
-            print("***<=>audioWidgetsEng $audioWidgetsEng");
-
             if (element == audioPathKz) {
               audioPathKaz = audioPathKaz + element;
             }
@@ -1442,7 +1473,24 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
             if (element == audioPathEn) {
               audioPathEng = audioPathEng + element;
             }
-            print('audioPathKz--- $audioPathKz');
+            // print('audioPathKz--- $audioPathKz');
+            // print("***<=>elementaudio $element");
+            // if (element == audioWidgetsKz &&
+            //     Localizations.localeOf(context).languageCode ==
+            //         currentLanguagekz) {
+            //   audioWidgetsKaz = audioWidgetsKaz + element;
+            // } else if (element == audioWidgetsRu &&
+            //     Localizations.localeOf(context).languageCode ==
+            //         currentLanguageru) {
+            //   audioWidgetsRus = audioWidgetsRus + element;
+            // } else if (element == audioWidgetsEn &&
+            //     Localizations.localeOf(context).languageCode ==
+            //         currentLanguageen) {
+            //   audioWidgetsEng = audioWidgetsEng + element;
+            // }
+            // print("***<=>audioWidgetsKaz $audioWidgetsKaz");
+            // print("***<=>audioWidgetsRus $audioWidgetsRus");
+            // print("***<=>audioWidgetsEng $audioWidgetsEng");
           });
 
           if (Localizations.localeOf(context).languageCode ==
@@ -1489,8 +1537,8 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
 
           return WillPopScope(
             onWillPop: () async {
-              if (_audioPlayer.playing) {
-                _audioPlayer.stop(); // Остановите аудиоплеер
+              if (_audioPlayerQR.playing) {
+                _audioPlayerQR.stop(); // Остановите аудиоплеер
               }
               return true; // Разрешить закрытие экрана
             },
@@ -1524,7 +1572,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
                           position: positionData?.position ?? Duration.zero,
                           bufferedPosition:
                               positionData?.bufferedPosition ?? Duration.zero,
-                          onChangedEnd: _audioPlayer.seek,
+                          onChangedEnd: _audioPlayerQR.seek,
                         );
                       },
                     ),
@@ -1545,7 +1593,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
                           // ),
                           width: 110,
                           child: StreamBuilder<PlayerState>(
-                            stream: _audioPlayer.playerStateStream,
+                            stream: _audioPlayerQR.playerStateStream,
                             builder: (context, snapshot) {
                               final playerState = snapshot.data;
                               final proccessingState =
@@ -1562,7 +1610,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
                                 );
                               } else if (playing != true) {
                                 return ElevatedButton(
-                                  onPressed: _audioPlayer.play,
+                                  onPressed: _audioPlayerQR.play,
                                   child: const Icon(Icons.play_arrow),
                                   style: ElevatedButton.styleFrom(
                                     shape: RoundedRectangleBorder(
@@ -1574,7 +1622,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
                               } else if (proccessingState !=
                                   ProcessingState.completed) {
                                 return ElevatedButton(
-                                  onPressed: _audioPlayer.pause,
+                                  onPressed: _audioPlayerQR.pause,
                                   child: const Icon(Icons.pause),
                                   style: ElevatedButton.styleFrom(
                                     shape: RoundedRectangleBorder(
@@ -1586,7 +1634,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
                               } else {
                                 return ElevatedButton(
                                   onPressed: () =>
-                                      _audioPlayer.seek(Duration.zero),
+                                      _audioPlayerQR.seek(Duration.zero),
                                   child: const Icon(Icons.replay),
                                   style: ElevatedButton.styleFrom(
                                     shape: RoundedRectangleBorder(
@@ -1974,7 +2022,7 @@ class MenuTileWidget extends State<MenuTile> {
           children: <Widget>[
             InkWell(
               onTap: () async {
-                _audioPlayer.stop();
+                _audioPlayerQR.stop();
                 await Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -2015,7 +2063,7 @@ class MenuTileWidget extends State<MenuTile> {
         children: <Widget>[
           InkWell(
             onTap: () async {
-              _audioPlayer.stop();
+              _audioPlayerQR.stop();
               await Navigator.push(
                 this.context,
                 MaterialPageRoute(
@@ -2048,7 +2096,7 @@ class MenuTileWidget extends State<MenuTile> {
         children: <Widget>[
           InkWell(
             onTap: () async {
-              _audioPlayer.stop();
+              _audioPlayerQR.stop();
               await Navigator.push(
                 this.context,
                 MaterialPageRoute(
@@ -2071,3 +2119,106 @@ class MenuTileWidget extends State<MenuTile> {
         ],
       );
 }
+
+ // floatingActionButton: Row(
+        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //   children: [
+        //     Padding(
+        //       padding: const EdgeInsets.only(left: 0.0, bottom: 0.0),
+        //       child: FloatingActionButton(
+        //         onPressed: () async {
+        //           late String keyforedit;
+        //           late CollectionReference<Map<String, dynamic>> collRef;
+        //           if (Localizations.localeOf(context).languageCode == 'kk') {
+        //             collRef = FirebaseFirestore.instance.collection('datakz');
+        //           } else if (Localizations.localeOf(context).languageCode ==
+        //               'ru') {
+        //             collRef = FirebaseFirestore.instance.collection('dataru');
+        //           } else if (Localizations.localeOf(context).languageCode ==
+        //               'en') {
+        //             collRef = FirebaseFirestore.instance.collection('dataen');
+        //           }
+        //           String targetTitle =
+        //               widget.selectedKey; // Значение, которое вы ищете
+        //           QuerySnapshot<Map<String, dynamic>> querySnapshot =
+        //               await collRef.get();
+        //           List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
+        //               querySnapshot.docs;
+        //           for (QueryDocumentSnapshot<Map<String, dynamic>> doc
+        //               in docs) {
+        //             Map<String, dynamic> autodata = doc.data();
+        //             String autokey = doc.id; // Получение ключа документа
+        //             // Проверка, соответствует ли поле title значению, которое вы ищете
+        //             if (autodata['id'] == targetTitle) {
+        //               keyforedit = autodata['id'];
+        //             }
+        //           }
+        //           await Navigator.push(
+        //             context,
+        //             MaterialPageRoute(
+        //               builder: (BuildContext context) => EditFirebasePage(
+        //                 //editMydb: editMydb,
+        //                 selectedKey: keyforedit,
+        //               ),
+        //             ),
+        //           );
+        //         },
+        //         mini:
+        //             true, // Установите mini: true для уменьшения размера кнопки
+        //         shape: RoundedRectangleBorder(
+        //           borderRadius:
+        //               BorderRadius.circular(15), // Настройте форму кнопки
+        //         ),
+        //         child: const Icon(Icons.create),
+        //       ),
+        //     ),
+        //     Padding(
+        //       padding: const EdgeInsets.only(right: 0.0, bottom: 0.0),
+        //       child: FloatingActionButton(
+        //         onPressed: () async {
+        //           Navigator.push(
+        //             context,
+        //             MaterialPageRoute(
+        //               builder: (context) => HomePage(),
+        //             ),
+        //           );
+        //           late CollectionReference<Map<String, dynamic>> collRef;
+        //           if (Localizations.localeOf(context).languageCode == 'kk') {
+        //             collRef = FirebaseFirestore.instance.collection('datakz');
+        //           } else if (Localizations.localeOf(context).languageCode ==
+        //               'ru') {
+        //             collRef = FirebaseFirestore.instance.collection('dataru');
+        //           } else if (Localizations.localeOf(context).languageCode ==
+        //               'en') {
+        //             collRef = FirebaseFirestore.instance.collection('dataen');
+        //           }
+        //           String targetTitle =
+        //               widget.selectedKey; // Значение, которое вы ищете
+
+        //           QuerySnapshot<Map<String, dynamic>> querySnapshot =
+        //               await collRef.get();
+        //           List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
+        //               querySnapshot.docs;
+        //           for (QueryDocumentSnapshot<Map<String, dynamic>> doc
+        //               in docs) {
+        //             Map<String, dynamic> autodata = doc.data();
+        //             String autokey = doc.id; // Получение ключа документа
+        //             // Проверка, соответствует ли поле title значению, которое вы ищете
+        //             if (autodata['id'] == targetTitle) {
+        //               await collRef.doc(autokey).delete();
+        //               print("Document deleted: $autokey");
+        //             }
+        //           }
+        //         },
+        //         mini:
+        //             true, // Установите mini: true для уменьшения размера кнопки
+        //         shape: RoundedRectangleBorder(
+        //           borderRadius:
+        //               BorderRadius.circular(15), // Настройте форму кнопки
+        //         ),
+        //         child: const Icon(Icons.delete),
+        //       ),
+        //     ),
+        //   ],
+        // ),
+        // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

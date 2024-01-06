@@ -76,75 +76,8 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-class MyAppBar extends StatefulWidget {
-  final ValueChanged<List<dynamic>> onResultListChanged;
 
-  MyAppBar({
-    required this.onResultListChanged,
-  });
 
-  @override
-  State<MyAppBar> createState() => _MyAppBarState();
-}
-
-class _MyAppBarState extends State<MyAppBar> {
-  @override
-  Widget build(BuildContext context) {
-    return AppBar(
-      iconTheme: IconThemeData(color: Colors.grey),
-      backgroundColor: Colors.white,
-      automaticallyImplyLeading: false,
-      actions: <Widget>[
-        SizedBox(
-          width: 10, // Устанавливаем отступ сверху
-        ),
-        Padding(
-          padding: const EdgeInsets.only(right: 10),
-          child: SizedBox(
-            width: 290,
-            child: FutureBuilder(
-              builder: (context, snapshot) {
-                return FirebaseSearch(
-                  onResultListChanged: widget.onResultListChanged,
-                );
-              },
-              future: Future.delayed(const Duration(seconds: 1)),
-            ),
-          ),
-        ),
-        // IconButton(
-        //   padding: const EdgeInsets.only(left: 0),
-        //   onPressed: () {},
-        //   icon: Icon(Icons.bookmark_add),
-        // ),
-        Padding(
-          padding: const EdgeInsets.only(right: 10),
-          child: DropdownFlag(
-            changedLanguage: (value) {
-              setState(() {
-                context.setLocale(Locale((value)));
-              });
-            },
-          ),
-        ),
-      ],
-      // leading: Builder(
-      //   builder: (context) {
-      //     return Padding(
-      //       padding: const EdgeInsets.only(
-      //           right: 20.0), // Устанавливаем отступ слева
-      //       child: IconButton(
-      //         icon: Icon(Icons.menu),
-      //         onPressed: () {
-      //           Scaffold.of(context).openDrawer();
-      //         },
-      //       ),
-      //     );
-      //   },
-      // ),
-    );
-  }
-}
 
 class FirebaseSearch extends StatefulWidget {
   final ValueChanged<List<dynamic>>
@@ -157,6 +90,8 @@ class FirebaseSearch extends StatefulWidget {
   @override
   FirebaseSearchWidget createState() => FirebaseSearchWidget();
 }
+
+
 
 class FirebaseSearchWidget extends State<FirebaseSearch> {
   TextEditingController keyword = TextEditingController();
@@ -174,35 +109,6 @@ class FirebaseSearchWidget extends State<FirebaseSearch> {
     print(keyword.text);
     searchResultList();
   }
-
-  // void createAndSaveExcelFile(List<List<String>> excelData) async {
-  //   // Создание нового Excel документа
-  //   var exc = excel.Excel.createExcel();
-  //   excel.Sheet sheetObject = exc['Sheet1'];
-
-  //   for (int row = 0; row < excelData.length; row++) {
-  //     for (int col = 0; col < excelData[row].length; col++) {
-  //       var cellIndex =
-  //           excel.CellIndex.indexByColumnRow(columnIndex: col, rowIndex: row);
-  //       // Создаем экземпляр TextCellValue из строки
-  //       var cellValue = excel.TextCellValue(excelData[row][col]);
-  //       // Добавление данных в ячейку
-  //       sheetObject.updateCell(cellIndex, cellValue);
-  //     }
-  //   }
-  //   // Сохранение Excel файла в файловой системе
-
-  //   final directory = await getApplicationDocumentsDirectory();
-  //   String filePath = path.join(directory.path, "output.xlsx");
-
-  //   // Сохранение файла
-  //   var fileBytes = exc.save();
-  //   File(filePath)
-  //     ..createSync(recursive: true)
-  //     ..writeAsBytesSync(fileBytes!);
-
-  //   print('Excel файл сохранен: $filePath');
-  // }
 
   searchResultList() {
     var showRes = [];
@@ -223,50 +129,8 @@ class FirebaseSearchWidget extends State<FirebaseSearch> {
       print('showRes $showRes');
     } else {
       showRes = List.from(allResults);
-
-      // List<List<String>> excelData = allResults.map((keySnap) {
-      //   return [
-      //     keySnap['id'].toString(),
-      //     keySnap['title'].toString(),
-      //     keySnap['description'].toString(),
-      //     //keySnap['firebaseaudiopathkz'].toString(),
-      //     //keySnap['firebaseaudiopathru'].toString(),
-      //     //keySnap['firebaseaudiopathen'].toString(),
-      //   ];
-      // }).toList();
-
-      // // Создание и сохранение файла Excel
-      // createAndSaveExcelFile(excelData);
-
-      // for (var keySnap in allResults) {
-      //   var id = keySnap['id'].toString();
-      //   var title = keySnap['title'].toString();
-      //   var description = keySnap['description'].toString();
-      //   var firebaseaudiopathkz = keySnap['firebaseaudiopathkz'].toString();
-      //   var firebaseaudiopathru = keySnap['firebaseaudiopathru'].toString();
-      //   var firebaseaudiopathen = keySnap['firebaseaudiopathen'].toString();
-      //   print("--------------------------------");
-      //   print("ID: $id");
-      //   print("TITLE doc: $title");
-      //   print("DESCRIPTION: $description");
-      //   print("firebaseaudiopathkz: $firebaseaudiopathkz");
-      //   print("firebaseaudiopathru: $firebaseaudiopathru");
-      //   print("firebaseaudiopathen: $firebaseaudiopathen");
-      //   print("--------------------------------");
-      // }
-
-      // showRes.forEach((element) {
-      //   print("showRes id ${element['id']}");
-      //   print("showRes title ${element['title']}");
-      //   print("showRes description ${element['description']}");
-      // });
+     
     }
-    // showRes.forEach((element) {
-    //   print("showRes id ${element['id']}");
-    //   print("showRes title ${element['title']}");
-    //   print("showRes description ${element['description']}");
-    // });
-
     setState(() {
       resultList = showRes;
     });
@@ -363,103 +227,124 @@ class FirebaseSearchWidget extends State<FirebaseSearch> {
         ),
         SizedBox(
           height: 5, // Устанавливаем отступ сверху
-        ),
-        // Mausoleum(),
-        // SingleChildScrollView(
-        //   child: ConstrainedBox(
-        //     constraints: BoxConstraints(
-        //       maxHeight: MediaQuery.of(context).size.height -
-        //           518, // appBarHeight - это высота вашего AppBar
-        //     ),
-        //     child: ListView(
-        //       children: [
-        //         streamBuild(resultList: resultList),
-        //       ],
-        //     ),
-        //   ),
-        // ),
+        ),      
       ],
     );
   }
 }
 
-class streamBuild extends StatelessWidget {
-  List<dynamic> resultList;
 
-  streamBuild({
-    required this.resultList,
+class MyAppBar extends StatefulWidget {
+  final ValueChanged<List<dynamic>> onResultListChanged;
+
+  MyAppBar({
+    required this.onResultListChanged,
   });
 
   @override
+  State<MyAppBar> createState() => _MyAppBarState();
+}
+
+class _MyAppBarState extends State<MyAppBar> {
+  @override
   Widget build(BuildContext context) {
-    late Stream<QuerySnapshot<Map<String, dynamic>>> datastream;
-    if (Localizations.localeOf(context).languageCode == 'kk') {
-      datastream = FirebaseFirestore.instance.collection('datakz').snapshots();
-    } else if (Localizations.localeOf(context).languageCode == 'ru') {
-      datastream = FirebaseFirestore.instance.collection('dataru').snapshots();
-    } else if (Localizations.localeOf(context).languageCode == 'en') {
-      datastream = FirebaseFirestore.instance.collection('dataen').snapshots();
-    }
-
-    return StreamBuilder<QuerySnapshot>(
-      stream: datastream,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Text('Loading...');
-        }
-        if (snapshot.hasError) {
-          return Text('Error');
-        }
-        if (!snapshot.hasData || snapshot.data == null) {
-          return Text('No data');
-        }
-
-        if (resultList != "") {
-          return Container(
-            child: Row(
-              // Use curly braces here instead of parentheses
-              children: resultList.map((data) {
-                final doc = data.data() as Map<String, dynamic>;
-                return Container(
-                  child: Row(children: [
-                    Container(
-                      margin: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 5,
-                      ),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ObjectFirebasePage(
-                                selectedKey: doc['id'],
-                              ),
-                            ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
-                        child: Text(
-                          doc['title'],
-                          style: TextStyle(color: Colors.white, fontSize: 24),
-                        ),
-                      ),
-                    ),
-                  ]),
+    return AppBar(
+      iconTheme: IconThemeData(color: Colors.grey),
+      backgroundColor: Colors.white,
+      automaticallyImplyLeading: false,
+      actions: <Widget>[
+        SizedBox(
+          width: 10, // Устанавливаем отступ сверху
+        ),
+        Padding(
+          padding: const EdgeInsets.only(right: 10),
+          child: SizedBox(
+            width: 290,
+            child: FutureBuilder(
+              builder: (context, snapshot) {
+                return FirebaseSearch(
+                  onResultListChanged: widget.onResultListChanged,
                 );
-              }).toList(),
+              },
+              future: Future.delayed(const Duration(seconds: 1)),
             ),
-          );
-        }
-        return Container();
-      },
+          ),
+        ),
+        // IconButton(
+        //   padding: const EdgeInsets.only(left: 0),
+        //   onPressed: () {},
+        //   icon: Icon(Icons.bookmark_add),
+        // ),
+        Padding(
+          padding: const EdgeInsets.only(right: 10),
+          child: DropdownFlag(
+            changedLanguage: (value) {
+              setState(() {
+                context.setLocale(Locale((value)));
+              });
+            },
+          ),
+        ),
+      ],
+      // leading: Builder(
+      //   builder: (context) {
+      //     return Padding(
+      //       padding: const EdgeInsets.only(
+      //           right: 20.0), // Устанавливаем отступ слева
+      //       child: IconButton(
+      //         icon: Icon(Icons.menu),
+      //         onPressed: () {
+      //           Scaffold.of(context).openDrawer();
+      //         },
+      //       ),
+      //     );
+      //   },
+      // ),
     );
   }
 }
+
+
+class MyHomePage extends StatefulWidget {
+  final List<dynamic> resultListHome;
+  final DecorationImage backgroundImage;
+  MyHomePage(
+      {required this.backgroundImage, required this.resultListHome, Key? key})
+      : super(key: key);
+
+  @override
+  HomePageState createState() => HomePageState();
+}
+
+
+class HomePageState extends State<MyHomePage> {
+  //List resultList = [];
+
+  @override
+  final whiteTexstStyle = TextStyle(color: Colors.white, fontSize: 24);
+
+  @override
+  Widget build(BuildContext context) {
+    final colorTextStyle = TextStyle(
+      color: Color.fromARGB(255, 78, 82, 26),
+      fontSize: 25,
+    ); // Обновленный размер текста
+    print('widget.onResultListChanged2 ${widget.resultListHome}');
+    return Scaffold(
+      body: Column(
+        children: [       
+          Expanded(
+            // Используйте Expanded здесь
+            child: streamBuildHome(resultList: widget.resultListHome),
+          ),     
+        ],
+      ),
+    
+    );
+  }
+}
+
+
 
 class streamBuildHome extends StatefulWidget {
   List<dynamic> resultList;
@@ -717,132 +602,6 @@ class _streamBuildHomeState extends State<streamBuildHome> {
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  final List<dynamic> resultListHome;
-  final DecorationImage backgroundImage;
-  MyHomePage(
-      {required this.backgroundImage, required this.resultListHome, Key? key})
-      : super(key: key);
-
-  @override
-  HomePageState createState() => HomePageState();
-}
-
-class HomePageState extends State<MyHomePage> {
-  //List resultList = [];
-
-  @override
-  final whiteTexstStyle = TextStyle(color: Colors.white, fontSize: 24);
-
-  @override
-  Widget build(BuildContext context) {
-    final colorTextStyle = TextStyle(
-      color: Color.fromARGB(255, 78, 82, 26),
-      fontSize: 25,
-    ); // Обновленный размер текста
-    print('widget.onResultListChanged2 ${widget.resultListHome}');
-    return Scaffold(
-      body: Column(
-        children: [
-          // Container(
-          //   child: SingleChildScrollView(
-          //     scrollDirection: Axis.horizontal,
-          //     child: ConstrainedBox(
-          //       constraints: BoxConstraints(
-          //         maxHeight: MediaQuery.of(context).size.height -
-          //             228, // appBarHeight - это высота вашего AppBar
-          //       ),
-          //       child: Row(
-          //         children: [
-          //           streamBuild(resultList: widget.resultListHome),
-          //         ],
-          //       ),
-          //     ),
-          //   ),
-          // ),
-          Expanded(
-            // Используйте Expanded здесь
-            child: streamBuildHome(resultList: widget.resultListHome),
-          ),
-
-          // Container(
-          //   child: ConstrainedBox(
-          //     constraints: BoxConstraints(
-          //       maxHeight: MediaQuery.of(context).size.height +
-          //           26500, // appBarHeight - это высота вашего AppBar
-          //     ),
-          //     child: Column(
-          //       children: [
-          //         streamBuildHome(resultList: widget.resultListHome),
-          //       ],
-          //     ),
-          //   ),
-          // ),
-        ],
-      ),
-      // floatingActionButton: Stack(
-      //   children: [
-      //     Positioned(
-      //       right: 0,
-      //       bottom: 0,
-      //       child: FloatingActionButton(
-      //         onPressed: () async {
-      //           await Navigator.push(
-      //             context,
-      //             MaterialPageRoute(
-      //               builder: (context) => CreateHistoryPost(),
-      //             ),
-      //           );
-      //         },
-      //         child: const Icon(Icons.create),
-      //       ),
-      //     ),
-      //     // Positioned(
-      //     //   left: 20,
-      //     //   bottom: 0,
-      //     //   child: FloatingActionButton(
-      //     //     onPressed: () async {
-      //     //       var collRefkz = FirebaseFirestore.instance.collection('datakz');
-      //     //       var collRefru = FirebaseFirestore.instance.collection('dataru');
-      //     //       var collRefen = FirebaseFirestore.instance.collection('dataen');
-
-      //     //       QuerySnapshot querySnapshotkz = await collRefkz.get();
-      //     //       QuerySnapshot querySnapshotru = await collRefru.get();
-      //     //       QuerySnapshot querySnapshoten = await collRefen.get();
-
-      //     //       List<QueryDocumentSnapshot> docskz = querySnapshotkz.docs;
-      //     //       List<QueryDocumentSnapshot> docsru = querySnapshotru.docs;
-      //     //       List<QueryDocumentSnapshot> docsen = querySnapshoten.docs;
-
-      //     //       List<String> autokey = [];
-      //     //       for (QueryDocumentSnapshot doc in docskz) {
-      //     //         autokey.add(doc.id);
-      //     //       }
-      //     //       for (QueryDocumentSnapshot doc in docsru) {
-      //     //         autokey.add(doc.id);
-      //     //       }
-      //     //       for (QueryDocumentSnapshot doc in docsen) {
-      //     //         autokey.add(doc.id);
-      //     //       }
-
-      //     //       autokey.forEach((element) {
-      //     //         collRefkz.doc(element).delete();
-      //     //       });
-      //     //       autokey.forEach((element) {
-      //     //         collRefru.doc(element).delete();
-      //     //       });
-      //     //       autokey.forEach((element) {
-      //     //         collRefen.doc(element).delete();
-      //     //       });
-      //     //     },
-      //     //     child: const Icon(Icons.delete),
-      //     //   ),
-      //     // ),
-      //   ],
-      // ),
-    );
-  }
-}
 
 class MenuTile extends StatefulWidget {
   @override
@@ -1057,3 +816,425 @@ class MenuTileWidget extends State<MenuTile> {
 //     ),
 //   ],
 // ),
+
+// class streamBuild extends StatelessWidget {
+//   List<dynamic> resultList;
+
+//   streamBuild({
+//     required this.resultList,
+//   });
+
+//   @override
+//   Widget build(BuildContext context) {
+//     late Stream<QuerySnapshot<Map<String, dynamic>>> datastream;
+//     if (Localizations.localeOf(context).languageCode == 'kk') {
+//       datastream = FirebaseFirestore.instance.collection('datakz').snapshots();
+//     } else if (Localizations.localeOf(context).languageCode == 'ru') {
+//       datastream = FirebaseFirestore.instance.collection('dataru').snapshots();
+//     } else if (Localizations.localeOf(context).languageCode == 'en') {
+//       datastream = FirebaseFirestore.instance.collection('dataen').snapshots();
+//     }
+
+//     return StreamBuilder<QuerySnapshot>(
+//       stream: datastream,
+//       builder: (context, snapshot) {
+//         if (snapshot.connectionState == ConnectionState.waiting) {
+//           return Text('Loading...');
+//         }
+//         if (snapshot.hasError) {
+//           return Text('Error');
+//         }
+//         if (!snapshot.hasData || snapshot.data == null) {
+//           return Text('No data');
+//         }
+
+//         if (resultList != "") {
+//           return Container(
+//             child: Row(
+//               // Use curly braces here instead of parentheses
+//               children: resultList.map((data) {
+//                 final doc = data.data() as Map<String, dynamic>;
+//                 return Container(
+//                   child: Row(children: [
+//                     Container(
+//                       margin: const EdgeInsets.symmetric(
+//                         horizontal: 10,
+//                         vertical: 5,
+//                       ),
+//                       child: ElevatedButton(
+//                         onPressed: () {
+//                           Navigator.push(
+//                             context,
+//                             MaterialPageRoute(
+//                               builder: (context) => ObjectFirebasePage(
+//                                 selectedKey: doc['id'],
+//                               ),
+//                             ),
+//                           );
+//                         },
+//                         style: ElevatedButton.styleFrom(
+//                           shape: RoundedRectangleBorder(
+//                             borderRadius: BorderRadius.circular(30),
+//                           ),
+//                         ),
+//                         child: Text(
+//                           doc['title'],
+//                           style: TextStyle(color: Colors.white, fontSize: 24),
+//                         ),
+//                       ),
+//                     ),
+//                   ]),
+//                 );
+//               }).toList(),
+//             ),
+//           );
+//         }
+//         return Container();
+//       },
+//     );
+//   }
+// }
+
+
+// class HomePageState extends State<MyHomePage> {
+//   //List resultList = [];
+
+//   @override
+//   final whiteTexstStyle = TextStyle(color: Colors.white, fontSize: 24);
+
+//   @override
+//   Widget build(BuildContext context) {
+//     final colorTextStyle = TextStyle(
+//       color: Color.fromARGB(255, 78, 82, 26),
+//       fontSize: 25,
+//     ); // Обновленный размер текста
+//     print('widget.onResultListChanged2 ${widget.resultListHome}');
+//     return Scaffold(
+//       body: Column(
+//         children: [
+//           // Container(
+//           //   child: SingleChildScrollView(
+//           //     scrollDirection: Axis.horizontal,
+//           //     child: ConstrainedBox(
+//           //       constraints: BoxConstraints(
+//           //         maxHeight: MediaQuery.of(context).size.height -
+//           //             228, // appBarHeight - это высота вашего AppBar
+//           //       ),
+//           //       child: Row(
+//           //         children: [
+//           //           streamBuild(resultList: widget.resultListHome),
+//           //         ],
+//           //       ),
+//           //     ),
+//           //   ),
+//           // ),
+//           Expanded(
+//             // Используйте Expanded здесь
+//             child: streamBuildHome(resultList: widget.resultListHome),
+//           ),
+
+//           // Container(
+//           //   child: ConstrainedBox(
+//           //     constraints: BoxConstraints(
+//           //       maxHeight: MediaQuery.of(context).size.height +
+//           //           26500, // appBarHeight - это высота вашего AppBar
+//           //     ),
+//           //     child: Column(
+//           //       children: [
+//           //         streamBuildHome(resultList: widget.resultListHome),
+//           //       ],
+//           //     ),
+//           //   ),
+//           // ),
+//         ],
+//       ),
+//       // floatingActionButton: Stack(
+//       //   children: [
+//       //     Positioned(
+//       //       right: 0,
+//       //       bottom: 0,
+//       //       child: FloatingActionButton(
+//       //         onPressed: () async {
+//       //           await Navigator.push(
+//       //             context,
+//       //             MaterialPageRoute(
+//       //               builder: (context) => CreateHistoryPost(),
+//       //             ),
+//       //           );
+//       //         },
+//       //         child: const Icon(Icons.create),
+//       //       ),
+//       //     ),
+//       //     // Positioned(
+//       //     //   left: 20,
+//       //     //   bottom: 0,
+//       //     //   child: FloatingActionButton(
+//       //     //     onPressed: () async {
+//       //     //       var collRefkz = FirebaseFirestore.instance.collection('datakz');
+//       //     //       var collRefru = FirebaseFirestore.instance.collection('dataru');
+//       //     //       var collRefen = FirebaseFirestore.instance.collection('dataen');
+
+//       //     //       QuerySnapshot querySnapshotkz = await collRefkz.get();
+//       //     //       QuerySnapshot querySnapshotru = await collRefru.get();
+//       //     //       QuerySnapshot querySnapshoten = await collRefen.get();
+
+//       //     //       List<QueryDocumentSnapshot> docskz = querySnapshotkz.docs;
+//       //     //       List<QueryDocumentSnapshot> docsru = querySnapshotru.docs;
+//       //     //       List<QueryDocumentSnapshot> docsen = querySnapshoten.docs;
+
+//       //     //       List<String> autokey = [];
+//       //     //       for (QueryDocumentSnapshot doc in docskz) {
+//       //     //         autokey.add(doc.id);
+//       //     //       }
+//       //     //       for (QueryDocumentSnapshot doc in docsru) {
+//       //     //         autokey.add(doc.id);
+//       //     //       }
+//       //     //       for (QueryDocumentSnapshot doc in docsen) {
+//       //     //         autokey.add(doc.id);
+//       //     //       }
+
+//       //     //       autokey.forEach((element) {
+//       //     //         collRefkz.doc(element).delete();
+//       //     //       });
+//       //     //       autokey.forEach((element) {
+//       //     //         collRefru.doc(element).delete();
+//       //     //       });
+//       //     //       autokey.forEach((element) {
+//       //     //         collRefen.doc(element).delete();
+//       //     //       });
+//       //     //     },
+//       //     //     child: const Icon(Icons.delete),
+//       //     //   ),
+//       //     // ),
+//       //   ],
+//       // ),
+//     );
+//   }
+// }
+
+
+
+// class FirebaseSearchWidget extends State<FirebaseSearch> {
+//   TextEditingController keyword = TextEditingController();
+
+//   List allResults = [];
+//   List resultList = [];
+
+//   @override
+//   void initState() {
+//     keyword.addListener(_onSearchChanged);
+//     super.initState();
+//   }
+
+//   _onSearchChanged() {
+//     print(keyword.text);
+//     searchResultList();
+//   }
+
+//   // void createAndSaveExcelFile(List<List<String>> excelData) async {
+//   //   // Создание нового Excel документа
+//   //   var exc = excel.Excel.createExcel();
+//   //   excel.Sheet sheetObject = exc['Sheet1'];
+
+//   //   for (int row = 0; row < excelData.length; row++) {
+//   //     for (int col = 0; col < excelData[row].length; col++) {
+//   //       var cellIndex =
+//   //           excel.CellIndex.indexByColumnRow(columnIndex: col, rowIndex: row);
+//   //       // Создаем экземпляр TextCellValue из строки
+//   //       var cellValue = excel.TextCellValue(excelData[row][col]);
+//   //       // Добавление данных в ячейку
+//   //       sheetObject.updateCell(cellIndex, cellValue);
+//   //     }
+//   //   }
+//   //   // Сохранение Excel файла в файловой системе
+
+//   //   final directory = await getApplicationDocumentsDirectory();
+//   //   String filePath = path.join(directory.path, "output.xlsx");
+
+//   //   // Сохранение файла
+//   //   var fileBytes = exc.save();
+//   //   File(filePath)
+//   //     ..createSync(recursive: true)
+//   //     ..writeAsBytesSync(fileBytes!);
+
+//   //   print('Excel файл сохранен: $filePath');
+//   // }
+
+//   searchResultList() {
+//     var showRes = [];
+//     if (keyword.text != "") {
+//       var keywords = keyword.text.toLowerCase().split(" ");
+//       for (var keySnap in allResults) {
+//         var id = keySnap['id'].toString().toLowerCase();
+//         var title = keySnap['title'].toString().toLowerCase();
+//         var description = keySnap['description'].toString().toLowerCase();
+//         bool foundInTitle = keywords.any((kw) => title.contains(kw));
+//         bool foundInOtherFields =
+//             keywords.any((kw) => id.contains(kw) || description.contains(kw));
+
+//         if (foundInTitle || foundInOtherFields) {
+//           showRes.add(keySnap);
+//         }
+//       }
+//       print('showRes $showRes');
+//     } else {
+//       showRes = List.from(allResults);
+
+//       // List<List<String>> excelData = allResults.map((keySnap) {
+//       //   return [
+//       //     keySnap['id'].toString(),
+//       //     keySnap['title'].toString(),
+//       //     keySnap['description'].toString(),
+//       //     //keySnap['firebaseaudiopathkz'].toString(),
+//       //     //keySnap['firebaseaudiopathru'].toString(),
+//       //     //keySnap['firebaseaudiopathen'].toString(),
+//       //   ];
+//       // }).toList();
+
+//       // // Создание и сохранение файла Excel
+//       // createAndSaveExcelFile(excelData);
+
+//       // for (var keySnap in allResults) {
+//       //   var id = keySnap['id'].toString();
+//       //   var title = keySnap['title'].toString();
+//       //   var description = keySnap['description'].toString();
+//       //   var firebaseaudiopathkz = keySnap['firebaseaudiopathkz'].toString();
+//       //   var firebaseaudiopathru = keySnap['firebaseaudiopathru'].toString();
+//       //   var firebaseaudiopathen = keySnap['firebaseaudiopathen'].toString();
+//       //   print("--------------------------------");
+//       //   print("ID: $id");
+//       //   print("TITLE doc: $title");
+//       //   print("DESCRIPTION: $description");
+//       //   print("firebaseaudiopathkz: $firebaseaudiopathkz");
+//       //   print("firebaseaudiopathru: $firebaseaudiopathru");
+//       //   print("firebaseaudiopathen: $firebaseaudiopathen");
+//       //   print("--------------------------------");
+//       // }
+
+//       // showRes.forEach((element) {
+//       //   print("showRes id ${element['id']}");
+//       //   print("showRes title ${element['title']}");
+//       //   print("showRes description ${element['description']}");
+//       // });
+//     }
+//     // showRes.forEach((element) {
+//     //   print("showRes id ${element['id']}");
+//     //   print("showRes title ${element['title']}");
+//     //   print("showRes description ${element['description']}");
+//     // });
+
+//     setState(() {
+//       resultList = showRes;
+//     });
+
+//     widget.onResultListChanged(resultList);
+
+//     print('widget.onResultListChanged ${widget.onResultListChanged}');
+//   }
+
+//   getClientStream() async {
+//     final localeCode = Localizations.localeOf(context).languageCode;
+//     final collectionName = localeCode == 'kk'
+//         ? 'datakz'
+//         : localeCode == 'ru'
+//             ? 'dataru'
+//             : 'dataen';
+
+//     final datalingua = await FirebaseFirestore.instance
+//         .collection(collectionName)
+//         .orderBy('id')
+//         .get();
+
+//     setState(() {
+//       allResults = datalingua.docs;
+//       searchResultList();
+//     });
+//   }
+
+//   @override
+//   void dispose() {
+//     keyword.removeListener(_onSearchChanged);
+//     keyword.dispose();
+//     super.dispose();
+//   }
+
+//   @override
+//   void didChangeDependencies() {
+//     getClientStream();
+//     super.didChangeDependencies();
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Column(
+//       children: [
+//         SizedBox(
+//           height: 5, // Устанавливаем отступ сверху
+//         ),
+//         Container(
+//           width: double.infinity,
+//           height: 45,
+//           decoration: BoxDecoration(
+//             color: Colors.white,
+//             borderRadius: BorderRadius.circular(15),
+//           ),
+//           child: Center(
+//             child: TextField(
+//               controller: keyword,
+//               onSubmitted: (value) {
+//                 setState(() {
+//                   // ignore: unrelated_type_equality_checks
+//                   keyword.text = value;
+//                 });
+//               },
+//               decoration: InputDecoration(
+//                 prefixIcon: IconButton(
+//                   icon: const Icon(Icons.search),
+//                   onPressed: () {
+//                     if (keyword.text != '') {
+//                       setState(() {
+//                         getClientStream();
+//                       });
+//                     } else if (keyword.text == '') {
+//                       Navigator.push(
+//                         context,
+//                         MaterialPageRoute(
+//                           builder: (context) => HomePage(),
+//                         ),
+//                       );
+//                     }
+//                   },
+//                 ),
+//                 suffixIcon: IconButton(
+//                   icon: const Icon(Icons.clear),
+//                   onPressed: () {
+//                     keyword.text = '';
+//                   },
+//                 ),
+//                 hintText: 'searchword'.tr(),
+//                 border: InputBorder.none,
+//               ),
+//             ),
+//           ),
+//         ),
+//         SizedBox(
+//           height: 5, // Устанавливаем отступ сверху
+//         ),
+//         // Mausoleum(),
+//         // SingleChildScrollView(
+//         //   child: ConstrainedBox(
+//         //     constraints: BoxConstraints(
+//         //       maxHeight: MediaQuery.of(context).size.height -
+//         //           518, // appBarHeight - это высота вашего AppBar
+//         //     ),
+//         //     child: ListView(
+//         //       children: [
+//         //         streamBuild(resultList: resultList),
+//         //       ],
+//         //     ),
+//         //   ),
+//         // ),
+//       ],
+//     );
+//   }
+// }
