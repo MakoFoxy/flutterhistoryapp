@@ -133,6 +133,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
     with WidgetsBindingObserver {
   @override
   void initState() {
+    widget.selectedKey;
     // audioDisplayed = "";
     // newAudioUrl = "";
     super.initState();
@@ -144,6 +145,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
   // String newAudioUrl = "";
   @override
   void dispose() {
+    widget.selectedKey;
     // audioDisplayed = "";
     // newAudioUrl = "";
     // Удаление обработчика изменения состояния приложения
@@ -179,22 +181,13 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
     arrlen.add(widget.selectedKey);
     print("widget.selectedKey from firebase ${arrlen.length}");
 
-    List<QueryDocumentSnapshot<Map<String, dynamic>>>? datafirebasekz;
-    List<QueryDocumentSnapshot<Map<String, dynamic>>>? datafirebaseru;
-    List<QueryDocumentSnapshot<Map<String, dynamic>>>? datafirebaseen;
-    late QuerySnapshot<Map<String, dynamic>> datakz;
-    late QuerySnapshot<Map<String, dynamic>> dataru;
-    late QuerySnapshot<Map<String, dynamic>> dataen;
-    dataru = await FirebaseFirestore.instance.collection('dataru').get();
-    datakz = await FirebaseFirestore.instance.collection('datakz').get();
-    dataen = await FirebaseFirestore.instance.collection('dataen').get();
-
-    datafirebasekz = datakz.docs.toList();
-    datafirebaseru = dataru.docs.toList();
-    datafirebaseen = dataen.docs.toList();
-
     late String autokey;
     late Map<String, dynamic> autodata;
+
+    List<QueryDocumentSnapshot<Map<String, dynamic>>>? datafirebasekz;
+    late QuerySnapshot<Map<String, dynamic>> datakz;
+    datakz = await FirebaseFirestore.instance.collection('datakz').get();
+    datafirebasekz = datakz.docs.toList();
 
     for (int i = 0; i < datafirebasekz.length; i++) {
       autokey = datafirebasekz[i].id;
@@ -210,8 +203,10 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
       }
     }
 
-    print("widget.selectedKey from firebase ${widget.selectedKey}");
-
+    List<QueryDocumentSnapshot<Map<String, dynamic>>>? datafirebaseru;
+    late QuerySnapshot<Map<String, dynamic>> dataru;
+    dataru = await FirebaseFirestore.instance.collection('dataru').get();
+    datafirebaseru = dataru.docs.toList();
     for (int i = 0; i < datafirebaseru.length; i++) {
       autokey = datafirebaseru[i].id;
       autodata = datafirebaseru[i].data() as Map<String, dynamic>;
@@ -224,9 +219,11 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
         audioWidgetsArr.add(audioPathRu);
         break;
       }
-      print('widget.selectedKey ${widget.selectedKey}');
     }
-
+    List<QueryDocumentSnapshot<Map<String, dynamic>>>? datafirebaseen;
+    late QuerySnapshot<Map<String, dynamic>> dataen;
+    dataen = await FirebaseFirestore.instance.collection('dataen').get();
+    datafirebaseen = dataen.docs.toList();
     for (int i = 0; i < datafirebaseen.length; i++) {
       autokey = datafirebaseen[i].id;
       autodata = datafirebaseen[i].data() as Map<String, dynamic>;
@@ -246,7 +243,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
     // print("audioWidgetsEn***${audioWidgetsEn}");
     print("audioWidgetsArr $audioWidgetsArr");
     print("audioWidgetsArr.length ${audioWidgetsArr.length}");
-
+    print('widget.selectedKey ${widget.selectedKey}');
     return audioWidgetsArr;
   }
 
@@ -713,6 +710,8 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
       await _audioPlayer.setUrl(newAudioUrl); // Установить новый URL
       audioDisplayed = newAudioUrl;
       _audioPlayer.play(); // Начать воспроизведение нового аудио
+      newAudioUrl = "";
+      audioDisplayed = "";
     }
 
     return FutureBuilder<List<String>>(
@@ -805,6 +804,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
             if (audioWidgetsKaz.isNotEmpty) {
               changeAudio(audioWidgetsKaz);
               audioWidgetsKaz = "";
+              print('clear audioWidgetsKaz $audioWidgetsKaz');
             }
           } else if (Localizations.localeOf(context).languageCode ==
               currentLanguageru) {
@@ -812,6 +812,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
             if (audioWidgetsRus.isNotEmpty) {
               changeAudio(audioWidgetsRus);
               audioWidgetsRus = "";
+              print('clear audioWidgetsRus $audioWidgetsRus');
             }
           } else if (Localizations.localeOf(context).languageCode ==
               currentLanguageen) {
@@ -819,6 +820,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
             if (audioWidgetsEng.isNotEmpty) {
               changeAudio(audioWidgetsEng);
               audioWidgetsEng = "";
+              print('clear audioWidgetsEng $audioWidgetsEng');
             }
           }
 
