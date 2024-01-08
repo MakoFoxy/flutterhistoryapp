@@ -13,6 +13,7 @@ import 'package:path/path.dart' as path;
 import 'package:downloads_path_provider_28/downloads_path_provider_28.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
+import 'dart:convert';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -76,9 +77,6 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-
-
-
 class FirebaseSearch extends StatefulWidget {
   final ValueChanged<List<dynamic>>
       onResultListChanged; // Изменили тип на ValueChanged
@@ -90,8 +88,6 @@ class FirebaseSearch extends StatefulWidget {
   @override
   FirebaseSearchWidget createState() => FirebaseSearchWidget();
 }
-
-
 
 class FirebaseSearchWidget extends State<FirebaseSearch> {
   TextEditingController keyword = TextEditingController();
@@ -129,7 +125,6 @@ class FirebaseSearchWidget extends State<FirebaseSearch> {
       print('showRes $showRes');
     } else {
       showRes = List.from(allResults);
-     
     }
     setState(() {
       resultList = showRes;
@@ -141,6 +136,8 @@ class FirebaseSearchWidget extends State<FirebaseSearch> {
   }
 
   getClientStream() async {
+    // final directory = await getApplicationDocumentsDirectory();
+    // final file = File('${directory.path}/my_data.json');
     final localeCode = Localizations.localeOf(context).languageCode;
     final collectionName = localeCode == 'kk'
         ? 'datakz'
@@ -157,6 +154,11 @@ class FirebaseSearchWidget extends State<FirebaseSearch> {
       allResults = datalingua.docs;
       searchResultList();
     });
+    // final List<Map<String, dynamic>> documents = datalingua.docs
+    //     .map((doc) => doc.data() as Map<String, dynamic>)
+    //     .toList();
+    // jsonEncode(documents);
+    // await file.writeAsString(jsonEncode(documents));
   }
 
   @override
@@ -227,12 +229,11 @@ class FirebaseSearchWidget extends State<FirebaseSearch> {
         ),
         SizedBox(
           height: 5, // Устанавливаем отступ сверху
-        ),      
+        ),
       ],
     );
   }
 }
-
 
 class MyAppBar extends StatefulWidget {
   final ValueChanged<List<dynamic>> onResultListChanged;
@@ -304,7 +305,6 @@ class _MyAppBarState extends State<MyAppBar> {
   }
 }
 
-
 class MyHomePage extends StatefulWidget {
   final List<dynamic> resultListHome;
   final DecorationImage backgroundImage;
@@ -315,7 +315,6 @@ class MyHomePage extends StatefulWidget {
   @override
   HomePageState createState() => HomePageState();
 }
-
 
 class HomePageState extends State<MyHomePage> {
   //List resultList = [];
@@ -332,19 +331,16 @@ class HomePageState extends State<MyHomePage> {
     print('widget.onResultListChanged2 ${widget.resultListHome}');
     return Scaffold(
       body: Column(
-        children: [       
+        children: [
           Expanded(
             // Используйте Expanded здесь
             child: streamBuildHome(resultList: widget.resultListHome),
-          ),     
+          ),
         ],
       ),
-    
     );
   }
 }
-
-
 
 class streamBuildHome extends StatefulWidget {
   List<dynamic> resultList;
@@ -601,7 +597,6 @@ class _streamBuildHomeState extends State<streamBuildHome> {
     );
   }
 }
-
 
 class MenuTile extends StatefulWidget {
   @override
