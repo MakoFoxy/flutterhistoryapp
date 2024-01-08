@@ -153,6 +153,7 @@ class _MyAppBarState extends State<MyAppBar> {
             width: 290,
             child: FutureBuilder(
               builder: (context, snapshot) {
+                _audioPlayerQR.stop();
                 return mySearchQR();
               },
               future: Future.delayed(const Duration(seconds: 1)),
@@ -471,6 +472,7 @@ class _MySearchState extends State<mySearchQR> {
                       MaterialPageRoute(
                         builder: (context) {
                           if (keywordTextObj.text.isNotEmpty) {
+                            _audioPlayerQR.stop();
                             return takeSearchFirebasePage(
                                 // resList: resList,
                                 mykeyword: keywordTextObj.text,
@@ -852,7 +854,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.paused) {
       // Приложение свернуто, ставим плеер на паузу
-      _audioPlayerQR.pause();
+      _audioPlayerQR.stop();
     } else if (state == AppLifecycleState.resumed) {
       _audioPlayerQR.pause();
       // Приложение развернуто, можно возобновить воспроизведение, если необходимо

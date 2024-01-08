@@ -159,7 +159,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.paused) {
       // Приложение свернуто, ставим плеер на паузу
-      _audioPlayer.pause();
+      _audioPlayer.stop();
     } else if (state == AppLifecycleState.resumed) {
       _audioPlayer.pause();
       // Приложение развернуто, можно возобновить воспроизведение, если необходимо
@@ -266,14 +266,6 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
     String audioPathKaz = "";
     String audioPathRus = "";
     String audioPathEng = "";
-
-    // Future<void> requestManageExternalStoragePermission() async {
-    //   if (Platform.isAndroid &&
-    //       await Permission.manageExternalStorage.status.isDenied) {
-    //     // Открываем страницу настроек системы, где пользователь может предоставить разрешение
-    //     await Permission.manageExternalStorage.request();
-    //   }
-    // }
 
     void showPermissionDialog(BuildContext context) {
       showDialog(
@@ -738,11 +730,8 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
 
           // If data is loaded successfully, display it
           List<String> audioWidgetsArr = snapshot.data ?? [];
-
           print("***<=>audioWidgetsArr $audioWidgetsArr");
-
           print("***<=>audioWidgetsArr.length ${audioWidgetsArr.length}");
-
           print("***<=>widget.selectedKey ${widget.selectedKey}");
 
           String audioWidgetsKaz = audioWidgetsKz;
@@ -750,13 +739,11 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
           String audioWidgetsEng = audioWidgetsEn;
 
           //String audioDisplayed = "";
-
           String currentLanguagekz = 'kk';
           String currentLanguageru = 'ru';
           String currentLanguageen = 'en';
 
           List<String> uniqueAudioWidgetsArr = [];
-
           audioWidgetsArr.forEach((element) {
             if (!uniqueAudioWidgetsArr.contains(element)) {
               uniqueAudioWidgetsArr.add(element);
@@ -1266,6 +1253,7 @@ class _MyAppBarState extends State<MyAppBar> {
             width: 290,
             child: FutureBuilder(
               builder: (context, snapshot) {
+                _audioPlayer.stop();
                 return mySearch();
               },
               future: Future.delayed(const Duration(seconds: 1)),
@@ -1350,6 +1338,7 @@ class _MySearchState extends State<mySearch> {
                       MaterialPageRoute(
                         builder: (context) {
                           if (keywordTextObj.text.isNotEmpty) {
+                            _audioPlayer.stop();
                             return takeSearchFirebasePage(
                                 // resList: resList,
                                 mykeyword: keywordTextObj.text,
