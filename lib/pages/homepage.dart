@@ -278,7 +278,7 @@ class _MyAppBarState extends State<MyAppBar> {
         // ),
         Padding(
           padding: const EdgeInsets.only(right: 10),
-          child: DropdownFlag(
+          child: DropdownFlagHome(
             changedLanguage: (value) {
               setState(() {
                 context.setLocale(Locale((value)));

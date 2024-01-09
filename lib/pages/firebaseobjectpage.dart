@@ -69,7 +69,8 @@ class _ObjectFirebasePageState extends State<ObjectFirebasePage> {
         appBar: PreferredSize(
           preferredSize:
               Size.fromHeight(kToolbarHeight), // Set your preferred height here
-          child: MyAppBar(), // Use your custom app bar
+          child: MyAppBar(
+              selectedKey: widget.selectedKey), // Use your custom app bar
         ),
         body: SafeArea(
           child: Column(
@@ -135,10 +136,10 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
   void initState() {
     widget.selectedKey;
     // audioDisplayed = "";
-    // newAudioUrl = "";
-    super.initState();
+    // newAudioUrl = "";    
     _audioPlayer = AudioPlayer();
     WidgetsBinding.instance.addObserver(this); // Добавляем наблюдателя
+    super.initState();
   }
 
   String audioDisplayed = "";
@@ -1232,6 +1233,11 @@ class MyOverviewsState extends State<MyOverviews> {
 }
 
 class MyAppBar extends StatefulWidget {
+  String selectedKey;
+ 
+  MyAppBar({
+    required this.selectedKey,
+  });
   @override
   State<MyAppBar> createState() => _MyAppBarState();
 }
@@ -1243,7 +1249,7 @@ class _MyAppBarState extends State<MyAppBar> {
       iconTheme: IconThemeData(color: Colors.grey),
       backgroundColor: Colors.white,
       automaticallyImplyLeading: false,
-      actions: <Widget>[
+      actions: <Widget>[        
         SizedBox(
           width: 10, // Устанавливаем отступ сверху
         ),
@@ -1267,10 +1273,23 @@ class _MyAppBarState extends State<MyAppBar> {
         // ),
         Padding(
           padding: const EdgeInsets.only(right: 10),
-          child: DropdownFlag(
+          child: DropdownFlag(           
+            selectedKey: widget.selectedKey,
             changedLanguage: (value) {
               setState(() {
                 context.setLocale(Locale((value)));
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //     builder: (context) {
+                //       _audioPlayer.stop();
+                //       return ObjectFirebasePage(
+                //         selectedKey: widget.selectedKey,
+                //       );
+                //     },
+                //   ),
+                // );
+                // _audioPlayer.stop();
               });
             },
           ),

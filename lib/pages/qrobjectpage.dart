@@ -84,7 +84,8 @@ class QRobjectpageState extends State<QRobjectpage> {
         appBar: PreferredSize(
           preferredSize:
               Size.fromHeight(kToolbarHeight), // Set your preferred height here
-          child: MyAppBar(), // Use your custom app bar
+          child: MyAppBar(
+              selectedKey: widget.selectedKey), // Use your custom app bar
         ),
         body: SafeArea(
           child: DefaultTextStyle(
@@ -132,6 +133,11 @@ class QRobjectpageState extends State<QRobjectpage> {
 }
 
 class MyAppBar extends StatefulWidget {
+  String selectedKey;
+
+  MyAppBar({
+    required this.selectedKey,
+  });
   @override
   State<MyAppBar> createState() => _MyAppBarState();
 }
@@ -168,6 +174,7 @@ class _MyAppBarState extends State<MyAppBar> {
         Padding(
           padding: const EdgeInsets.only(right: 10),
           child: DropdownFlag(
+            selectedKey: widget.selectedKey,
             changedLanguage: (value) {
               setState(() {
                 context.setLocale(Locale((value)));
@@ -830,17 +837,19 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
     with WidgetsBindingObserver {
   @override
   void initState() {
+    widget.selectedKey;
     // audioDisplayed = "";
     // newAudioUrl = "";
-    super.initState();
     _audioPlayerQR = AudioPlayer();
     WidgetsBinding.instance.addObserver(this); // Добавляем наблюдателя
+    super.initState();
   }
 
   // String audioDisplayed = "";
   // String newAudioUrl = "";
   @override
   void dispose() {
+    widget.selectedKey;
     // audioDisplayed = "";
     // newAudioUrl = "";
     // Удаление обработчика изменения состояния приложения
