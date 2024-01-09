@@ -173,11 +173,12 @@ class _MyAppBarState extends State<MyAppBar> {
         // ),
         Padding(
           padding: const EdgeInsets.only(right: 10),
-          child: DropdownFlag(
-            selectedKey: widget.selectedKey,
+          child: DropdownFlagHome(
+            //selectedKey: widget.selectedKey,
             changedLanguage: (value) {
               setState(() {
                 context.setLocale(Locale((value)));
+                _audioPlayerQR.stop();
               });
             },
           ),
@@ -1413,7 +1414,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
       }
       await _audioPlayerQR.setUrl(newAudioUrl); // Установить новый URL
       audioDisplayed = newAudioUrl;
-      _audioPlayerQR.play(); // Начать воспроизведение нового аудио
+      _audioPlayerQR.stop(); // Начать воспроизведение нового аудио
     }
 
     return FutureBuilder<List<String>>(

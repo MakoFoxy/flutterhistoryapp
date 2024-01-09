@@ -136,7 +136,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
   void initState() {
     widget.selectedKey;
     // audioDisplayed = "";
-    // newAudioUrl = "";    
+    // newAudioUrl = "";
     _audioPlayer = AudioPlayer();
     WidgetsBinding.instance.addObserver(this); // Добавляем наблюдателя
     super.initState();
@@ -702,7 +702,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
       }
       await _audioPlayer.setUrl(newAudioUrl); // Установить новый URL
       audioDisplayed = newAudioUrl;
-      _audioPlayer.play(); // Начать воспроизведение нового аудио
+      _audioPlayer.stop(); // Начать воспроизведение нового аудио
       newAudioUrl = "";
       audioDisplayed = "";
     }
@@ -1234,7 +1234,7 @@ class MyOverviewsState extends State<MyOverviews> {
 
 class MyAppBar extends StatefulWidget {
   String selectedKey;
- 
+
   MyAppBar({
     required this.selectedKey,
   });
@@ -1249,7 +1249,7 @@ class _MyAppBarState extends State<MyAppBar> {
       iconTheme: IconThemeData(color: Colors.grey),
       backgroundColor: Colors.white,
       automaticallyImplyLeading: false,
-      actions: <Widget>[        
+      actions: <Widget>[
         SizedBox(
           width: 10, // Устанавливаем отступ сверху
         ),
@@ -1273,11 +1273,12 @@ class _MyAppBarState extends State<MyAppBar> {
         // ),
         Padding(
           padding: const EdgeInsets.only(right: 10),
-          child: DropdownFlag(           
-            selectedKey: widget.selectedKey,
+          child: DropdownFlagHome(
+            //selectedKey: widget.selectedKey,
             changedLanguage: (value) {
               setState(() {
                 context.setLocale(Locale((value)));
+                _audioPlayer.stop();
                 // Navigator.push(
                 //   context,
                 //   MaterialPageRoute(
@@ -1289,7 +1290,6 @@ class _MyAppBarState extends State<MyAppBar> {
                 //     },
                 //   ),
                 // );
-                // _audioPlayer.stop();
               });
             },
           ),

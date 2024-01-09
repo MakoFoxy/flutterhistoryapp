@@ -20,7 +20,7 @@ void main() async {
   }
   await FirebaseApi().initNotifications();
   debugPaintSizeEnabled = false;
-  runApp(
+  runApp( 
     EasyLocalization(
       supportedLocales: [
         Locale('kk'),
