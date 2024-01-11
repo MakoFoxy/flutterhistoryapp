@@ -93,6 +93,11 @@ public final class GeneratedPluginRegistrant {
       Log.e(TAG, "Error registering plugin just_audio, com.ryanheise.just_audio.JustAudioPlugin", e);
     }
     try {
+      flutterEngine.getPlugins().add(new com.snnafi.media_store_plus.MediaStorePlusPlugin());
+    } catch (Exception e) {
+      Log.e(TAG, "Error registering plugin media_store_plus, com.snnafi.media_store_plus.MediaStorePlusPlugin", e);
+    }
+    try {
       flutterEngine.getPlugins().add(new dev.steenbakker.mobile_scanner.MobileScannerPlugin());
     } catch (Exception e) {
       Log.e(TAG, "Error registering plugin mobile_scanner, dev.steenbakker.mobile_scanner.MobileScannerPlugin", e);
@@ -121,6 +126,11 @@ public final class GeneratedPluginRegistrant {
       flutterEngine.getPlugins().add(new com.mhz.savegallery.saver_gallery.SaverGalleryPlugin());
     } catch (Exception e) {
       Log.e(TAG, "Error registering plugin saver_gallery, com.mhz.savegallery.saver_gallery.SaverGalleryPlugin", e);
+    }
+    try {
+      flutterEngine.getPlugins().add(new dev.fluttercommunity.plus.share.SharePlusPlugin());
+    } catch (Exception e) {
+      Log.e(TAG, "Error registering plugin share_plus, dev.fluttercommunity.plus.share.SharePlusPlugin", e);
     }
     try {
       flutterEngine.getPlugins().add(new io.flutter.plugins.sharedpreferences.SharedPreferencesPlugin());

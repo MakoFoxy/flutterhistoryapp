@@ -53,6 +53,8 @@ dependencies:
   downloads_path_provider_28: ^0.1.2
   excel: ^4.0.0
   audio_session: ^0.1.18
+  share_plus: ^7.2.1
+  media_store_plus: ^0.0.7
 
 
 dev_dependencies:

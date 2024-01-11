@@ -18,6 +18,8 @@ import 'package:dio/dio.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:downloads_path_provider_28/downloads_path_provider_28.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:media_store_plus/media_store_plus.dart';
 
 class QRobjectpage extends StatefulWidget {
   final String selectedKey; // Добавьте параметр для выбранного ключа
@@ -987,6 +989,10 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
           content: Text('Please, you should to get permission.'),
           actions: <Widget>[
             TextButton(
+              child: Text('Cancel'),
+              onPressed: () => Navigator.of(context).pop(false),
+            ),
+            TextButton(
               child: Text('Open settings'),
               onPressed: () {
                 openAppSettings(); // Открывает настройки приложения
@@ -997,12 +1003,10 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
       );
     }
 
-    Future downloadFileKz() async {
+    Future downloadFileKzQR() async {
       print('audioPathKaz*** $audioPathKaz');
       try {
         if (Platform.isAndroid) {
-          //await requestManageExternalStoragePermission();
-          var storageStatus = await Permission.storage.request();
           final downloadsDirectory =
               await DownloadsPathProvider.downloadsDirectory;
           final Directory? downloadsDir = await getExternalStorageDirectory();
@@ -1010,108 +1014,202 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
           if (downloadsDir == null || downloadsDirectory == null) {
             print('Downloads directory not available on this device.');
           }
-          if (storageStatus == PermissionStatus.granted &&
-              downloadsDir != null) {
+          if (downloadsDir != null) {
             final ref = FirebaseStorage.instance.ref().child(audioPathKaz);
             final url = await ref.getDownloadURL();
-
             //final tempDir = await getTemporaryDirectory();
-            final downloadDirectoryPath =
-                '${downloadsDirectory!.path}/${ref.name}.mp3';
             String downloadPath = "";
-            //final downloadsDirectory = await getExternalStorageDirectory();
-            //if (downloadsDirectory != null) {
             downloadPath = '${downloadsDir.path}/${ref.name}.mp3';
-            // Теперь у вас есть путь к директории "Загрузки" на устройстве.
-            // Можете использовать его для сохранения файлов.
-            // }
             await Dio().download(url, downloadPath);
             print('url $url');
-            // if (url.contains('.mp3')) {
-            //   await SaverGallery.saveFile(
-            //       file: downloadPath, name: ref.name, androidExistNotSave: true);
-            // }
-            await File(downloadPath).copy(downloadDirectoryPath);
-
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text('Downloaded ${ref.name}.mp3'),
+                duration: Duration(minutes: 30), // 30 мин отображение
+                action: SnackBarAction(
+                  label: 'Share',
+                  onPressed: () async {
+                    // Предоставление возможности поделиться файлом
+                    await Share.shareXFiles([XFile(downloadPath)]);
+                  },
+                ),
               ),
             );
-            print('Saving in the: $downloadPath');
+            print('Saving downloadPath in the: $downloadPath');
             // print('Saving in the: $downloadDirectoryPath');
-          } else if (storageStatus == PermissionStatus.granted &&
-              downloadsDirectory != null) {
+          } else if (downloadsDirectory != null && downloadsDir == null) {
             final dataref = FirebaseStorage.instance.ref().child(audioPathKaz);
             final dataurl = await dataref.getDownloadURL();
-            String downloadPathDirectoryAndroid = "";
-            downloadPathDirectoryAndroid =
+            String downloadPathDirectoryAndroid =
                 '${downloadsDirectory.path}/${dataref.name}.mp3';
             await Dio().download(dataurl, downloadPathDirectoryAndroid);
-            print('dataurl $dataurl');
 
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text('Downloaded ${dataref.name}.mp3'),
+                duration: Duration(minutes: 30), // Бесконечное отображение
+                action: SnackBarAction(
+                  label: 'Share',
+                  onPressed: () async {
+                    // Предоставление возможности поделиться файлом
+                    await Share.shareXFiles(
+                        [XFile(downloadPathDirectoryAndroid)]);
+                  },
+                ),
               ),
             );
-          } else if (storageStatus.isDenied) {
-            final ref = FirebaseStorage.instance.ref().child(audioPathKaz);
-            //Directory appDirectory = await getApplicationDocumentsDirectory();
-            //String appFolderPath = '${appDirectory.path}/${ref.name}.mp3';
-            String? selectedDirectory =
-                await FilePicker.platform.getDirectoryPath();
-            final url = await ref.getDownloadURL();
-            // await Dio().download(url, appFolderPath);
-            if (selectedDirectory != null) {
-              String savePath = '$selectedDirectory/${ref.name}.mp3';
-              await Dio().download(url, savePath);
-              // String destinationFilePath =
-              //     '${downloadsDirectory.path}/${ref.name}.mp3';
-              // // Переместите файл из исходного пути в путь загрузок
-              // File originalFile = File(savePath);
-              // final readAppfiles = await originalFile.readAsBytes();
-              // File(destinationFilePath).writeAsBytes(readAppfiles);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content:
-                      Text('Downloaded ${ref.name}.mp3 to $selectedDirectory'),
-                ),
-              );
-            }
+            print(
+                'Saving downloadPathDirectoryAndroid in the: $downloadPathDirectoryAndroid');
           } else {
-            if (storageStatus.isPermanentlyDenied) {
-              // Пользователь отказал и выбрал "Не спрашивать снова"
-              // Показать диалоговое окно с информацией о необходимости предоставления разрешения
-              if (mounted) {
-                showPermissionDialog(context);
+            final mediaStorePlugin = MediaStore();
+            WidgetsFlutterBinding.ensureInitialized();
+            List<Permission> permissions = [];
+            if ((await mediaStorePlugin.getPlatformSDKInt()) >= 33) {
+              permissions.add(Permission.photos);
+              permissions.add(Permission.audio);
+              permissions.add(Permission.videos);
+              permissions.add(Permission.storage);
+            }
+            Map<Permission, PermissionStatus> statuses =
+                await permissions.request();
+            bool isAllGranted =
+                statuses.values.every((status) => status.isGranted);
+            statuses.forEach((permission, status) {
+              print(
+                  'permission status now ${permission.toString()}: ${status.toString()}');
+            });
+            //await requestManageExternalStoragePermission();
+            print('isAllGranted1 $isAllGranted');
+            if (isAllGranted == true) {
+              print('isAllGranted2 $isAllGranted');
+              final ref = FirebaseStorage.instance.ref().child(audioPathKaz);
+              final url = await ref.getDownloadURL();
+              // Скачивание файла во временную папку
+              var tempDir = await getTemporaryDirectory();
+              String tempPath = '${tempDir.path}/${ref.name}.mp3';
+              await Dio().download(url, tempPath);
+              bool savedSuccessfully = await mediaStorePlugin.saveFile(
+                tempFilePath: tempPath,
+                dirType: DirType
+                    .download, // Или другой тип директории в зависимости от вашего случая
+                dirName: DirName.download,
+              );
+              if (savedSuccessfully == true) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Downloaded ${ref.name}.mp3 to $tempPath'),
+                    duration: Duration(minutes: 30), // 30 мин отображение
+                    action: SnackBarAction(
+                      label: 'Share',
+                      onPressed: () async {
+                        // Предоставление возможности поделиться файлом
+                        await Share.shareXFiles([XFile(tempPath)]);
+                      },
+                    ),
+                  ),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                        'Error download: $isAllGranted and $savedSuccessfully'),
+                  ),
+                );
+              }
+              if (statuses[Permission.storage] == PermissionStatus.denied) {
+                // Пользователь отказал и выбрал "Не спрашивать снова"
+                // Показать диалоговое окно с информацией о необходимости предоставления разрешения
+                if (mounted) {
+                  showPermissionDialog(context);
+                }
+              }
+            } else {
+              var storageStatus = await Permission.storage.request();
+              if (storageStatus.isGranted) {
+                final ref = FirebaseStorage.instance.ref().child(audioPathKaz);
+                //Directory appDirectory = await getApplicationDocumentsDirectory();
+                //String appFolderPath = '${appDirectory.path}/${ref.name}.mp3';
+                String? selectedDirectory =
+                    await FilePicker.platform.getDirectoryPath();
+                final url = await ref.getDownloadURL();
+                // await Dio().download(url, appFolderPath);
+                if (selectedDirectory != null) {
+                  String savePath = '$selectedDirectory/${ref.name}.mp3';
+                  await Dio().download(url, savePath);
+                  // String destinationFilePath =
+                  //     '${downloadsDirectory.path}/${ref.name}.mp3';
+                  // // Переместите файл из исходного пути в путь загрузок
+                  // File originalFile = File(savePath);
+                  // final readAppfiles = await originalFile.readAsBytes();
+                  // File(destinationFilePath).writeAsBytes(readAppfiles);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      duration: Duration(minutes: 30), // 30 мин отображение
+                      content: Text(
+                          'Downloaded ${ref.name}.mp3 to $selectedDirectory'),
+                      action: SnackBarAction(
+                        label: 'Share',
+                        onPressed: () async {
+                          // Предоставление возможности поделиться файлом
+                          await Share.shareXFiles([XFile(savePath)]);
+                        },
+                      ),
+                    ),
+                  );
+                }
+              } else if (storageStatus.isDenied) {
+                // Пользователь отказал и выбрал "Не спрашивать снова"
+                // Показать диалоговое окно с информацией о необходимости предоставления разрешения
+                if (mounted) {
+                  showPermissionDialog(context);
+                }
               }
             }
           }
         } else if (Platform.isIOS) {
           final ref = FirebaseStorage.instance.ref().child(audioPathKaz);
-          // final appDocDir = await getApplicationDocumentsDirectory();
-          // final downloadPath = '${appDocDir.path}/${ref.name}.mp3';
-          String? selectedDirectory =
-              await FilePicker.platform.getDirectoryPath();
+          final appDocDir = await getApplicationDocumentsDirectory();
+          final downloadPath = '${appDocDir.path}/${ref.name}.mp3';
+          print('Путь к директории appDocDir: $downloadPath');
           final url = await ref.getDownloadURL();
-          //await Dio().download(url, downloadPath);
-          if (selectedDirectory != null) {
-            String savePath = '$selectedDirectory/${ref.name}.mp3';
-            await Dio().download(url, savePath);
-            // String destinationFilePath =
-            //     '${downloadsDirectory.path}/${ref.name}.mp3';
-            // // Переместите файл из исходного пути в путь загрузок
-            // File originalFile = File(savePath);
-            // final readAppfiles = await originalFile.readAsBytes();
-            // File(destinationFilePath).writeAsBytes(readAppfiles);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content:
-                    Text('Downloaded ${ref.name}.mp3 to $selectedDirectory'),
+          await Dio().download(url, downloadPath);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              duration: Duration(minutes: 30), // 30 мин отображение
+              content: Text('Downloaded ${ref.name}.mp3'),
+              action: SnackBarAction(
+                label: 'Share',
+                onPressed: () async {
+                  // Предоставление возможности поделиться файлом
+                  await Share.shareXFiles([XFile(downloadPath)]);
+                },
               ),
-            );
-          }
+            ),
+          );
+          // final ref = FirebaseStorage.instance.ref().child(audioPathKaz);
+          // // final appDocDir = await getApplicationDocumentsDirectory();
+          // // final downloadPath = '${appDocDir.path}/${ref.name}.mp3';
+          // // print('Путь к директории "Documents": $appDocDir');
+          // String? selectedDirectory =
+          //     await FilePicker.platform.getDirectoryPath();
+          // final url = await ref.getDownloadURL();
+          // //await Dio().download(url, downloadPath);
+          // if (selectedDirectory != null) {
+          //   String savePath = '$selectedDirectory/${ref.name}.mp3';
+          //   await Dio().download(url, savePath);
+          //   // String destinationFilePath =
+          //   //     '${downloadsDirectory.path}/${ref.name}.mp3';
+          //   // // Переместите файл из исходного пути в путь загрузок
+          //   // File originalFile = File(savePath);
+          //   // final readAppfiles = await originalFile.readAsBytes();
+          //   // File(destinationFilePath).writeAsBytes(readAppfiles);
+          //   ScaffoldMessenger.of(context).showSnackBar(
+          //     SnackBar(
+          //       content:
+          //           Text('Downloaded ${ref.name}.mp3 to $selectedDirectory'),
+          //     ),
+          //   );
+          // }
         }
       } catch (e, stackTrace) {
         print('Error download: $e');
@@ -1133,12 +1231,10 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
       // );
     }
 
-    Future downloadFileRu() async {
+    Future downloadFileRuQR() async {
       print('audioPathRus*** $audioPathRus');
       try {
         if (Platform.isAndroid) {
-          //await requestManageExternalStoragePermission();
-          var storageStatus = await Permission.storage.request();
           final downloadsDirectory =
               await DownloadsPathProvider.downloadsDirectory;
           final Directory? downloadsDir = await getExternalStorageDirectory();
@@ -1146,108 +1242,178 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
           if (downloadsDir == null || downloadsDirectory == null) {
             print('Downloads directory not available on this device.');
           }
-          if (storageStatus == PermissionStatus.granted &&
-              downloadsDir != null) {
+          if (downloadsDir != null) {
             final ref = FirebaseStorage.instance.ref().child(audioPathRus);
             final url = await ref.getDownloadURL();
-
             //final tempDir = await getTemporaryDirectory();
-            final downloadDirectoryPath =
-                '${downloadsDirectory!.path}/${ref.name}.mp3';
             String downloadPath = "";
-            //final downloadsDirectory = await getExternalStorageDirectory();
-            //if (downloadsDirectory != null) {
             downloadPath = '${downloadsDir.path}/${ref.name}.mp3';
-            // Теперь у вас есть путь к директории "Загрузки" на устройстве.
-            // Можете использовать его для сохранения файлов.
-            // }
             await Dio().download(url, downloadPath);
             print('url $url');
-            // if (url.contains('.mp3')) {
-            //   await SaverGallery.saveFile(
-            //       file: downloadPath, name: ref.name, androidExistNotSave: true);
-            // }
-            await File(downloadPath).copy(downloadDirectoryPath);
-
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text('Downloaded ${ref.name}.mp3'),
+                duration: Duration(minutes: 30), // 30 мин отображение
+                action: SnackBarAction(
+                  label: 'Share',
+                  onPressed: () async {
+                    // Предоставление возможности поделиться файлом
+                    await Share.shareXFiles([XFile(downloadPath)]);
+                  },
+                ),
               ),
             );
-            print('Saving in the: $downloadPath');
+            print('Saving downloadPath in the: $downloadPath');
             // print('Saving in the: $downloadDirectoryPath');
-          } else if (storageStatus == PermissionStatus.granted &&
-              downloadsDirectory != null) {
+          } else if (downloadsDirectory != null && downloadsDir == null) {
             final dataref = FirebaseStorage.instance.ref().child(audioPathRus);
             final dataurl = await dataref.getDownloadURL();
-            String downloadPathDirectoryAndroid = "";
-            downloadPathDirectoryAndroid =
+            String downloadPathDirectoryAndroid =
                 '${downloadsDirectory.path}/${dataref.name}.mp3';
             await Dio().download(dataurl, downloadPathDirectoryAndroid);
-            print('dataurl $dataurl');
 
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text('Downloaded ${dataref.name}.mp3'),
+                duration: Duration(minutes: 30), // Бесконечное отображение
+                action: SnackBarAction(
+                  label: 'Share',
+                  onPressed: () async {
+                    // Предоставление возможности поделиться файлом
+                    await Share.shareXFiles(
+                        [XFile(downloadPathDirectoryAndroid)]);
+                  },
+                ),
               ),
             );
-          } else if (storageStatus.isDenied) {
-            final ref = FirebaseStorage.instance.ref().child(audioPathRus);
-            //Directory appDirectory = await getApplicationDocumentsDirectory();
-            //String appFolderPath = '${appDirectory.path}/${ref.name}.mp3';
-            String? selectedDirectory =
-                await FilePicker.platform.getDirectoryPath();
-            final url = await ref.getDownloadURL();
-            // await Dio().download(url, appFolderPath);
-            if (selectedDirectory != null) {
-              String savePath = '$selectedDirectory/${ref.name}.mp3';
-              await Dio().download(url, savePath);
-              // String destinationFilePath =
-              //     '${downloadsDirectory.path}/${ref.name}.mp3';
-              // // Переместите файл из исходного пути в путь загрузок
-              // File originalFile = File(savePath);
-              // final readAppfiles = await originalFile.readAsBytes();
-              // File(destinationFilePath).writeAsBytes(readAppfiles);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content:
-                      Text('Downloaded ${ref.name}.mp3 to $selectedDirectory'),
-                ),
-              );
-            }
+            print(
+                'Saving downloadPathDirectoryAndroid in the: $downloadPathDirectoryAndroid');
           } else {
-            if (storageStatus.isPermanentlyDenied) {
-              // Пользователь отказал и выбрал "Не спрашивать снова"
-              // Показать диалоговое окно с информацией о необходимости предоставления разрешения
-              if (mounted) {
-                showPermissionDialog(context);
+            final mediaStorePlugin = MediaStore();
+            WidgetsFlutterBinding.ensureInitialized();
+            List<Permission> permissions = [];
+            if ((await mediaStorePlugin.getPlatformSDKInt()) >= 33) {
+              permissions.add(Permission.photos);
+              permissions.add(Permission.audio);
+              permissions.add(Permission.videos);
+              permissions.add(Permission.storage);
+            }
+            Map<Permission, PermissionStatus> statuses =
+                await permissions.request();
+            bool isAllGranted =
+                statuses.values.every((status) => status.isGranted);
+            statuses.forEach((permission, status) {
+              print(
+                  'permission status now ${permission.toString()}: ${status.toString()}');
+            });
+            //await requestManageExternalStoragePermission();
+            print('isAllGranted1 $isAllGranted');
+            if (isAllGranted == true) {
+              print('isAllGranted2 $isAllGranted');
+              final ref = FirebaseStorage.instance.ref().child(audioPathRus);
+              final url = await ref.getDownloadURL();
+              // Скачивание файла во временную папку
+              var tempDir = await getTemporaryDirectory();
+              String tempPath = '${tempDir.path}/${ref.name}.mp3';
+              await Dio().download(url, tempPath);
+              bool savedSuccessfully = await mediaStorePlugin.saveFile(
+                tempFilePath: tempPath,
+                dirType: DirType
+                    .download, // Или другой тип директории в зависимости от вашего случая
+                dirName: DirName.download,
+              );
+              if (savedSuccessfully == true) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Downloaded ${ref.name}.mp3 to $tempPath'),
+                    duration: Duration(minutes: 30), // 30 мин отображение
+                    action: SnackBarAction(
+                      label: 'Share',
+                      onPressed: () async {
+                        // Предоставление возможности поделиться файлом
+                        await Share.shareXFiles([XFile(tempPath)]);
+                      },
+                    ),
+                  ),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                        'Error download: $isAllGranted and $savedSuccessfully'),
+                  ),
+                );
+              }
+              if (statuses[Permission.storage] == PermissionStatus.denied) {
+                // Пользователь отказал и выбрал "Не спрашивать снова"
+                // Показать диалоговое окно с информацией о необходимости предоставления разрешения
+                if (mounted) {
+                  showPermissionDialog(context);
+                }
+              }
+            } else {
+              var storageStatus = await Permission.storage.request();
+              if (storageStatus.isGranted) {
+                final ref = FirebaseStorage.instance.ref().child(audioPathRus);
+                //Directory appDirectory = await getApplicationDocumentsDirectory();
+                //String appFolderPath = '${appDirectory.path}/${ref.name}.mp3';
+                String? selectedDirectory =
+                    await FilePicker.platform.getDirectoryPath();
+                final url = await ref.getDownloadURL();
+                // await Dio().download(url, appFolderPath);
+                if (selectedDirectory != null) {
+                  String savePath = '$selectedDirectory/${ref.name}.mp3';
+                  await Dio().download(url, savePath);
+                  // String destinationFilePath =
+                  //     '${downloadsDirectory.path}/${ref.name}.mp3';
+                  // // Переместите файл из исходного пути в путь загрузок
+                  // File originalFile = File(savePath);
+                  // final readAppfiles = await originalFile.readAsBytes();
+                  // File(destinationFilePath).writeAsBytes(readAppfiles);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      duration: Duration(minutes: 30), // 30 мин отображение
+                      content: Text(
+                          'Downloaded ${ref.name}.mp3 to $selectedDirectory'),
+                      action: SnackBarAction(
+                        label: 'Share',
+                        onPressed: () async {
+                          // Предоставление возможности поделиться файлом
+                          await Share.shareXFiles([XFile(savePath)]);
+                        },
+                      ),
+                    ),
+                  );
+                }
+              } else if (storageStatus.isDenied) {
+                // Пользователь отказал и выбрал "Не спрашивать снова"
+                // Показать диалоговое окно с информацией о необходимости предоставления разрешения
+                if (mounted) {
+                  showPermissionDialog(context);
+                }
               }
             }
           }
         } else if (Platform.isIOS) {
           final ref = FirebaseStorage.instance.ref().child(audioPathRus);
-          // final appDocDir = await getApplicationDocumentsDirectory();
-          // final downloadPath = '${appDocDir.path}/${ref.name}.mp3';
-          String? selectedDirectory =
-              await FilePicker.platform.getDirectoryPath();
+          final appDocDir = await getApplicationDocumentsDirectory();
+          final downloadPath = '${appDocDir.path}/${ref.name}.mp3';
+          print('Путь к директории appDocDir: $downloadPath');
           final url = await ref.getDownloadURL();
-          //await Dio().download(url, downloadPath);
-          if (selectedDirectory != null) {
-            String savePath = '$selectedDirectory/${ref.name}.mp3';
-            await Dio().download(url, savePath);
-            // String destinationFilePath =
-            //     '${downloadsDirectory.path}/${ref.name}.mp3';
-            // // Переместите файл из исходного пути в путь загрузок
-            // File originalFile = File(savePath);
-            // final readAppfiles = await originalFile.readAsBytes();
-            // File(destinationFilePath).writeAsBytes(readAppfiles);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content:
-                    Text('Downloaded ${ref.name}.mp3 to $selectedDirectory'),
+          await Dio().download(url, downloadPath);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              duration: Duration(minutes: 30), // 30 мин отображение
+              content: Text('Downloaded ${ref.name}.mp3'),
+              action: SnackBarAction(
+                label: 'Share',
+                onPressed: () async {
+                  // Предоставление возможности поделиться файлом
+                  await Share.shareXFiles([XFile(downloadPath)]);
+                },
               ),
-            );
-          }
+            ),
+          );
         }
       } catch (e, stackTrace) {
         print('Error download: $e');
@@ -1269,12 +1435,10 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
       // );
     }
 
-    Future downloadFileEn() async {
+    Future downloadFileEnQR() async {
       print('audioPathEng*** $audioPathEng');
       try {
         if (Platform.isAndroid) {
-          //await requestManageExternalStoragePermission();
-          var storageStatus = await Permission.storage.request();
           final downloadsDirectory =
               await DownloadsPathProvider.downloadsDirectory;
           final Directory? downloadsDir = await getExternalStorageDirectory();
@@ -1282,108 +1446,178 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
           if (downloadsDir == null || downloadsDirectory == null) {
             print('Downloads directory not available on this device.');
           }
-          if (storageStatus == PermissionStatus.granted &&
-              downloadsDir != null) {
+          if (downloadsDir != null) {
             final ref = FirebaseStorage.instance.ref().child(audioPathEng);
             final url = await ref.getDownloadURL();
-
             //final tempDir = await getTemporaryDirectory();
-            final downloadDirectoryPath =
-                '${downloadsDirectory!.path}/${ref.name}.mp3';
             String downloadPath = "";
-            //final downloadsDirectory = await getExternalStorageDirectory();
-            //if (downloadsDirectory != null) {
             downloadPath = '${downloadsDir.path}/${ref.name}.mp3';
-            // Теперь у вас есть путь к директории "Загрузки" на устройстве.
-            // Можете использовать его для сохранения файлов.
-            // }
             await Dio().download(url, downloadPath);
             print('url $url');
-            // if (url.contains('.mp3')) {
-            //   await SaverGallery.saveFile(
-            //       file: downloadPath, name: ref.name, androidExistNotSave: true);
-            // }
-            await File(downloadPath).copy(downloadDirectoryPath);
-
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text('Downloaded ${ref.name}.mp3'),
+                duration: Duration(minutes: 30), // 30 мин отображение
+                action: SnackBarAction(
+                  label: 'Share',
+                  onPressed: () async {
+                    // Предоставление возможности поделиться файлом
+                    await Share.shareXFiles([XFile(downloadPath)]);
+                  },
+                ),
               ),
             );
-            print('Saving in the: $downloadPath');
+            print('Saving downloadPath in the: $downloadPath');
             // print('Saving in the: $downloadDirectoryPath');
-          } else if (storageStatus == PermissionStatus.granted &&
-              downloadsDirectory != null) {
+          } else if (downloadsDirectory != null && downloadsDir == null) {
             final dataref = FirebaseStorage.instance.ref().child(audioPathEng);
             final dataurl = await dataref.getDownloadURL();
-            String downloadPathDirectoryAndroid = "";
-            downloadPathDirectoryAndroid =
+            String downloadPathDirectoryAndroid =
                 '${downloadsDirectory.path}/${dataref.name}.mp3';
             await Dio().download(dataurl, downloadPathDirectoryAndroid);
-            print('dataurl $dataurl');
 
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text('Downloaded ${dataref.name}.mp3'),
+                duration: Duration(minutes: 30), // Бесконечное отображение
+                action: SnackBarAction(
+                  label: 'Share',
+                  onPressed: () async {
+                    // Предоставление возможности поделиться файлом
+                    await Share.shareXFiles(
+                        [XFile(downloadPathDirectoryAndroid)]);
+                  },
+                ),
               ),
             );
-          } else if (storageStatus.isDenied) {
-            final ref = FirebaseStorage.instance.ref().child(audioPathEng);
-            //Directory appDirectory = await getApplicationDocumentsDirectory();
-            //String appFolderPath = '${appDirectory.path}/${ref.name}.mp3';
-            String? selectedDirectory =
-                await FilePicker.platform.getDirectoryPath();
-            final url = await ref.getDownloadURL();
-            // await Dio().download(url, appFolderPath);
-            if (selectedDirectory != null) {
-              String savePath = '$selectedDirectory/${ref.name}.mp3';
-              await Dio().download(url, savePath);
-              // String destinationFilePath =
-              //     '${downloadsDirectory.path}/${ref.name}.mp3';
-              // // Переместите файл из исходного пути в путь загрузок
-              // File originalFile = File(savePath);
-              // final readAppfiles = await originalFile.readAsBytes();
-              // File(destinationFilePath).writeAsBytes(readAppfiles);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content:
-                      Text('Downloaded ${ref.name}.mp3 to $selectedDirectory'),
-                ),
-              );
-            }
+            print(
+                'Saving downloadPathDirectoryAndroid in the: $downloadPathDirectoryAndroid');
           } else {
-            if (storageStatus.isPermanentlyDenied) {
-              // Пользователь отказал и выбрал "Не спрашивать снова"
-              // Показать диалоговое окно с информацией о необходимости предоставления разрешения
-              if (mounted) {
-                showPermissionDialog(context);
+            final mediaStorePlugin = MediaStore();
+            WidgetsFlutterBinding.ensureInitialized();
+            List<Permission> permissions = [];
+            if ((await mediaStorePlugin.getPlatformSDKInt()) >= 33) {
+              permissions.add(Permission.photos);
+              permissions.add(Permission.audio);
+              permissions.add(Permission.videos);
+              permissions.add(Permission.storage);
+            }
+            Map<Permission, PermissionStatus> statuses =
+                await permissions.request();
+            bool isAllGranted =
+                statuses.values.every((status) => status.isGranted);
+            statuses.forEach((permission, status) {
+              print(
+                  'permission status now ${permission.toString()}: ${status.toString()}');
+            });
+            //await requestManageExternalStoragePermission();
+            print('isAllGranted1 $isAllGranted');
+            if (isAllGranted == true) {
+              print('isAllGranted2 $isAllGranted');
+              final ref = FirebaseStorage.instance.ref().child(audioPathEng);
+              final url = await ref.getDownloadURL();
+              // Скачивание файла во временную папку
+              var tempDir = await getTemporaryDirectory();
+              String tempPath = '${tempDir.path}/${ref.name}.mp3';
+              await Dio().download(url, tempPath);
+              bool savedSuccessfully = await mediaStorePlugin.saveFile(
+                tempFilePath: tempPath,
+                dirType: DirType
+                    .download, // Или другой тип директории в зависимости от вашего случая
+                dirName: DirName.download,
+              );
+              if (savedSuccessfully == true) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Downloaded ${ref.name}.mp3 to $tempPath'),
+                    duration: Duration(minutes: 30), // 30 мин отображение
+                    action: SnackBarAction(
+                      label: 'Share',
+                      onPressed: () async {
+                        // Предоставление возможности поделиться файлом
+                        await Share.shareXFiles([XFile(tempPath)]);
+                      },
+                    ),
+                  ),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                        'Error download: $isAllGranted and $savedSuccessfully'),
+                  ),
+                );
+              }
+              if (statuses[Permission.storage] == PermissionStatus.denied) {
+                // Пользователь отказал и выбрал "Не спрашивать снова"
+                // Показать диалоговое окно с информацией о необходимости предоставления разрешения
+                if (mounted) {
+                  showPermissionDialog(context);
+                }
+              }
+            } else {
+              var storageStatus = await Permission.storage.request();
+              if (storageStatus.isGranted) {
+                final ref = FirebaseStorage.instance.ref().child(audioPathEng);
+                //Directory appDirectory = await getApplicationDocumentsDirectory();
+                //String appFolderPath = '${appDirectory.path}/${ref.name}.mp3';
+                String? selectedDirectory =
+                    await FilePicker.platform.getDirectoryPath();
+                final url = await ref.getDownloadURL();
+                // await Dio().download(url, appFolderPath);
+                if (selectedDirectory != null) {
+                  String savePath = '$selectedDirectory/${ref.name}.mp3';
+                  await Dio().download(url, savePath);
+                  // String destinationFilePath =
+                  //     '${downloadsDirectory.path}/${ref.name}.mp3';
+                  // // Переместите файл из исходного пути в путь загрузок
+                  // File originalFile = File(savePath);
+                  // final readAppfiles = await originalFile.readAsBytes();
+                  // File(destinationFilePath).writeAsBytes(readAppfiles);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      duration: Duration(minutes: 30), // 30 мин отображение
+                      content: Text(
+                          'Downloaded ${ref.name}.mp3 to $selectedDirectory'),
+                      action: SnackBarAction(
+                        label: 'Share',
+                        onPressed: () async {
+                          // Предоставление возможности поделиться файлом
+                          await Share.shareXFiles([XFile(savePath)]);
+                        },
+                      ),
+                    ),
+                  );
+                }
+              } else if (storageStatus.isDenied) {
+                // Пользователь отказал и выбрал "Не спрашивать снова"
+                // Показать диалоговое окно с информацией о необходимости предоставления разрешения
+                if (mounted) {
+                  showPermissionDialog(context);
+                }
               }
             }
           }
         } else if (Platform.isIOS) {
           final ref = FirebaseStorage.instance.ref().child(audioPathEng);
-          // final appDocDir = await getApplicationDocumentsDirectory();
-          // final downloadPath = '${appDocDir.path}/${ref.name}.mp3';
-          String? selectedDirectory =
-              await FilePicker.platform.getDirectoryPath();
+          final appDocDir = await getApplicationDocumentsDirectory();
+          final downloadPath = '${appDocDir.path}/${ref.name}.mp3';
+          print('Путь к директории appDocDir: $downloadPath');
           final url = await ref.getDownloadURL();
-          //await Dio().download(url, downloadPath);
-          if (selectedDirectory != null) {
-            String savePath = '$selectedDirectory/${ref.name}.mp3';
-            await Dio().download(url, savePath);
-            // String destinationFilePath =
-            //     '${downloadsDirectory.path}/${ref.name}.mp3';
-            // // Переместите файл из исходного пути в путь загрузок
-            // File originalFile = File(savePath);
-            // final readAppfiles = await originalFile.readAsBytes();
-            // File(destinationFilePath).writeAsBytes(readAppfiles);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content:
-                    Text('Downloaded ${ref.name}.mp3 to $selectedDirectory'),
+          await Dio().download(url, downloadPath);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              duration: Duration(minutes: 30), // 30 мин отображение
+              content: Text('Downloaded ${ref.name}.mp3'),
+              action: SnackBarAction(
+                label: 'Share',
+                onPressed: () async {
+                  // Предоставление возможности поделиться файлом
+                  await Share.shareXFiles([XFile(downloadPath)]);
+                },
               ),
-            );
-          }
+            ),
+          );
         }
       } catch (e, stackTrace) {
         print('Error download: $e');
@@ -1408,13 +1642,14 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
     Future<void> changeAudio(newAudioUrl) async {
       if (audioDisplayed == newAudioUrl) {
         if (_audioPlayerQR.playing || audioDisplayed.isNotEmpty) {
-          await _audioPlayerQR
-              .stop(); // Остановить текущий трек, если он играет
+          await _audioPlayerQR.stop(); // Остановить текущий трек, если он играет
         }
       }
       await _audioPlayerQR.setUrl(newAudioUrl); // Установить новый URL
       audioDisplayed = newAudioUrl;
       _audioPlayerQR.stop(); // Начать воспроизведение нового аудио
+      newAudioUrl = "";
+      audioDisplayed = "";
     }
 
     return FutureBuilder<List<String>>(
@@ -1438,25 +1673,14 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
           if (snapshot.hasError) {
             return Text("Error: ${snapshot.error}");
           }
-
           // If data is loaded successfully, display it
-          List<String> audioWidgetsArr = snapshot.data ?? [];
-          print("***<=>audioWidgetsArr $audioWidgetsArr");
-
-          print("***<=>audioWidgetsArr.length ${audioWidgetsArr.length}");
-
-          print("***<=>widget.selectedKey ${widget.selectedKey}");
-
+          List<String> audioWidgetsArr = snapshot.data ?? [];   
           String audioWidgetsKaz = audioWidgetsKz;
           String audioWidgetsRus = audioWidgetsRu;
           String audioWidgetsEng = audioWidgetsEn;
-
-          //String audioDisplayed = "";
-
           String currentLanguagekz = 'kk';
           String currentLanguageru = 'ru';
           String currentLanguageen = 'en';
-
           List<String> uniqueAudioWidgetsArr = [];
 
           audioWidgetsArr.forEach((element) {
@@ -1672,17 +1896,17 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
                               if (Localizations.localeOf(context)
                                       .languageCode ==
                                   currentLanguagekz) {
-                                downloadFileKz();
+                                downloadFileKzQR();
                               }
                               if (Localizations.localeOf(context)
                                       .languageCode ==
                                   currentLanguageru) {
-                                downloadFileRu();
+                                downloadFileRuQR();
                               }
                               if (Localizations.localeOf(context)
                                       .languageCode ==
                                   currentLanguageen) {
-                                downloadFileEn();
+                                downloadFileEnQR();
                               }
                             },
                             child: const Icon(
